@@ -6,18 +6,20 @@ Option = options.Option
 pygame.init()
 #Init variables
 gameStatus = 'main'
-screen = pygame.display.set_mode((200, 260))
+
 font = pygame.font.Font(None, 40)
 board = pygame.transform.scale(pygame.image.load('Images/board.png'),(600,600))
+optionscreen = pygame.display.set_mode((200, 260))
 
-
-menu = [Option("NEW GAME", (10, 10), font, screen, 0), Option("LOAD GAME", (10, 65), font, screen, 1),
-           Option("OPTIONS", (10, 120), font, screen, 2), Option("RULES", (10, 175), font, screen, 3),
-           Option("QUIT", (10, 230), font, screen, 4)]
+menu = [Option("NEW GAME", (10, 10), font, optionscreen, 0), Option("LOAD GAME", (10, 65), font, optionscreen, 1),
+           Option("OPTIONS", (10, 120), font, optionscreen, 2), Option("RULES", (10, 175), font, optionscreen, 3),
+           Option("QUIT", (10, 230), font, optionscreen, 4)]
 while True:#Main game loop
+    
     events = pygame.event.get()
-    screen.fill((0, 0, 0))
     if(gameStatus == 'main'):#This is true if we're in the main menu
+        screen = pygame.display.set_mode((200, 260))
+        screen.fill((0, 0, 0))
         for option in menu:#Draw all options on the screen
             if option.rect.collidepoint(pygame.mouse.get_pos()):
                 option.hovered = True
@@ -25,6 +27,8 @@ while True:#Main game loop
                 option.hovered = False
             option.draw()
         for ev in events:#Get events and check whether or not a mouseclick was on a button.
+            if ev.type == pygame.QUIT:#Allow pygame to be closed with the x
+                    sys.exit()
             if ev.type == pygame.MOUSEBUTTONUP:
                 for option in menu:
                     if option.rect.collidepoint(pygame.mouse.get_pos()):
@@ -48,11 +52,17 @@ while True:#Main game loop
             screen = pygame.display.set_mode((1000, 600))
             screen.blit(board,(0,0))
             for ev in events:#Event listener again.
+                keys=pygame.key.get_pressed()
+                if ev.type == pygame.QUIT:
+                    sys.exit()
                 if ev.type == pygame.KEYUP:
-                    if ev.key == 'K_ESCAPE':
+                    if ev.key == pygame.K_ESCAPE:
                         gameStatus = 'main'
+                    #print('Forward')
     #if(gameStatus == 'new'):
        # pass
+
+    
     pygame.display.update()
 
 
