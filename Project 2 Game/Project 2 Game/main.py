@@ -24,6 +24,7 @@ while True:
 
 
 
+
 #screensize = width, height = 1000, 600
 #startmenusize = width, height = 200, 500
 #circle = pygame.transform.scale(pygame.image.load('Images/circle.jpg'), (30,30))
