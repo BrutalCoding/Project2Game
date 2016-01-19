@@ -5,21 +5,43 @@ import options
 Option = options.Option
 pygame.init()
 
-optionsscreen = pygame.display.set_mode((200, 150))
+optionsscreen = pygame.display.set_mode((200, 260))
 font = pygame.font.Font(None, 40)
 
 
-options = [Option("NEW GAME", (10, 10), font, optionsscreen), Option("LOAD GAME", (10, 65), font, optionsscreen),
-           Option("OPTIONS", (10, 120), font, optionsscreen)]
-while True:
-    pygame.event.pump()
+menu = [Option("NEW GAME", (10, 10), font, optionsscreen, 0), Option("LOAD GAME", (10, 65), font, optionsscreen, 1),
+           Option("OPTIONS", (10, 120), font, optionsscreen, 2), Option("RULES", (10, 175), font, optionsscreen, 3),
+           Option("QUIT", (10, 230), font, optionsscreen, 4)]
+while True:#Main game loop
+    events = pygame.event.get()
     optionsscreen.fill((0, 0, 0))
-    for option in options:
+    for option in menu:
         if option.rect.collidepoint(pygame.mouse.get_pos()):
             option.hovered = True
         else:
             option.hovered = False
         option.draw()
+
+    for ev in events:
+        if ev.type == pygame.MOUSEBUTTONUP:
+            for option in menu:
+                if option.rect.collidepoint(pygame.mouse.get_pos()):
+                    #Do something with this information, like opening the actual survivor game or opening the rules.
+                    #No need for an else, we don't need to know if someone's aim sucks.
+                    print(option.id)
+                    if(option.id == 0): #New game
+                        pass
+                    elif(option.id == 1):#Load game
+                        pass
+                    elif(option.id == 2):#Options
+                        pass
+                    elif(option.id == 3):#Rules
+                        pass
+                    elif(option.id == 4):#Quit
+                        sys.exit()
+                
+                option.draw()
+
     pygame.display.update()
 
 

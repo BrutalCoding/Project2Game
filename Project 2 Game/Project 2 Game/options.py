@@ -1,10 +1,11 @@
 class Option:
     hovered = False 
-    def __init__(self, text, pos, font, screen):
+    def __init__(self, text, pos, font, screen, id):
         self.text = text
         self.pos = pos
         self.font = font
         self.screen = screen
+        self.id = id
         self.set_rect()
         self.draw()
             
