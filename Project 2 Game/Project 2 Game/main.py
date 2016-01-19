@@ -5,15 +5,15 @@ import options
 Option = options.Option
 pygame.init()
 
-screen = pygame.display.set_mode((480, 320))
+optionsscreen = pygame.display.set_mode((200, 150))
 font = pygame.font.Font(None, 40)
 
 
-options = [Option("NEW GAME", (140, 105), font, screen), Option("LOAD GAME", (135, 155), font, screen),
-           Option("OPTIONS", (145, 205), font, screen)]
+options = [Option("NEW GAME", (10, 10), font, optionsscreen), Option("LOAD GAME", (10, 65), font, optionsscreen),
+           Option("OPTIONS", (10, 120), font, optionsscreen)]
 while True:
     pygame.event.pump()
-    screen.fill((0, 0, 0))
+    optionsscreen.fill((0, 0, 0))
     for option in options:
         if option.rect.collidepoint(pygame.mouse.get_pos()):
             option.hovered = True
