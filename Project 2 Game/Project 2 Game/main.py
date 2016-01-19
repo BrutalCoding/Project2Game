@@ -4,23 +4,27 @@ import options
 
 Option = options.Option
 pygame.init()
+main = True
 
-optionsscreen = pygame.display.set_mode((200, 260))
+screen = pygame.display.set_mode((200, 260))
 font = pygame.font.Font(None, 40)
 
 
-menu = [Option("NEW GAME", (10, 10), font, optionsscreen, 0), Option("LOAD GAME", (10, 65), font, optionsscreen, 1),
-           Option("OPTIONS", (10, 120), font, optionsscreen, 2), Option("RULES", (10, 175), font, optionsscreen, 3),
-           Option("QUIT", (10, 230), font, optionsscreen, 4)]
+menu = [Option("NEW GAME", (10, 10), font, screen, 0), Option("LOAD GAME", (10, 65), font, screen, 1),
+           Option("OPTIONS", (10, 120), font, screen, 2), Option("RULES", (10, 175), font, screen, 3),
+           Option("QUIT", (10, 230), font, screen, 4)]
 while True:#Main game loop
     events = pygame.event.get()
-    optionsscreen.fill((0, 0, 0))
-    for option in menu:
-        if option.rect.collidepoint(pygame.mouse.get_pos()):
-            option.hovered = True
-        else:
-            option.hovered = False
-        option.draw()
+    screen.fill((0, 0, 0))
+    if(main):
+        for option in menu:
+            if option.rect.collidepoint(pygame.mouse.get_pos()):
+                option.hovered = True
+            else:
+                option.hovered = False
+            option.draw()
+    else:
+        screen = pygame.display.set_mode((1000, 600))
 
     for ev in events:
         if ev.type == pygame.MOUSEBUTTONUP:
@@ -30,7 +34,7 @@ while True:#Main game loop
                     #No need for an else, we don't need to know if someone's aim sucks.
                     print(option.id)
                     if(option.id == 0): #New game
-                        pass
+                        main = False
                     elif(option.id == 1):#Load game
                         pass
                     elif(option.id == 2):#Options
