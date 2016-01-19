@@ -1,21 +1,26 @@
 ﻿import sys
 import pygame
 import options
+import random
 
 Option = options.Option
+def diceload(file):
+    return pygame.transform.scale(pygame.image.load(file), (150,150))
 pygame.init()
 #Init variables
 gameStatus = 'main'
-
 font = pygame.font.Font(None, 40)
 board = pygame.transform.scale(pygame.image.load('Images/board.png'),(600,600))
 optionscreen = pygame.display.set_mode((200, 260))
+dice = {1:diceload('Images/Die-1.png'), 2:diceload('Images/Die-2.png'), 3:diceload('Images/Die-3.png'), 4:diceload('Images/Die-4.png'), 5:diceload('Images/Die-5.png'), 6:diceload('Images/Die-6.png')}
+gameElements = {}
+randomInt = 1
+
 
 menu = [Option("NEW GAME", (10, 10), font, optionscreen, 0), Option("LOAD GAME", (10, 65), font, optionscreen, 1),
            Option("OPTIONS", (10, 120), font, optionscreen, 2), Option("RULES", (10, 175), font, optionscreen, 3),
            Option("QUIT", (10, 230), font, optionscreen, 4)]
 while True:#Main game loop
-    
     events = pygame.event.get()
     if(gameStatus == 'main'):#This is true if we're in the main menu
         screen = pygame.display.set_mode((200, 260))
@@ -51,6 +56,10 @@ while True:#Main game loop
     elif(gameStatus == 'new'):#This means we're about to start a new game, start initialising the screen and its elements.
             screen = pygame.display.set_mode((1000, 600))
             screen.blit(board,(0,0))
+            dieRect = pygame.Rect((725,50,150,150))
+            #pygame.draw.rect(screen,(0,255,0),(725,50,150,150))
+            screen.blit(dice[randomInt], (725,50))
+
             for ev in events:#Event listener again.
                 keys=pygame.key.get_pressed()
                 if ev.type == pygame.QUIT:
@@ -58,30 +67,13 @@ while True:#Main game loop
                 if ev.type == pygame.KEYUP:
                     if ev.key == pygame.K_ESCAPE:
                         gameStatus = 'main'
-                    #print('Forward')
-    #if(gameStatus == 'new'):
-       # pass
-
+                if ev.type == pygame.MOUSEBUTTONDOWN:
+                    if dieRect.collidepoint(pygame.mouse.get_pos()):
+                        randomInt = random.randint(1,6)
+                        #print(randomInt)
+                        
+                   
+                    #option.rect.collidepoint(pygame.mouse.get_pos()):
     
     pygame.display.update()
 
-
-
-
-
-
-#screensize = width, height = 1000, 600
-#startmenusize = width, height = 200, 500
-#circle = pygame.transform.scale(pygame.image.load('Images/circle.jpg'), (30,30))
-#board = pygame.transform.scale(pygame.image.load('Images/board.png'), (600,600))
-
-#startmenu = pygame.display.set_mode()
-#screen = pygame.display.set_mode(screensize)
-##screen.fill(black)
-
-#def main():
-#    while True:#Main game loop
-#       screen.blit(board, (0, 0))
-#       screen.blit(circle, (10,10))
-#       pygame.display.update()
-#main()
