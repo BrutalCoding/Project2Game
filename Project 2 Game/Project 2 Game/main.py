@@ -13,7 +13,8 @@ font = pygame.font.Font(None, 40)
 menu = [Option("NEW GAME", (10, 10), font, screen, 0), Option("LOAD GAME", (10, 65), font, screen, 1),
            Option("OPTIONS", (10, 120), font, screen, 2), Option("RULES", (10, 175), font, screen, 3),
            Option("QUIT", (10, 230), font, screen, 4)]
-while True:#Main game loop
+gameFinished = False
+while not gameFinished:#Main game loop
     events = pygame.event.get()
     screen.fill((0, 0, 0))
     if(main):
@@ -42,11 +43,13 @@ while True:#Main game loop
                     elif(option.id == 3):#Rules
                         pass
                     elif(option.id == 4):#Quit
-                        sys.exit()
+                        gameFinished = True
+                        break
                 
                 option.draw()
 
     pygame.display.update()
+pygame.quit(); sys.exit(); exit();
 
 
 
