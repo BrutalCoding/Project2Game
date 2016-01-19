@@ -5,7 +5,7 @@ import options
 Option = options.Option
 pygame.init()
 #Init variables
-main = True
+gameStatus = 'main'
 screen = pygame.display.set_mode((200, 260))
 font = pygame.font.Font(None, 40)
 board = pygame.transform.scale(pygame.image.load('Images/board.png'),(600,600))
@@ -17,7 +17,7 @@ menu = [Option("NEW GAME", (10, 10), font, screen, 0), Option("LOAD GAME", (10, 
 while True:#Main game loop
     events = pygame.event.get()
     screen.fill((0, 0, 0))
-    if(main):#This is true if we're in the main menu
+    if(gameStatus == 'main'):#This is true if we're in the main menu
         for option in menu:#Draw all options on the screen
             if option.rect.collidepoint(pygame.mouse.get_pos()):
                 option.hovered = True
@@ -32,7 +32,6 @@ while True:#Main game loop
                         #No need for an else, we don't need to know if someone's aim sucks.
                         print(option.id)
                         if(option.id == 0): #New game
-                            main = False
                             gameStatus = 'new'
                         elif(option.id == 1):#Load game
                             pass
@@ -48,9 +47,10 @@ while True:#Main game loop
     elif(gameStatus == 'new'):#This means we're about to start a new game, start initialising the screen and its elements.
             screen = pygame.display.set_mode((1000, 600))
             screen.blit(board,(0,0))
-
-
-
+            for ev in events:#Event listener again.
+                if ev.type == pygame.KEYUP:
+                    if ev.key == 'K_ESCAPE':
+                        gameStatus = 'main'
     #if(gameStatus == 'new'):
        # pass
     pygame.display.update()
