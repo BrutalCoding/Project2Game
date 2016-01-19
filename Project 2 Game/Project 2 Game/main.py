@@ -4,10 +4,11 @@ import options
 
 Option = options.Option
 pygame.init()
+#Init variables
 main = True
-
 screen = pygame.display.set_mode((200, 260))
 font = pygame.font.Font(None, 40)
+board = ('Images/board.png')
 
 
 menu = [Option("NEW GAME", (10, 10), font, screen, 0), Option("LOAD GAME", (10, 65), font, screen, 1),
@@ -16,16 +17,14 @@ menu = [Option("NEW GAME", (10, 10), font, screen, 0), Option("LOAD GAME", (10, 
 while True:#Main game loop
     events = pygame.event.get()
     screen.fill((0, 0, 0))
-    if(main):
-        for option in menu:
+    if(main):#This is true if we're in the main menu
+        for option in menu:#Draw all options on the screen
             if option.rect.collidepoint(pygame.mouse.get_pos()):
                 option.hovered = True
             else:
                 option.hovered = False
             option.draw()
-    
-
-        for ev in events:
+        for ev in events:#Get events and check whether or not a mouseclick was on a button.
             if ev.type == pygame.MOUSEBUTTONUP:
                 for option in menu:
                     if option.rect.collidepoint(pygame.mouse.get_pos()):
@@ -34,6 +33,7 @@ while True:#Main game loop
                         print(option.id)
                         if(option.id == 0): #New game
                             main = False
+                            gameStatus = 'new'
                         elif(option.id == 1):#Load game
                             pass
                         elif(option.id == 2):#Options
@@ -45,8 +45,12 @@ while True:#Main game loop
                             break
                     option.draw()
 
-    else:
+    elif(gameStatus == 'new'):#This means we're about to start a new game, start initialising the screen and its elements.
             screen = pygame.display.set_mode((1000, 600))
+
+
+    #if(gameStatus == 'new'):
+       # pass
     pygame.display.update()
 
 
