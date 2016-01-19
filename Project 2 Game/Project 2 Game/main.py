@@ -4,6 +4,7 @@ import options
 import random
 
 Option = options.Option
+pygame.mixer.init()
 def diceload(file):
     return pygame.transform.scale(pygame.image.load(file), (150,150))
 pygame.init()
@@ -69,11 +70,7 @@ while True:#Main game loop
                         gameStatus = 'main'
                 if ev.type == pygame.MOUSEBUTTONDOWN:
                     if dieRect.collidepoint(pygame.mouse.get_pos()):
-                        randomInt = random.randint(1,6)
-                        #print(randomInt)
-                        
-                   
-                    #option.rect.collidepoint(pygame.mouse.get_pos()):
-    
+                        for i in range(10):
+                            randomInt = random.randint(1,6)
     pygame.display.update()
 
