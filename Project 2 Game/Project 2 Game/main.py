@@ -8,7 +8,7 @@ pygame.init()
 main = True
 screen = pygame.display.set_mode((200, 260))
 font = pygame.font.Font(None, 40)
-board = ('Images/board.png')
+board = pygame.transform.scale(pygame.image.load('Images/board.png'),(600,600))
 
 
 menu = [Option("NEW GAME", (10, 10), font, screen, 0), Option("LOAD GAME", (10, 65), font, screen, 1),
@@ -47,6 +47,8 @@ while True:#Main game loop
 
     elif(gameStatus == 'new'):#This means we're about to start a new game, start initialising the screen and its elements.
             screen = pygame.display.set_mode((1000, 600))
+            screen.blit(board,(0,0))
+
 
 
     #if(gameStatus == 'new'):
