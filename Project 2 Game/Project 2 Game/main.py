@@ -5,7 +5,7 @@ import options
 Option = options.Option
 pygame.init()
 #Init variables
-#Versie Daniel
+#Versie Daniel, 2e keer.
 main = True
 screen = pygame.display.set_mode((200, 260))
 font = pygame.font.Font(None, 40)
