@@ -23,29 +23,30 @@ while True:#Main game loop
             else:
                 option.hovered = False
             option.draw()
+    
+
+        for ev in events:
+            if ev.type == pygame.MOUSEBUTTONUP:
+                for option in menu:
+                    if option.rect.collidepoint(pygame.mouse.get_pos()):
+                        #Do something with this information, like opening the actual survivor game or opening the rules.
+                        #No need for an else, we don't need to know if someone's aim sucks.
+                        print(option.id)
+                        if(option.id == 0): #New game
+                            main = False
+                        elif(option.id == 1):#Load game
+                            pass
+                        elif(option.id == 2):#Options
+                            pass
+                        elif(option.id == 3):#Rules
+                            pass
+                        elif(option.id == 4):#Quit
+                            sys.exit(); exit()
+                            break
+                    option.draw()
+
     else:
-        screen = pygame.display.set_mode((1000, 600))
-
-    for ev in events:
-        if ev.type == pygame.MOUSEBUTTONUP:
-            for option in menu:
-                if option.rect.collidepoint(pygame.mouse.get_pos()):
-                    #Do something with this information, like opening the actual survivor game or opening the rules.
-                    #No need for an else, we don't need to know if someone's aim sucks.
-                    print(option.id)
-                    if(option.id == 0): #New game
-                        main = False
-                    elif(option.id == 1):#Load game
-                        pass
-                    elif(option.id == 2):#Options
-                        pass
-                    elif(option.id == 3):#Rules
-                        pass
-                    elif(option.id == 4):#Quit
-                        sys.exit()
-                
-                option.draw()
-
+            screen = pygame.display.set_mode((1000, 600))
     pygame.display.update()
 
 
