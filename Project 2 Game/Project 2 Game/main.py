@@ -1,14 +1,16 @@
 ﻿import sys
 import pygame
-import option
+import options
 
-
+Option = options.Option
 pygame.init()
 
 screen = pygame.display.set_mode((480, 320))
-menu_font = pygame.font.Font(None, 40)
-options = [Option("NEW GAME", (140, 105)), Option("LOAD GAME", (135, 155)),
-           Option("OPTIONS", (145, 205))]
+font = pygame.font.Font(None, 40)
+
+
+options = [Option("NEW GAME", (140, 105), font, screen), Option("LOAD GAME", (135, 155), font, screen),
+           Option("OPTIONS", (145, 205), font, screen)]
 while True:
     pygame.event.pump()
     screen.fill((0, 0, 0))

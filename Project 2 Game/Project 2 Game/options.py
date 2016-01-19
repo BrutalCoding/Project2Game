@@ -1,16 +1,19 @@
 class Option:
     hovered = False 
-    def __init__(self, text, pos):
+    def __init__(self, text, pos, font, screen):
         self.text = text
         self.pos = pos
+        self.font = font
+        self.screen = screen
         self.set_rect()
         self.draw()
             
     def draw(self):
         self.set_rend()
-        screen.blit(self.rend, self.rect)
+        self.screen.blit(self.rend, self.rect)
         
     def set_rend(self):
+        menu_font = self.font
         self.rend = menu_font.render(self.text, True, self.get_color())
         
     def get_color(self):
