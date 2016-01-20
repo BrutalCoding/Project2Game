@@ -29,6 +29,9 @@
     <PtvsTargetsFile>$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets</PtvsTargetsFile>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="board.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="main.py" />
     <Compile Include="Node.py" />
     <Compile Include="options.py">
@@ -46,9 +49,15 @@
     <Folder Include="Images\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Images\board.jpg" />
+    <Content Include="Images\1.jpg" />
     <Content Include="Images\board.png" />
     <Content Include="Images\circle.jpg" />
+    <Content Include="Images\Die-1.png" />
+    <Content Include="Images\Die-2.png" />
+    <Content Include="Images\Die-3.png" />
+    <Content Include="Images\Die-4.png" />
+    <Content Include="Images\Die-5.png" />
+    <Content Include="Images\Die-6.png" />
     <Content Include="Images\test.PNG" />
   </ItemGroup>
   <Import Project="$(PtvsTargetsFile)" Condition="Exists($(PtvsTargetsFile))" />
