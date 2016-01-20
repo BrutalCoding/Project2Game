@@ -2,6 +2,8 @@
 import pygame
 import options
 import random
+from board import tiles
+
 
 Option = options.Option
 pygame.mixer.init()
@@ -16,6 +18,11 @@ optionscreen = pygame.display.set_mode((200, 260))
 dice = {1:diceload('Images/Die-1.png'), 2:diceload('Images/Die-2.png'), 3:diceload('Images/Die-3.png'), 4:diceload('Images/Die-4.png'), 5:diceload('Images/Die-5.png'), 6:diceload('Images/Die-6.png')}
 gameElements = {}
 randomInt = 1
+tiles = {}
+
+
+
+
 
 
 menu = [Option("NEW GAME", (10, 10), font, optionscreen, 0), Option("LOAD GAME", (10, 65), font, optionscreen, 1),
