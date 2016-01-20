@@ -4,8 +4,7 @@ import options
 import random
 from board import tiles
 
-tiles = tiles()#Runs tiles function
-print (tiles)
+
 Option = options.Option
 pygame.mixer.init()
 def diceload(file):
@@ -19,7 +18,8 @@ optionscreen = pygame.display.set_mode((200, 260))
 dice = {1:diceload('Images/Die-1.png'), 2:diceload('Images/Die-2.png'), 3:diceload('Images/Die-3.png'), 4:diceload('Images/Die-4.png'), 5:diceload('Images/Die-5.png'), 6:diceload('Images/Die-6.png')}
 gameElements = {}
 randomInt = 1
-
+tiles = {}
+#tester
 
 
 
@@ -56,7 +56,7 @@ while True:#Main game loop
                         elif(option.id == 2):#Options
                             pass
                         elif(option.id == 3):#Rules
-                            pass
+                            r = R.rules.LoadAllRules
                         elif(option.id == 4):#Quit
                             sys.exit(); exit()
                             break
@@ -77,8 +77,6 @@ while True:#Main game loop
                     if ev.key == pygame.K_ESCAPE:
                         gameStatus = 'main'
                 if ev.type == pygame.MOUSEBUTTONDOWN:
-                    print(pygame.mouse.get_pos())
-
                     if dieRect.collidepoint(pygame.mouse.get_pos()):
                         for i in range(10):
                             randomInt = random.randint(1,6)

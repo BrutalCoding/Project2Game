@@ -33,6 +33,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="main.py" />
+    <Compile Include="Node.py" />
     <Compile Include="options.py">
       <SubType>Code</SubType>
     </Compile>
