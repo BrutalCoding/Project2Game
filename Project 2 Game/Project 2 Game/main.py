@@ -55,7 +55,7 @@ while True:#Main game loop
                         elif(option.id == 2):#Options
                             pass
                         elif(option.id == 3):#Rules
-                            pass
+                            r = R.rules.LoadAllRules
                         elif(option.id == 4):#Quit
                             sys.exit(); exit()
                             break
