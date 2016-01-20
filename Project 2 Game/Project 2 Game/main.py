@@ -18,7 +18,8 @@ optionscreen = pygame.display.set_mode((200, 260))
 dice = {1:diceload('Images/Die-1.png'), 2:diceload('Images/Die-2.png'), 3:diceload('Images/Die-3.png'), 4:diceload('Images/Die-4.png'), 5:diceload('Images/Die-5.png'), 6:diceload('Images/Die-6.png')}
 gameElements = {}
 randomInt = 1
-tiles = {} #test daniel branch
+tiles = {}
+#test
 
 
 
