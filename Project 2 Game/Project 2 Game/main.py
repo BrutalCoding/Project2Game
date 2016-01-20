@@ -19,6 +19,7 @@ dice = {1:diceload('Images/Die-1.png'), 2:diceload('Images/Die-2.png'), 3:dicelo
 gameElements = {}
 randomInt = 1
 tiles = {}
+#test
 
 
 
