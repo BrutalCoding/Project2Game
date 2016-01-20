@@ -5,7 +5,7 @@ def tiles():#Algorithm to decide where tiles are
     for i in range(40):#There's 40 tiles.
         if i == 0 or i == 5 or i == 10 or i == 15 or i == 20 or i == 25 or i == 30 or i == 35: #Exceptions (big tiles in corners and big tiles in middle of each lane.)
             tiles[i] = posx, posy
-            i += 15
+            i += 15 
         elif i > 10:
             tiles[i] = posx, posy
             i += 1
