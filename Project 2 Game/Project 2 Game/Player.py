@@ -1,7 +1,7 @@
 '''
 Created on 19 jan. 2016
 
-@author: bunyamin
+@author: Bunyamin Sakar
 
 '''
 
