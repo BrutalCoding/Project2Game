@@ -3,28 +3,25 @@ import pygame
 import options
 import random
 from board import tiles
+from elements import diceload, pawnload
 
 
 Option = options.Option
 pygame.mixer.init()
-def diceload(file):
-    return pygame.transform.scale(pygame.image.load(file), (150,150))
+
 pygame.init()
 #Init variables
 gameStatus = 'main'
 font = pygame.font.Font(None, 40)
 board = pygame.transform.scale(pygame.image.load('Images/board.png'),(600,600))
 optionscreen = pygame.display.set_mode((200, 260))
+pawns = {1:pawnload('Images/Blue.png'), 2:pawnload('Images/Red.png'), 3:pawnload('Images/Green.png'), 4:pawnload('Images/Yellow.png')}
 dice = {1:diceload('Images/Die-1.png'), 2:diceload('Images/Die-2.png'), 3:diceload('Images/Die-3.png'), 4:diceload('Images/Die-4.png'), 5:diceload('Images/Die-5.png'), 6:diceload('Images/Die-6.png')}
-gameElements = {}
+boardtiles = tiles()
+pawnLocations = {1:boardtiles[0], 2:(0,0), 3:(0,0), 4:(0,0)}
 randomInt = 1
-tiles = {}
-#tester
 
-
-
-
-
+print (tiles)
 
 menu = [Option("NEW GAME", (10, 10), font, optionscreen, 0), Option("LOAD GAME", (10, 65), font, optionscreen, 1),
            Option("OPTIONS", (10, 120), font, optionscreen, 2), Option("RULES", (10, 175), font, optionscreen, 3),
@@ -68,7 +65,7 @@ while True:#Main game loop
             dieRect = pygame.Rect((725,50,150,150))
             #pygame.draw.rect(screen,(0,255,0),(725,50,150,150))
             screen.blit(dice[randomInt], (725,50))
-
+            screen.blit(pawns[1], (pawnLocations[1]))
             for ev in events:#Event listener again.
                 keys=pygame.key.get_pressed()
                 if ev.type == pygame.QUIT:

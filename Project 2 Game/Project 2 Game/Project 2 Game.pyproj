@@ -32,6 +32,9 @@
     <Compile Include="board.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="elements.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="main.py" />
     <Compile Include="Node.py" />
     <Compile Include="options.py">
@@ -50,6 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Images\1.jpg" />
+    <Content Include="Images\blue.png" />
     <Content Include="Images\board.png" />
     <Content Include="Images\circle.jpg" />
     <Content Include="Images\Die-1.png" />
@@ -58,7 +62,10 @@
     <Content Include="Images\Die-4.png" />
     <Content Include="Images\Die-5.png" />
     <Content Include="Images\Die-6.png" />
+    <Content Include="Images\green.png" />
+    <Content Include="Images\red.png" />
     <Content Include="Images\test.PNG" />
+    <Content Include="Images\yellow.png" />
   </ItemGroup>
   <Import Project="$(PtvsTargetsFile)" Condition="Exists($(PtvsTargetsFile))" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" Condition="!Exists($(PtvsTargetsFile))" />
