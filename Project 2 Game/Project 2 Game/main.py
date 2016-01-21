@@ -18,7 +18,9 @@ optionscreen = pygame.display.set_mode((200, 260))
 pawns = {1:pawnload('Images/Blue.png'), 2:pawnload('Images/Red.png'), 3:pawnload('Images/Green.png'), 4:pawnload('Images/Yellow.png')}
 dice = {1:diceload('Images/Die-1.png'), 2:diceload('Images/Die-2.png'), 3:diceload('Images/Die-3.png'), 4:diceload('Images/Die-4.png'), 5:diceload('Images/Die-5.png'), 6:diceload('Images/Die-6.png')}
 boardtiles = tiles()
-pawnLocations = {1:boardtiles[0], 2:(0,0), 3:(0,0), 4:(0,0)}
+#pawnLocations = {1:boardtiles[0], 2:(0,0), 3:(0,0), 4:(0,0)} The actual code, the code below is temporary.
+pawnLocations = {1:(20,15), 2:(550,15), 3:(550,540), 4:(20,540)}
+
 randomInt = 1
 
 print (tiles)
@@ -66,7 +68,8 @@ while True:#Main game loop
             dieRect = pygame.Rect((725,50,150,150))
             #pygame.draw.rect(screen,(0,255,0),(725,50,150,150))
             screen.blit(dice[randomInt], (725,50))
-            screen.blit(pawns[1], (pawnLocations[1]))
+            for pawn in pawns:#Loop for all pawns
+                screen.blit(pawns[pawn], (pawnLocations[pawn]))
             for ev in events:#Event listener again.
                 keys=pygame.key.get_pressed()
                 if ev.type == pygame.QUIT:
