@@ -20,12 +20,34 @@ dice = {1:diceload('Images/Die-1.png'), 2:diceload('Images/Die-2.png'), 3:dicelo
 boardtiles = tiles()
 pawnLocations = {1:boardtiles[0], 2:(0,0), 3:(0,0), 4:(0,0)}
 randomInt = 1
+amountPlayers = 0
+yourChar = 0
+chosen = []
 
 print (tiles)
 
 menu = [Option("NEW GAME", (10, 10), font, optionscreen, 0), Option("LOAD GAME", (10, 65), font, optionscreen, 1),
            Option("OPTIONS", (10, 120), font, optionscreen, 2), Option("RULES", (10, 175), font, optionscreen, 3),
            Option("QUIT", (10, 230), font, optionscreen, 4)]
+
+player = [Option('1 player', (200, 50), font, optionscreen, 1), Option('2 players', (350, 50), font, optionscreen, 2),
+            Option('3 players', (500, 50), font, optionscreen, 3), Option('4 player', (650, 50), font, optionscreen, 4)]
+
+buttons = [Option("Start game", (800, 550), font, optionscreen, 10)]
+
+characters = [Option('Jacky', (200, 200), font, optionscreen, 5), Option('Daniel', (350, 200), font, optionscreen, 6),
+            Option('Iron', (500, 200), font, optionscreen, 7), Option('Bunyamin', (650, 200), font, optionscreen, 8)]
+
+entities = [characters, player, buttons]
+
+def drawOptions(l):
+    for option in l:#Draw all options on the screen
+        if option.rect.collidepoint(pygame.mouse.get_pos()):
+            option.hovered = True
+        else:
+            option.hovered = False
+        option.draw()   
+
 while True:#Main game loop
     events = pygame.event.get()
     if(gameStatus == 'main'):#This is true if we're in the main menu
@@ -58,12 +80,32 @@ while True:#Main game loop
                             sys.exit(); exit()
                             break
                     option.draw()
-
-    elif(gameStatus == 'new'):#This means we're about to start a new game, start initialising the screen and its elements.
+    elif(gameStatus == 'new'):
             screen = pygame.display.set_mode((1000, 600))
+            label = font.render("Choose amount players", 1, (255,255,0))
+            screen.blit(label, (350, 10))
+            label = font.render("Choose your character", 1, (255,255,0))
+            screen.blit(label, (350, 150))
+            for x in entities:
+                drawOptions(x)
+                for ev in events:
+                    if ev.type == pygame.MOUSEBUTTONUP:
+                        for option in x:
+                            if option.rect.collidepoint(pygame.mouse.get_pos()):
+                                if int(option.id) <= 4:
+                                    amountPlayers = int(option.id)
+                                    chosen.append(amountPlayers)
+                                elif int(option.id) > 4 and int(option.id) < 10:
+                                    yourCharID = int(option.id)
+                                    chosen.append(yourCharID)
+                                elif option.id == 10:
+                                    gameStatus = 'Game'
+                                option.selected = True
+    elif(gameStatus == 'Game'):#This means we're about to start a new game, start initialising the screen and its elements.        
+            screen = pygame.display.set_mode((1000, 600))           
             screen.blit(board,(0,0))
             dieRect = pygame.Rect((725,50,150,150))
-            #pygame.draw.rect(screen,(0,255,0),(725,50,150,150))
+            ##pygame.draw.rect(screen,(0,255,0),(725,50,150,150))
             screen.blit(dice[randomInt], (725,50))
             screen.blit(pawns[1], (pawnLocations[1]))
             for ev in events:#Event listener again.
@@ -77,5 +119,6 @@ while True:#Main game loop
                     if dieRect.collidepoint(pygame.mouse.get_pos()):
                         for i in range(10):
                             randomInt = random.randint(1,6)
+        
     pygame.display.update()
 
