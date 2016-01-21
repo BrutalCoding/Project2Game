@@ -27,13 +27,8 @@ menu = [Option("NEW GAME", (10, 10), font, optionscreen, 0), Option("LOAD GAME",
 while True:#Main game loop
     events = pygame.event.get()
     if(gameStatus == 'main'):#This is true if we're in the main menu
-        #screen = pygame.display.set_mode((640, 480), 0, 32)
-        #menu_items = ('Start', 'Quit')
-        #pygame.display.set_caption('Survivor')
-        #Men = menu.GameMenu(screen, menu_items);
-        #Men.run()
-        #screen = pygame.display.set_mode((500, 500))
-        #screen.fill((0, 0, 0))
+        screen = pygame.display.set_mode((640, 480), 0, 32)
+        screen.fill((0, 0, 0))
         for option in menu:#Draw all options on the screen
             if option.rect.collidepoint(pygame.mouse.get_pos()):
                 option.hovered = True
