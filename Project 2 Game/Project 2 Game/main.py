@@ -2,6 +2,7 @@
 import pygame
 import options
 import random
+import menu
 from board import tiles
 
 
@@ -18,13 +19,7 @@ optionscreen = pygame.display.set_mode((200, 260))
 dice = {1:diceload('Images/Die-1.png'), 2:diceload('Images/Die-2.png'), 3:diceload('Images/Die-3.png'), 4:diceload('Images/Die-4.png'), 5:diceload('Images/Die-5.png'), 6:diceload('Images/Die-6.png')}
 gameElements = {}
 randomInt = 1
-tiles = {}
-#test
-
-
-
-
-
+tiles = {}  
 
 menu = [Option("NEW GAME", (10, 10), font, optionscreen, 0), Option("LOAD GAME", (10, 65), font, optionscreen, 1),
            Option("OPTIONS", (10, 120), font, optionscreen, 2), Option("RULES", (10, 175), font, optionscreen, 3),
@@ -32,8 +27,13 @@ menu = [Option("NEW GAME", (10, 10), font, optionscreen, 0), Option("LOAD GAME",
 while True:#Main game loop
     events = pygame.event.get()
     if(gameStatus == 'main'):#This is true if we're in the main menu
-        screen = pygame.display.set_mode((200, 260))
-        screen.fill((0, 0, 0))
+        #screen = pygame.display.set_mode((640, 480), 0, 32)
+        #menu_items = ('Start', 'Quit')
+        #pygame.display.set_caption('Survivor')
+        #Men = menu.GameMenu(screen, menu_items);
+        #Men.run()
+        #screen = pygame.display.set_mode((500, 500))
+        #screen.fill((0, 0, 0))
         for option in menu:#Draw all options on the screen
             if option.rect.collidepoint(pygame.mouse.get_pos()):
                 option.hovered = True
