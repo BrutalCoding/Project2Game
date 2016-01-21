@@ -41,6 +41,7 @@ while True:#Main game loop
             if ev.type == pygame.QUIT:#Allow pygame to be closed with the x
                     sys.exit()
             if ev.type == pygame.MOUSEBUTTONUP:
+                print('asdf')
                 for option in menu:
                     if option.rect.collidepoint(pygame.mouse.get_pos()):
                         #Do something with this information, like opening the actual survivor game or opening the rules.
