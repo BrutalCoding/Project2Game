@@ -12,7 +12,7 @@ class SuperFighters(Enum):
                 3:{"damage":25},
                 4:{"damage":20},
                 5:{"damage":15},
-                6:{"damage":10}
+                6:{"damage":10} 
                 }
     JasonStatham = {
                 1:{"damage":15},
