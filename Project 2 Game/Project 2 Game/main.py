@@ -8,14 +8,18 @@ from board import tiles
 from elements import diceload, pawnload
 from Player import *
 from PlayerCards import *
+from rules import *
 
 Option = options.Option
 pygame.mixer.init()
-
 pygame.init()
+
 #Init variables
 gameStatus = 'main'
+rules = Rules
 font = pygame.font.Font(None, 40)
+selectedCharacters = [] #List of selected characters from the "new game" screen
+selectedAmountBots = False #Returns True if the player has selected with how many bots he/she wants to play
 
 #The board can be resized every moment by declaring the function here
 boardVectorSize = {"x": 600, "y": 600}
@@ -24,7 +28,7 @@ def setBoardVectorSize(boardVectorSize):
 board = setBoardVectorSize(boardVectorSize) #Initialize the board size
 
 #The screen can be resized too by declaring the function here
-screenVectorSize = {"x": 1000, "y": 700}
+screenVectorSize = {"x": 200, "y": 260}
 def setScreenVectorSize(screenVectorSize):
     return pygame.display.set_mode((screenVectorSize["x"], screenVectorSize["y"]))
 screen = setScreenVectorSize(screenVectorSize)
@@ -47,7 +51,9 @@ menu = [Option("NEW GAME", (10, 10), font, screen, 0), Option("LOAD GAME", (10, 
            Option("QUIT", (10, 230), font, screen, 4)]
 
 players = [Player("Badr Heri",100, 15, PlayerCards.BadrHeri), Player("Manny Pecquiao",150, 15, PlayerCards.MannyPecquiao), 
-            Player("Mike Tysen",200, 15, PlayerCards.MikeTysen), Player("Rocky Belboa",250,15,PlayerCards.RockyBelboa), Player("IRON NICOLAAS!",250,15,PlayerCards.RockyBelboa), Player("Daniel Killer",250,15,PlayerCards.RockyBelboa)]
+            Player("Mike Tysen",200, 15, PlayerCards.MikeTysen), Player("Rocky Belboa",250,15,PlayerCards.RockyBelboa), Player("Bunya Sakboa",250,15,PlayerCards.RockyBelboa)]
+
+#Define entities so that it can also be called again to reset all values such as the selections
 
 #Draw all player names on the screen
 playerLabels = []
@@ -62,15 +68,18 @@ for x in players:
         playerLabelVector["y"] += 50
     else:
         playerLabelVector["x"] += playerNameRectWidth
-amountOfPlayers = generateID #This is the amount of players adding + 1 because it started from ID 0
+amountOfCharacters = generateID #This is the amount of players adding + 1 because it started from ID 0
 
 
 labelAmountPlayers = []
 playerNumber = 1 #Starting with min 1 and max 4 players
 amountPlayersLabelVector = {"x": 200,"y": 50}
 generateID += 1 #Increment the latest generated id by one so it stays unique
-for x in range(0,4):
-    labelAmountPlayers.append(Option(str(playerNumber) + ' player', (amountPlayersLabelVector['x'], amountPlayersLabelVector['y']), font, screen, generateID))
+labelBotName = "Bot"
+for x in range(1,4):
+    if not playerNumber == 1:
+        labelBotName = "Bots"
+    labelAmountPlayers.append(Option(str(playerNumber) + ' ' + labelBotName, (amountPlayersLabelVector['x'], amountPlayersLabelVector['y']), font, screen, generateID))
     generateID += 1
     playerNumber += 1
     amountPlayersLabelVector['x'] += 150
@@ -78,8 +87,8 @@ for x in range(0,4):
 #Increment the latest generated id and give it to the clickable button
 startGameID = generateID + 1
 selectScreenButtons = [Option("Start game", (800, 550), font, screen, startGameID)]
-
 entities = [playerLabels, labelAmountPlayers, selectScreenButtons]
+
 
 def drawOptions(l):
     for option in l:#Draw all options on the screen
@@ -101,14 +110,19 @@ while gameIsRunning:#Main game loop
     #Erase screen, fill everything with black
     screen.fill((0, 0, 0))
 
-    #If the user is focussing on the game again than update the screen, so that the user can switch to other programs/software/windows.
-    if pygame.mouse.get_focused() or ev.type == pygame.MOUSEBUTTONDOWN:
+    #Check if the user is focussing on the game again than update the screen, so that the user can switch to other programs/software/windows.
+    if pygame.mouse.get_focused() or ev.type == pygame.MOUSEBUTTONDOWN or (ev.type == pygame.KEYUP and ev.key == pygame.K_ESCAPE):
         setScreenVectorSize(screenVectorSize)
     
     if(gameStatus == 'main'):
         screenVectorSize["x"] = 200
         screenVectorSize["y"] = 260
         
+        #Reset option class so no selections get remembered from the previous time that the user selected amount of players and/or character
+        for entity in entities:
+                for option in entity:
+                    option.selected = False
+
         for option in menu:
             if option.rect.collidepoint(pygame.mouse.get_pos()):
                 option.hovered = True
@@ -128,82 +142,108 @@ while gameIsRunning:#Main game loop
                     elif(option.id == 2):#Options
                         pygame.display.toggle_fullscreen
                     elif(option.id == 3):#Rules
-                        r = R.rules.LoadAllRules
+                        gameStatus = "rules"
                     elif(option.id == 4):#Quit
                         gameIsRunning = False
                     option.draw()
     elif(gameStatus == 'new'):
-            screenVectorSize["x"] = 1000
-            screenVectorSize["y"] = 600
+        if ev.type == pygame.KEYUP:
+            if ev.key == pygame.K_ESCAPE:
+                gameStatus = 'main'
 
-            label = font.render("Choose amount players", 1, (255,255,0))
-            screen.blit(label, (350, 10))
-            label = font.render("Choose your character", 1, (255,255,0))
-            screen.blit(label, (350, 150))
-            for entity in entities:
-                drawOptions(entity)
-                for ev in events:
-                    if ev.type == pygame.MOUSEBUTTONUP:
-                        for option in entity:
-                            if option.rect.collidepoint(pygame.mouse.get_pos()):
-                                if option.id <= amountOfPlayers and int(option.id) != startGameID:#Set which character player 1 is.
-                                    yourChar = players[option.id] #Set yourChar to the selected player
-                                elif option.id == startGameID:
-                                    gameStatus = 'Game'
+        screenVectorSize["x"] = 1000
+        screenVectorSize["y"] = 600
+        label = font.render("How many bots should play?", 1, (255,255,0))
+        screen.blit(label, (350, 10))
+        label = font.render("Choose your character", 1, (255,255,0))
+        screen.blit(label, (350, 150))
+        for entity in entities:
+            drawOptions(entity)
+            if ev.type == pygame.MOUSEBUTTONDOWN:
+                for option in entity:
+                    if option.rect.collidepoint(pygame.mouse.get_pos()):
+                        if option.id <= amountOfCharacters and int(option.id) != startGameID:#Set which character player 1 is.
+                            yourChar = players[option.id] #Set yourChar to the selected player
+                            if not players[option.id] in selectedCharacters: #To prevent double (or more) selections, check if the character already got chosen before
+                                selectedCharacters.append(players[option.id]) #Add the selected character to the list
                                 option.selected = True
+                        elif option.id > amountOfCharacters and option.id != startGameID: #Set amount of bots
+                            if not selectedAmountBots: #If the player didn't made a choice yet
+                                option.selected = True
+                                selectedAmountBots = True
+                        elif option.id == startGameID:
+                            gameStatus = 'Game'
+                        else:
+                            raise ValueError('Whoops, it looks like something went wrong when choosing your selection.')
     elif(gameStatus == 'Game'):#This means we're about to start a new game, start initialising the screen and its elements.
-            screenVectorSize["x"] = 1000
-            screenVectorSize["y"] = 700
+        if ev.type == pygame.QUIT:
+            gameIsRunning = False
+        if ev.type == pygame.KEYUP:
+            if ev.key == pygame.K_ESCAPE:
+                gameStatus = 'main'
+        if ev.type == pygame.MOUSEBUTTONDOWN:
+            if dieRect.collidepoint(pygame.mouse.get_pos()):
+                for i in range(10):
+                    randomInt = random.randint(1,6)
+        screenVectorSize["x"] = 1000
+        screenVectorSize["y"] = 700
             
-            screen.blit(board,(0,0))
-            dieRect = pygame.Rect((725,50,150,150))
-            screen.blit(dice[randomInt], (725,50))
+        screen.blit(board,(0,0))
+        dieRect = pygame.Rect((725,50,150,150))
+        screen.blit(dice[randomInt], (725,50))
 
-            #draw labels on scoreboard with lifepoints/conditions p/player
-            scoreBoardFont = pygame.font.Font(None, 20)
-            scoreBoardColor = (255,255,255)
+        #draw labels on scoreboard with lifepoints/conditions p/player
+        scoreBoardFont = pygame.font.Font(None, 20)
+        scoreBoardColor = (255,255,255)
 
-            #default is the player itself   
-            currentPlayerCounter = 1
-            scoreBoardLabels = []
-            name = None
-            for x in players:
-                if x == yourChar:
-                    name = str(x.Name) + " (That's you)"
-                    print("You are: " + str(x.Name))
-                else:
-                    name = str(x.Name)
-                scoreBoardLabels.append(scoreBoardFont.render(name + " - Lifepoints: " + str(x.Health) + " | Condition: " + str(x.Condition), 1, (0,0,0)))
-                pygame.draw.rect(screen, scoreBoardColor, (0,600,screenVectorSize["x"],scoreBoardHeight), 0)
-                currentPlayerCounter += 1
+        #default is the player itself   
+        currentPlayerCounter = 1
+        scoreBoardLabels = []
+        name = None
+        for x in selectedCharacters:
+            if x == yourChar:
+                name = str(x.Name) + " (That's you)"
+                print("You are: " + str(x.Name))
+            else:
+                name = str(x.Name)
+            scoreBoardLabels.append(scoreBoardFont.render(name + " - Lifepoints: " + str(x.Health) + " | Condition: " + str(x.Condition), 1, (0,0,0)))
+            pygame.draw.rect(screen, scoreBoardColor, (0,600,screenVectorSize["x"],scoreBoardHeight), 0)
+            currentPlayerCounter += 1
 
-            #Render the players on the score board
-            labelPixelHeight = 605 #First label location on the score board
-            for label in scoreBoardLabels:
-                screen.blit(label, (0, labelPixelHeight)) 
-                if labelPixelHeight < 705:
-                    labelPixelHeight += 25 #5 pixels difference between each label and 20 pixels for the font size which is 20 now.
-                else:
-                    #Now it does not fit the score board screen anymore, the height of it got exceeded.
-                    #boardHeight += 25 #Let's extend the board height first
-                    screenVectorSize["y"] += 25
-                    scoreBoardHeight += 25
-                    labelPixelHeight += 25
+        #Render the players on the score board
+        labelPixelHeight = 605 #First label location on the score board
+        for label in scoreBoardLabels:
+            screen.blit(label, (0, labelPixelHeight)) 
+            if labelPixelHeight < 705:
+                labelPixelHeight += 25 #5 pixels difference between each label and 20 pixels for the font size which is 20 now.
+            else:
+                #Now it does not fit the score board screen anymore, the height of it got exceeded.
+                #boardHeight += 25 #Let's extend the board height first
+                screenVectorSize["y"] += 25
+                scoreBoardHeight += 25
+                labelPixelHeight += 25
                     
-            for pawn in pawns:#Loop for all pawns
-                screen.blit(pawns[pawn], (pawnLocations[pawn]))
+        for pawn in pawns:#Loop for all pawns
+            screen.blit(pawns[pawn], (pawnLocations[pawn]))
+    elif gameStatus == "rules":
+        if ev.type == pygame.QUIT:
+            gameIsRunning = False
+        if ev.type == pygame.KEYUP:
+            if ev.key == pygame.K_ESCAPE:
+                gameStatus = 'main'
 
-            for ev in events:#Event listener again.
-                keys=pygame.key.get_pressed()
-                if ev.type == pygame.QUIT:
-                    sys.exit()
-                if ev.type == pygame.KEYUP:
-                    if ev.key == pygame.K_ESCAPE:
-                        gameStatus = 'main'
-                if ev.type == pygame.MOUSEBUTTONDOWN:
-                    if dieRect.collidepoint(pygame.mouse.get_pos()):
-                        for i in range(10):
-                            randomInt = random.randint(1,6)
+        screenVectorSize["y"] = 600
+        screenVectorSize["x"] = 1000
+        labelHeight = screen.get_rect().midtop[1]
+        for rule in rules.LoadAllRules():
+            text = font.render(rule, 1, (217, 30, 24))
+            textpos = text.get_rect()
+            labelHeight += 25
+            screen.blit(text, (screen.get_rect().centerx / 2, labelHeight))
+        text = font.render("Press 'ESC' to get back to the main menu", 1, (255,255,0))
+        textpos = text.get_rect()
+        screen.blit(text, (screen.get_rect().centerx / 2, screen.get_size()[1] - 50))
+    #pygame.time.wait(50)
     pygame.display.update()
     
 pygame.quit()
