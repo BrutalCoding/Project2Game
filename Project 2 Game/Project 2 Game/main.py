@@ -2,6 +2,8 @@
 import pygame
 import options
 import random
+from Player import *
+from PlayerCards import *
 from board import tiles
 from elements import diceload, pawnload
 from Player import *
@@ -25,24 +27,26 @@ spelers = [Player(100, 15, PlayerCards.RockyBelboa),Player(100, 15, PlayerCards.
 
 randomInt = 1
 amountPlayers = 0
-yourChar = 0
+yourChar = None
 chosen = []
-
 print (tiles)
 
 menu = [Option("NEW GAME", (10, 10), font, optionscreen, 0), Option("LOAD GAME", (10, 65), font, optionscreen, 1),
            Option("OPTIONS", (10, 120), font, optionscreen, 2), Option("RULES", (10, 175), font, optionscreen, 3),
            Option("QUIT", (10, 230), font, optionscreen, 4)]
 
-player = [Option('1 player', (200, 50), font, optionscreen, 1), Option('2 players', (350, 50), font, optionscreen, 2),
+labelAmountPlayers = [Option('1 player', (200, 50), font, optionscreen, 1), Option('2 players', (350, 50), font, optionscreen, 2),
             Option('3 players', (500, 50), font, optionscreen, 3), Option('4 player', (650, 50), font, optionscreen, 4)]
 
-buttons = [Option("Start game", (800, 550), font, optionscreen, 10)]
+selectScreenButtons = [Option("Start game", (800, 550), font, optionscreen, 10)]
 
-characters = [Option('Jacky', (200, 200), font, optionscreen, 5), Option('Daniel', (350, 200), font, optionscreen, 6),
-            Option('Iron', (500, 200), font, optionscreen, 7), Option('Bunyamin', (650, 200), font, optionscreen, 8)]
+players = [Player(100, 15, PlayerCards.BadrHeri), Player(150, 15, PlayerCards.MannyPecquiao), 
+            Player(200, 15, PlayerCards.MikeTysen), Player(250,15,PlayerCards.RockyBelboa)]
 
-entities = [characters, player, buttons]
+playerLabels = [Option("Badr Heri", (100, 200), font, optionscreen, 5), Option("Manny Pecquiao", (280, 200), font, optionscreen, 6),
+                Option("Mike Tysen", (550, 200), font, optionscreen, 7), Option("Rocky Belboa", (730, 200), font, optionscreen, 8)]
+
+entities = [playerLabels, labelAmountPlayers, selectScreenButtons]
 
 def drawOptions(l):
     for option in l:#Draw all options on the screen
@@ -96,13 +100,20 @@ while True:#Main game loop
                     if ev.type == pygame.MOUSEBUTTONUP:
                         for option in x:
                             if option.rect.collidepoint(pygame.mouse.get_pos()):
-                                if int(option.id) <= 4:
+                                if int(option.id) <= 4:#Set amount players that will play the game
                                     amountPlayers = int(option.id)
   
                                     chosen.append(amountPlayers)
-                                elif int(option.id) > 4 and int(option.id) < 10:
-                                    yourCharID = int(option.id)
-                                    chosen.append(yourCharID)
+                                elif int(option.id) > 4 and int(option.id) < 10:#Set which character player 1 is.
+                                    if option.id == 5:
+                                        yourChar = players[0]
+                                    elif option.id == 6:
+                                        yourChar = players[1]
+                                    elif option.id == 7:
+                                        yourChar = players[2]
+                                    elif option.id == 8:
+                                        yourChar = players[3]
+                                    chosen.append(yourChar)
                                 elif option.id == 10:
                                     gameStatus = 'Game'
                                 option.selected = True
