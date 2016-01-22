@@ -18,5 +18,8 @@ class Player:
     def CalculateCondition(conditionLose):
         return self.Condition - conditionLose
     
+    def Update(self):
+        return
+    
     def DrawPawn(self):
-        
+        return
