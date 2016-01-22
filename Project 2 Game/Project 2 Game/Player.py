@@ -8,7 +8,7 @@ Created on 19 jan. 2016
 class Player:
     def __init__(self,health,condition,card):
         self.Health = health
-        self.Condition = Condition
+        self.Condition = condition
         self.Card = card
     
     def CalculateHealth(damage):
@@ -16,4 +16,8 @@ class Player:
     
     def CalculateCondition(conditionLose):
         return self.Condition - conditionLose
+
+    def loadDefaultValues(self):
+        self.Health = 100
+        self.Condition = 15
     

@@ -4,7 +4,8 @@ import options
 import random
 from board import tiles
 from elements import diceload, pawnload
-
+from Player import *
+from PlayerCards import *
 
 Option = options.Option
 pygame.mixer.init()
@@ -20,6 +21,7 @@ dice = {1:diceload('Images/Die-1.png'), 2:diceload('Images/Die-2.png'), 3:dicelo
 boardtiles = tiles()
 #pawnLocations = {1:boardtiles[0], 2:(0,0), 3:(0,0), 4:(0,0)} The actual code, the code below is temporary.
 pawnLocations = {1:(20,15), 2:(550,15), 3:(550,540), 4:(20,540)}
+spelers = [Player(100, 15, PlayerCards.RockyBelboa),Player(100, 15, PlayerCards.MikeTysen),Player(100, 15, PlayerCards.BadrHeri),Player(100, 15, PlayerCards.MannyPecquiao)]
 
 randomInt = 1
 amountPlayers = 0
@@ -65,7 +67,6 @@ while True:#Main game loop
             if ev.type == pygame.QUIT:#Allow pygame to be closed with the x
                     sys.exit()
             if ev.type == pygame.MOUSEBUTTONUP:
-                print('asdf')
                 for option in menu:
                     if option.rect.collidepoint(pygame.mouse.get_pos()):
                         #Do something with this information, like opening the actual survivor game or opening the rules.
@@ -97,6 +98,7 @@ while True:#Main game loop
                             if option.rect.collidepoint(pygame.mouse.get_pos()):
                                 if int(option.id) <= 4:
                                     amountPlayers = int(option.id)
+  
                                     chosen.append(amountPlayers)
                                 elif int(option.id) > 4 and int(option.id) < 10:
                                     yourCharID = int(option.id)
@@ -105,13 +107,38 @@ while True:#Main game loop
                                     gameStatus = 'Game'
                                 option.selected = True
     elif(gameStatus == 'Game'):#This means we're about to start a new game, start initialising the screen and its elements.        
-            screen = pygame.display.set_mode((1000, 600))           
+            screen = pygame.display.set_mode((1000, 700))           
             screen.blit(board,(0,0))
+            
             dieRect = pygame.Rect((725,50,150,150))
-            ##pygame.draw.rect(screen,(0,255,0),(725,50,150,150))
             screen.blit(dice[randomInt], (725,50))
+
+            #draw labels on scoreboard with lifepoints/conditions p/player
+            scoreBoardFont = pygame.font.Font(None, 20)
+            scoreBoardColor = (255,255,255)
+
+            #default is the player itself   
+            currentPlayerCounter = 1
+            scoreBoardLabels = []
+            name = None
+            for x in spelers:
+                if currentPlayerCounter == 1:
+                    name = "You"
+                else:
+                    name = "Player #" + str(currentPlayerCounter)
+                scoreBoardLabels.append(scoreBoardFont.render(name + " - Lifepoints: " + str(x.Health) + " | Condition: " + str(x.Condition), 1, (0,0,0)))
+                pygame.draw.rect(screen, scoreBoardColor, (0,600,600,100), 0)
+                currentPlayerCounter += 1
+
+            #Render the players on the score board
+            labelPixelHeight = 605 #First label location on the score board
+            for label in scoreBoardLabels:
+                screen.blit(label, (0, labelPixelHeight)) 
+                labelPixelHeight += 25 #5 pixels difference between each label and 20 pixels for the font size which is 20 now.
+
             for pawn in pawns:#Loop for all pawns
                 screen.blit(pawns[pawn], (pawnLocations[pawn]))
+
             for ev in events:#Event listener again.
                 keys=pygame.key.get_pressed()
                 if ev.type == pygame.QUIT:
