@@ -89,19 +89,26 @@ def drawOptions(l):
             option.hovered = False
         option.draw()   
 
-gameIsRunning = True
+gameIsRunning = True #If set to False, the game will stop and the program will exit.
+
 while gameIsRunning:#Main game loop
-    screen.fill((0, 0, 0))
-    events = pygame.event.get()
-    setScreenVectorSize(screenVectorSize)
     #Define the event loop here instead of creating one in each gameStatus (e.g. in the main menu, in the game, in the player select menu etc)
+    events = pygame.event.get()
     for ev in events:
             if ev.type == pygame.QUIT:
                     gameIsRunning = False
 
+    #Erase screen, fill everything with black
+    screen.fill((0, 0, 0))
+
+    #If the user is focussing on the game again than update the screen, so that the user can switch to other programs/software/windows.
+    if pygame.mouse.get_focused() or ev.type == pygame.MOUSEBUTTONDOWN:
+        setScreenVectorSize(screenVectorSize)
+    
     if(gameStatus == 'main'):
         screenVectorSize["x"] = 200
         screenVectorSize["y"] = 260
+        
         for option in menu:
             if option.rect.collidepoint(pygame.mouse.get_pos()):
                 option.hovered = True
@@ -119,8 +126,7 @@ while gameIsRunning:#Main game loop
                     elif(option.id == 1):#Load game
                         pass
                     elif(option.id == 2):#Options
-                        #setBoardVectorSize(1920, 1080)
-                        setScreenVectorSize(1920, 1080)
+                        pygame.display.toggle_fullscreen
                     elif(option.id == 3):#Rules
                         r = R.rules.LoadAllRules
                     elif(option.id == 4):#Quit
@@ -199,5 +205,6 @@ while gameIsRunning:#Main game loop
                         for i in range(10):
                             randomInt = random.randint(1,6)
     pygame.display.update()
+    
 pygame.quit()
 sys.exit()
