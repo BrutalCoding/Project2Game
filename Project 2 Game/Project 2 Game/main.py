@@ -22,6 +22,7 @@ pawnLocations = {1:boardtiles[0], 2:(0,0), 3:(0,0), 4:(0,0)}
 randomInt = 1
 amountPlayers = 0
 yourChar = 0
+chosen = []
 
 print (tiles)
 
@@ -32,12 +33,14 @@ menu = [Option("NEW GAME", (10, 10), font, optionscreen, 0), Option("LOAD GAME",
 player = [Option('1 player', (200, 50), font, optionscreen, 1), Option('2 players', (350, 50), font, optionscreen, 2),
             Option('3 players', (500, 50), font, optionscreen, 3), Option('4 player', (650, 50), font, optionscreen, 4)]
 
+buttons = [Option("Start game", (800, 550), font, optionscreen, 10)]
+
 characters = [Option('Jacky', (200, 200), font, optionscreen, 5), Option('Daniel', (350, 200), font, optionscreen, 6),
             Option('Iron', (500, 200), font, optionscreen, 7), Option('Bunyamin', (650, 200), font, optionscreen, 8)]
 
-entities = [characters, player]
+entities = [characters, player, buttons]
 
-def printD(l):
+def drawOptions(l):
     for option in l:#Draw all options on the screen
         if option.rect.collidepoint(pygame.mouse.get_pos()):
             option.hovered = True
@@ -77,48 +80,45 @@ while True:#Main game loop
                             sys.exit(); exit()
                             break
                     option.draw()
-    elif(gameStatus == 'new'):#This means we're about to start a new game, start initialising the screen and its elements.
+    elif(gameStatus == 'new'):
             screen = pygame.display.set_mode((1000, 600))
             label = font.render("Choose amount players", 1, (255,255,0))
             screen.blit(label, (350, 10))
             label = font.render("Choose your character", 1, (255,255,0))
             screen.blit(label, (350, 150))
-            printD(player)
-            printD(characters)  
             for x in entities:
+                drawOptions(x)
                 for ev in events:
                     if ev.type == pygame.MOUSEBUTTONUP:
                         for option in x:
                             if option.rect.collidepoint(pygame.mouse.get_pos()):
                                 if int(option.id) <= 4:
                                     amountPlayers = int(option.id)
-                                else:
+                                    chosen.append(amountPlayers)
+                                elif int(option.id) > 4 and int(option.id) < 10:
                                     yourCharID = int(option.id)
-                                #option.selected = True
-                                print(amountPlayers)
-            #for ev in events:
-            #    if ev.type == pygame.MOUSEBUTTONUP:
-            #        for option in characters:
-            #            if option.rect.collidepoint(pygame.mouse.get_pos()):
-            #                yourChar = int(option.id)
-            #                option.selected = True
-            #                print(yourChar)
-            #screen.blit(board,(0,0))
-            #dieRect = pygame.Rect((725,50,150,150))
+                                    chosen.append(yourCharID)
+                                elif option.id == 10:
+                                    gameStatus = 'Game'
+                                option.selected = True
+    elif(gameStatus == 'Game'):#This means we're about to start a new game, start initialising the screen and its elements.        
+            screen = pygame.display.set_mode((1000, 600))           
+            screen.blit(board,(0,0))
+            dieRect = pygame.Rect((725,50,150,150))
             ##pygame.draw.rect(screen,(0,255,0),(725,50,150,150))
-            #screen.blit(dice[randomInt], (725,50))
-            #screen.blit(pawns[1], (pawnLocations[1]))
-            #for ev in events:#Event listener again.
-            #    keys=pygame.key.get_pressed()
-            #    if ev.type == pygame.QUIT:
-            #        sys.exit()
-            #    if ev.type == pygame.KEYUP:
-            #        if ev.key == pygame.K_ESCAPE:
-            #            gameStatus = 'main'
-            #    if ev.type == pygame.MOUSEBUTTONDOWN:
-            #        if dieRect.collidepoint(pygame.mouse.get_pos()):
-            #            for i in range(10):
-            #                randomInt = random.randint(1,6)
+            screen.blit(dice[randomInt], (725,50))
+            screen.blit(pawns[1], (pawnLocations[1]))
+            for ev in events:#Event listener again.
+                keys=pygame.key.get_pressed()
+                if ev.type == pygame.QUIT:
+                    sys.exit()
+                if ev.type == pygame.KEYUP:
+                    if ev.key == pygame.K_ESCAPE:
+                        gameStatus = 'main'
+                if ev.type == pygame.MOUSEBUTTONDOWN:
+                    if dieRect.collidepoint(pygame.mouse.get_pos()):
+                        for i in range(10):
+                            randomInt = random.randint(1,6)
         
     pygame.display.update()
 
