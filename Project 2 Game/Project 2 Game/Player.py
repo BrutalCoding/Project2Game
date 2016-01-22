@@ -6,10 +6,11 @@ Created on 19 jan. 2016
 '''
 
 class Player:
-    def __init__(self,health,condition,card):
+    def __init__(self,health,condition,card,position):
         self.Health = health
         self.Condition = Condition
         self.Card = card
+        self.Position = position
     
     def CalculateHealth(damage):
         return self.Health - damage
@@ -17,3 +18,5 @@ class Player:
     def CalculateCondition(conditionLose):
         return self.Condition - conditionLose
     
+    def DrawPawn(self):
+        
