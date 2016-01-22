@@ -6,7 +6,8 @@ Created on 19 jan. 2016
 '''
 
 class Player:
-    def __init__(self,health,condition,card):
+    def __init__(self,name,health,condition,card):
+        self.Name = name
         self.Health = health
         self.Condition = condition
         self.Card = card

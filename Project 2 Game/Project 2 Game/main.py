@@ -23,7 +23,7 @@ dice = {1:diceload('Images/Die-1.png'), 2:diceload('Images/Die-2.png'), 3:dicelo
 boardtiles = tiles()
 #pawnLocations = {1:boardtiles[0], 2:(0,0), 3:(0,0), 4:(0,0)} The actual code, the code below is temporary.
 pawnLocations = {1:(20,15), 2:(550,15), 3:(550,540), 4:(20,540)}
-spelers = [Player(100, 15, PlayerCards.RockyBelboa),Player(100, 15, PlayerCards.MikeTysen),Player(100, 15, PlayerCards.BadrHeri),Player(100, 15, PlayerCards.MannyPecquiao)]
+#spelers = [Player(100, 15, PlayerCards.RockyBelboa),Player(100, 15, PlayerCards.MikeTysen),Player(100, 15, PlayerCards.BadrHeri),Player(100, 15, PlayerCards.MannyPecquiao)]
 
 randomInt = 1
 amountPlayers = 0
@@ -40,11 +40,22 @@ labelAmountPlayers = [Option('1 player', (200, 50), font, optionscreen, 1), Opti
 
 selectScreenButtons = [Option("Start game", (800, 550), font, optionscreen, 10)]
 
-players = [Player(100, 15, PlayerCards.BadrHeri), Player(150, 15, PlayerCards.MannyPecquiao), 
-            Player(200, 15, PlayerCards.MikeTysen), Player(250,15,PlayerCards.RockyBelboa)]
+players = [Player("Badr Heri",100, 15, PlayerCards.BadrHeri), Player("Manny Pecquiao",150, 15, PlayerCards.MannyPecquiao), 
+            Player("Mike Tysen",200, 15, PlayerCards.MikeTysen), Player("Rocky Belboa",250,15,PlayerCards.RockyBelboa), Player("IRON NICOLAAS!",250,15,PlayerCards.RockyBelboa), Player("Daniel Killer",250,15,PlayerCards.RockyBelboa)]
 
-playerLabels = [Option("Badr Heri", (100, 200), font, optionscreen, 5), Option("Manny Pecquiao", (280, 200), font, optionscreen, 6),
-                Option("Mike Tysen", (550, 200), font, optionscreen, 7), Option("Rocky Belboa", (730, 200), font, optionscreen, 8)]
+#Draw all player names on the screen
+playerLabels = []
+playerLabelVector = {"x": 100,"y": 200}#x,y coordinates on the screen for the label to be displayed
+playerID = 5 #+1 each loop
+for x in players:
+    playerLabels.append(Option(x.Name, (playerLabelVector["x"], playerLabelVector["y"]), font, optionscreen, playerID))
+    playerID += 1
+    playerNameRectWidth = len(x.Name) * 20 
+    if playerLabelVector["x"] > 600:
+        playerLabelVector["x"] = 50
+        playerLabelVector["y"] += 50
+    else:
+        playerLabelVector["x"] += playerNameRectWidth
 
 entities = [playerLabels, labelAmountPlayers, selectScreenButtons]
 
@@ -104,7 +115,7 @@ while True:#Main game loop
                                     amountPlayers = int(option.id)
   
                                     chosen.append(amountPlayers)
-                                elif int(option.id) > 4 and int(option.id) < 10:#Set which character player 1 is.
+                                elif int(option.id) > 4 and int(option.id) != 10:#Set which character player 1 is.
                                     if option.id == 5:
                                         yourChar = players[0]
                                     elif option.id == 6:
@@ -132,9 +143,9 @@ while True:#Main game loop
             currentPlayerCounter = 1
             scoreBoardLabels = []
             name = None
-            for x in spelers:
-                if currentPlayerCounter == 1:
-                    name = "You"
+            for x in players:
+                if x == yourChar:
+                    name = "You (" + str(x.Name) + ")"
                 else:
                     name = "Player #" + str(currentPlayerCounter)
                 scoreBoardLabels.append(scoreBoardFont.render(name + " - Lifepoints: " + str(x.Health) + " | Condition: " + str(x.Condition), 1, (0,0,0)))
