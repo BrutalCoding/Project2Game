@@ -19,7 +19,7 @@ class Player:
         return self.Condition + conditionLose
     
     def Update(self):
-        return  
+        return
     
     def DrawPawn(self):
-        return 
+        return
