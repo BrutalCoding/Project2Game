@@ -16,7 +16,7 @@ class Player:
         return self.Health - damage
     
     def CalculateCondition(conditionLose):
-        return self.Condition - conditionLose
+        return self.Condition + conditionLose
     
     def Update(self):
         return
