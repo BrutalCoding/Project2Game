@@ -26,7 +26,6 @@ class Option:
         else:
             return (100, 100, 100)
         
-        
     def set_rect(self):
         self.set_rend()
         self.rect = self.rend.get_rect()
