@@ -33,7 +33,7 @@ menu = [Option("NEW GAME", (10, 10), font, optionscreen, 0), Option("LOAD GAME",
            Option("OPTIONS", (10, 120), font, optionscreen, 2), Option("RULES", (10, 175), font, optionscreen, 3),
            Option("QUIT", (10, 230), font, optionscreen, 4)]
 
-labelAmountPlayers = [Option('1 player', (600, 50), font, optionscreen, 1), Option('2 players', (350, 50), font, optionscreen, 2),
+labelAmountPlayers = [Option('1 player', (200, 50), font, optionscreen, 1), Option('2 players', (350, 50), font, optionscreen, 2),
             Option('3 players', (500, 50), font, optionscreen, 3), Option('4 player', (650, 50), font, optionscreen, 4)]
 
 selectScreenButtons = [Option("Start game", (800, 550), font, optionscreen, 10)]
