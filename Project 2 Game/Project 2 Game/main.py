@@ -1,5 +1,4 @@
-﻿import sys
-import pygame
+﻿import sys,pygame
 import options
 import random
 from board import tiles
