@@ -21,7 +21,7 @@ rules = Rules
 font = pygame.font.Font(None, 40)
 selectedCharacters = [] #List of selected characters from the "new game" screen
 selectedAmountBots = None #How many bots he/she wants to play
-currentPlayerCounter = 1 #Default player
+currentPlayerCounter = 0 #Default player
 defaultPawnLocations = []
 maxAmountOfBots = 4 #Minimal 1 and maximum depends on how many characters are in the game, see 'players' variable. E.g. 4 = 3 bots, 1 player.
 pawnLocationsTiles = {}
