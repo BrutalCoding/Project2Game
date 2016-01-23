@@ -53,6 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />
+    <Folder Include="Sounds\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Images\1.jpg" />

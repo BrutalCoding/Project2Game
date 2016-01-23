@@ -6,11 +6,12 @@ Created on 19 jan. 2016
 '''
 
 class Player:
-    def __init__(self,name,health,condition,card):
+    def __init__(self,name,health,condition,card, imagecard):
         self.Name = name
         self.Health = health
         self.Condition = condition
         self.Card = card
+        self.ImageCard = imagecard
     
     def CalculateHealth(damage):
         return self.Health - damage
