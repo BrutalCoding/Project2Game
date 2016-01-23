@@ -19,7 +19,7 @@ gameStatus = 'main'
 rules = Rules
 font = pygame.font.Font(None, 40)
 selectedCharacters = [] #List of selected characters from the "new game" screen
-selectedAmountBots = False #Returns True if the player has selected with how many bots he/she wants to play
+selectedAmountBots = None #How many bots he/she wants to play
 
 #The board can be resized every moment by declaring the function here
 boardVectorSize = {"x": 600, "y": 600}
@@ -155,22 +155,28 @@ while gameIsRunning:#Main game loop
         screenVectorSize["y"] = 600
         label = font.render("How many bots should play?", 1, (255,255,0))
         screen.blit(label, (350, 10))
-        label = font.render("Choose your character", 1, (255,255,0))
+        label = font.render("Choose the characters", 1, (255,255,0))
         screen.blit(label, (350, 150))
         for entity in entities:
             drawOptions(entity)
             if ev.type == pygame.MOUSEBUTTONDOWN:
                 for option in entity:
                     if option.rect.collidepoint(pygame.mouse.get_pos()):
-                        if option.id <= amountOfCharacters and int(option.id) != startGameID:#Set which character player 1 is.
-                            yourChar = players[option.id] #Set yourChar to the selected player
-                            if not players[option.id] in selectedCharacters: #To prevent double (or more) selections, check if the character already got chosen before
+                        if option.id > amountOfCharacters and option.id != startGameID: #Set amount of bots
+                            if selectedAmountBots != None and selectedAmountBots.id != option.id: #If the player didn't made a choice yet
+                                if selectedAmountBots:
+                                    selectedAmountBots.selected = False
+                                    selectedAmountBots = None
+                            option.selected = True
+                            selectedAmountBots = option
+                        elif option.id <= amountOfCharacters and int(option.id) != startGameID:#Set which character player 1 is.
+                            if not players[option.id] in selectedCharacters and len(selectedCharacters) < (selectedAmountBots.id - len(players) + 1): #To prevent double (or more) selections, check if the character already got chosen before
+                                if len(selectedCharacters) == 0: #Assign first selection to yourChar
+                                    yourChar = players[option.id] #Set yourChar to the selected player
                                 selectedCharacters.append(players[option.id]) #Add the selected character to the list
                                 option.selected = True
-                        elif option.id > amountOfCharacters and option.id != startGameID: #Set amount of bots
-                            if not selectedAmountBots: #If the player didn't made a choice yet
-                                option.selected = True
-                                selectedAmountBots = True
+                                
+                        
                         elif option.id == startGameID:
                             gameStatus = 'Game'
                         else:
