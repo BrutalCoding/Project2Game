@@ -255,6 +255,13 @@ while gameIsRunning:#Main game loop
             pygame.draw.rect(screen, scoreBoardColor, (0,600,screenVectorSize["x"],scoreBoardHeight), 0)
 
         print(currentPlayerCounter)
+
+        #Kill player 4 after its his turn
+        if(currentPlayerCounter == 4):
+            if not selectedCharacters[currentPlayerCounter - 1].Health <= 0:
+                selectedCharacters[currentPlayerCounter - 1].Health -= randomInt
+
+
         #Render the players on the score board
         labelPixelHeight = 605 #First label location on the score board
         for label in scoreBoardLabels:
