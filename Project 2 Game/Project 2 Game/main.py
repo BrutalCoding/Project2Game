@@ -187,6 +187,7 @@ while gameIsRunning:#Main game loop
         if ev.type == pygame.KEYUP:
             if ev.key == pygame.K_ESCAPE:
                 gameStatus = 'main'
+                selectedCharacters.clear() #Reset the selected characters to zero again in able to reselect later.
         if ev.type == pygame.MOUSEBUTTONDOWN:
             if dieRect.collidepoint(pygame.mouse.get_pos()):
                 for i in range(10):
