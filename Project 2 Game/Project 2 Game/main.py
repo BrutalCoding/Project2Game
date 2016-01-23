@@ -23,7 +23,8 @@ selectedCharacters = [] #List of selected characters from the "new game" screen
 selectedAmountBots = None #How many bots he/she wants to play
 currentPlayerCounter = 1 #Default player
 defaultPawnLocations = []
-maxAmountOfBots = 5 #Min 1 and maximum depends on how many characters are in the game
+maxAmountOfBots = 4 #Min 1 and maximum depends on how many characters are in the game, see 'players' variable.
+pawnLocationsTiles = {}
 
 #The board can be resized every moment by declaring the function here
 boardVectorSize = {"x": 600, "y": 600}
@@ -32,7 +33,7 @@ def setBoardVectorSize(boardVectorSize):
 board = setBoardVectorSize(boardVectorSize) #Initialize the board size
 
 #The screen can be resized too by declaring the function here
-screenVectorSize = {"x": 200, "y": 260}
+screenVectorSize = {"x": 1920, "y": 1080}
 def setScreenVectorSize(screenVectorSize):
     return pygame.display.set_mode((screenVectorSize["x"], screenVectorSize["y"]))
 screen = setScreenVectorSize(screenVectorSize)
@@ -41,12 +42,14 @@ screen = setScreenVectorSize(screenVectorSize)
 scoreBoardHeight = 100
 
 #Loop through selected characters and place related pawns
-def setDefaultPawnLocations(defaultPawnLocations):
+def setDefaultPawnLocations(defaultPawnLocations, pawnLocationsTiles):
+    for currentPlayer in range(1, len(selectedCharacters) + 1):
+        pawnLocationsTiles.update({currentPlayer: (20 + currentPlayer * 5,15 + currentPlayer * 5)})
     for currentPlayer in range(1, len(selectedCharacters) + 1):
         for pawn in pawns:
-            if pawn == currentPlayer:
-                pawnLoc = [pawns[pawn], pawnLocations[pawn]]
-                defaultPawnLocations += pawnLoc
+                if pawn == currentPlayer:
+                    pawnLoc = [pawns[pawn], pawnLocationsTiles[pawn]]
+                    defaultPawnLocations += pawnLoc    
     return defaultPawnLocations
 
 #Reset the selected and amount of characters to zero again in able to reselect later.
@@ -58,10 +61,13 @@ def resetSelections(selectedCharacters, selectedAmountBots):
     return (selectedCharacters, selectedAmountBots)
 
 #Define the images
-pawns = {1:pawnload('Images/Blue.png'), 2:pawnload('Images/Red.png'), 3:pawnload('Images/Green.png'), 4:pawnload('Images/Yellow.png'), 5:pawnload('Images/Blue.png')}
+pawns = {1:pawnload('Images/Blue.png'), 2:pawnload('Images/Red.png'), 3:pawnload('Images/Green.png'), 4:pawnload('Images/Yellow.png'), 5:pawnload('Images/Blue.png'), 6:pawnload('Images/Red.png'), 7:pawnload('Images/Green.png'), 8:pawnload('Images/Yellow.png')}
 dice = {1:diceload('Images/Die-1.png'), 2:diceload('Images/Die-2.png'), 3:diceload('Images/Die-3.png'), 4:diceload('Images/Die-4.png'), 5:diceload('Images/Die-5.png'), 6:diceload('Images/Die-6.png')}
 boardtiles = tiles()
-pawnLocations = {1:(20,15), 2:(550,15), 3:(550,540), 4:(20,540), 5: (30,15), 6: (100, 15)}
+
+
+#pawnLocations = {1:(20,15), 2:(550,15), 3:(550,540), 4:(20,540), 5: (30,15), 6: (100, 15)}
+    
 
 randomInt = 1
 yourChar = None
@@ -71,8 +77,10 @@ menu = [Option("NEW GAME", (10, 10), font, screen, 0), Option("LOAD GAME", (10, 
            Option("OPTIONS", (10, 120), font, screen, 2), Option("RULES", (10, 175), font, screen, 3),
            Option("QUIT", (10, 230), font, screen, 4)]
 
-players = [Player("Badr Heri",100, 15, PlayerCards.BadrHeri), Player("Manny Pecquiao",150, 15, PlayerCards.MannyPecquiao), 
-            Player("Mike Tysen",200, 15, PlayerCards.MikeTysen), Player("Rocky Belboa",250,15,PlayerCards.RockyBelboa), Player("Bunya Sakboa",250,15,PlayerCards.RockyBelboa)]
+players =  [Player("Badr Heri",100, 15, PlayerCards.BadrHeri), Player("Manny Pecquiao",150, 15, PlayerCards.MannyPecquiao), 
+            Player("Mike Tysen",200, 15, PlayerCards.MikeTysen), Player("Rocky Belboa",250,15,PlayerCards.RockyBelboa), 
+            Player("Bunya Sakboa",250,15,PlayerCards.RockyBelboa), Player("Iron Rekt",250,15,PlayerCards.RockyBelboa), 
+            Player("Wout The Ripper",250,15,PlayerCards.RockyBelboa), Player("Dane the Banane",250,15,PlayerCards.RockyBelboa)]
 
 #Define entities so that it can also be called again to reset all values such as the selections
 
@@ -103,7 +111,11 @@ for x in range(1,maxAmountOfBots):
     labelAmountPlayers.append(Option(str(playerNumber) + ' ' + labelBotName, (amountPlayersLabelVector['x'], amountPlayersLabelVector['y']), font, screen, generateID))
     generateID += 1
     playerNumber += 1
-    amountPlayersLabelVector['x'] += 150
+    if amountPlayersLabelVector["x"] > 600:
+        amountPlayersLabelVector["x"] = 200
+        amountPlayersLabelVector["y"] += 50
+    else:
+        amountPlayersLabelVector['x'] += 150
 
 #Increment the latest generated id and give it to the clickable button
 startGameID = generateID + 1
@@ -258,7 +270,7 @@ while gameIsRunning:#Main game loop
         cnt = 0
         #screen.blit(pawns[1], pawnLocations[1])
         
-        defaultPawnLocations = setDefaultPawnLocations(defaultPawnLocations)
+        defaultPawnLocations = setDefaultPawnLocations(defaultPawnLocations, pawnLocationsTiles)
         for x in defaultPawnLocations:
             if cnt == 0:
                 source = x
