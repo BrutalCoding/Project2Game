@@ -60,8 +60,9 @@ pygame.mixer.init()
 def setDefaultSoundFadeOut(fadeOutms):
     pygame.mixer.music.fadeout(fadeOutms)
     return True
-def setDefaultSoundSystem(soundFileLocation, fadeOutms):
-    if(setDefaultSoundFadeOut(1000)):
+def setDefaultSoundSystem(soundFileLocation, fadeOutms=500, volume=1):
+    if(setDefaultSoundFadeOut(fadeOutms)):
+        pygame.mixer.music.set_volume(volume)
         pygame.mixer.music.load(soundFileLocation)
         pygame.mixer.music.play(-1)
     return
@@ -85,7 +86,8 @@ boardtiles = tiles()
     
 
 randomInt = 1
-yourChar = None
+yourChar = None #First selection made is the player
+latestSelectedChar = None #Latest character selection that was made
 print (tiles)
 # A global dict value that will contain all the Pygame
 # Surface objects returned by pygame.image.load().
@@ -97,13 +99,13 @@ menu =    [Option("NEW GAME", (10, 10), font, screen, 0),
            Option("QUIT", (10, 230), font, screen, 4)]
 
 players =  [Player("Badr Heri",100, 15, PlayerCards.BadrHeri, "card__badr_heri.jpg"),
-            Player("Manny Pecquiao",150, 15, PlayerCards.MannyPecquiao, "placeholder_500_500.png"),
-            Player("Mike Tysen",200, 15, PlayerCards.MikeTysen,"placeholder_500_500.png"),
-            Player("Rocky Belboa",250,15,PlayerCards.RockyBelboa,"placeholder_500_500.png"),
-            Player("Bunya Sakboa",250,15,PlayerCards.RockyBelboa,"placeholder_500_500.png"),
-            Player("Iron Rekt",250,15,PlayerCards.RockyBelboa,"placeholder_500_500.png"),
-            Player("Wout The Ripper",250,15,PlayerCards.RockyBelboa,"placeholder_500_500.png"),
-            Player("Bad Boy",250,15,PlayerCards.RockyBelboa,"placeholder_500_500.png")]
+            Player("Manny Pecquiao",150, 15, PlayerCards.MannyPecquiao, "placeholder_253_300.png"),
+            Player("Mike Tysen",200, 15, PlayerCards.MikeTysen,"placeholder_253_300.png"),
+            Player("Rocky Belboa",250,15,PlayerCards.RockyBelboa,"placeholder_253_300.png"),
+            Player("Bunya Sakboa",250,15,PlayerCards.RockyBelboa,"placeholder_253_300.png"),
+            Player("Iron Rekt",250,15,PlayerCards.RockyBelboa,"placeholder_253_300.png"),
+            Player("Wout The Ripper",250,15,PlayerCards.RockyBelboa,"placeholder_253_300.png"),
+            Player("Bad Boy",250,15,PlayerCards.RockyBelboa,"placeholder_253_300.png")]
 
 #Load all images from the Player class
 playerImageDict = {}
@@ -170,12 +172,6 @@ while gameIsRunning:#Main game loop
 
     #Erase screen, fill everything with black
     screen.fill((0,0,0))
-
-    
-
-    ##Check if the user is focussing on the game again than update the screen, so that the user can switch to other programs/software/windows.
-    #if pygame.mouse.get_focused() or ev.type == pygame.MOUSEBUTTONDOWN or (ev.type == pygame.KEYUP and ev.key == pygame.K_ESCAPE):
-    #    setScreenVectorSize(screenVectorSize, screen)
       
     if(gameStatus == 'main'):
         screenVectorSize["x"] = 200
@@ -196,14 +192,12 @@ while gameIsRunning:#Main game loop
             for option in menu:
                 if option.rect.collidepoint(pygame.mouse.get_pos()):
                     #Do something with this information, like opening the actual survivor game or opening the rules.
-                    #No need for an else, we don't need to know if someone's aim sucks.
                     if(option.id == 0): #New game
                         gameStatus = 'new'
                         screenVectorSize["x"] = 1000
                         screenVectorSize["y"] = 600
                         setScreenVectorSize(screenVectorSize, screen)
-                        if(setDefaultSoundFadeOut(1000)):
-                            setDefaultSoundSystem("Sounds\Intro_1_Hyped.mp3", 1000)
+                        setDefaultSoundSystem("Sounds\Intro_1_Hyped.mp3", 1000)
                         
                     elif(option.id == 1):#Load game
                         pass
@@ -233,8 +227,8 @@ while gameIsRunning:#Main game loop
         label = font.render("Choose the characters", 1, (255,255,0))
         screen.blit(label, (350, 150))
         
-        if yourChar != None:
-            screen.blit(playerImageDict[yourChar.Name],(350,300))
+        if latestSelectedChar != None:
+            screen.blit(playerImageDict[latestSelectedChar.Name],(350,300))
 
         for entity in entities:
             drawOptions(entity)
@@ -252,6 +246,8 @@ while gameIsRunning:#Main game loop
                             if not players[option.id] in selectedCharacters and selectedAmountBots != None and len(selectedCharacters) < (selectedAmountBots.id - len(players) + 1): #To prevent double (or more) selections, check if the character already got chosen before
                                 if len(selectedCharacters) == 0: #Assign first selection to yourChar
                                     yourChar = players[option.id] #Set yourChar to the selected player
+                                
+                                latestSelectedChar = players[option.id]
                                 selectedCharacters.append(players[option.id]) #Add the selected character to the list
                                 option.selected = True
                         elif option.id == startGameID and selectedAmountBots != None and len(selectedCharacters) == (selectedAmountBots.id - len(players) + 1):
@@ -259,7 +255,7 @@ while gameIsRunning:#Main game loop
                             screenVectorSize["y"] = 600
                             setScreenVectorSize(screenVectorSize, screen)
                             gameStatus = 'Game'
-                            setDefaultSoundSystem("Sounds\Intro_1_Soft_Pump.mp3", 1000)
+                            setDefaultSoundSystem("Sounds\Intro_1_Soft_Pump.mp3", 1000, 0.3)
                         else:
                             print("Selection menu: Make sure everything is selected.")
             
