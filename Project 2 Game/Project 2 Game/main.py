@@ -23,7 +23,7 @@ selectedCharacters = [] #List of selected characters from the "new game" screen
 selectedAmountBots = None #How many bots he/she wants to play
 currentPlayerCounter = 1 #Default player
 defaultPawnLocations = []
-maxAmountOfBots = 4 #Min 1 and maximum depends on how many characters are in the game, see 'players' variable.
+maxAmountOfBots = 8 #Min 1 and maximum depends on how many characters are in the game, see 'players' variable.
 pawnLocationsTiles = {}
 
 #The board can be resized every moment by declaring the function here
@@ -42,7 +42,7 @@ screen = pygame.display.set_mode((screenVectorSize["x"], screenVectorSize["y"]))
 screen = setScreenVectorSize(screenVectorSize, screen)
 
 #Define the scoreboard height, that's where the lives and conditions of each player gets displayed
-scoreBoardHeight = 100
+scoreBoardHeight = 0
 
 #Loop through selected characters and place related pawns
 def setDefaultPawnLocations(defaultPawnLocations, pawnLocationsTiles):
@@ -174,7 +174,6 @@ while gameIsRunning:#Main game loop
                     #No need for an else, we don't need to know if someone's aim sucks.
                     if(option.id == 0): #New game
                         gameStatus = 'new'
-
                         screenVectorSize["x"] = 1000
                         screenVectorSize["y"] = 600
                         setScreenVectorSize(screenVectorSize, screen)
@@ -190,6 +189,7 @@ while gameIsRunning:#Main game loop
                     elif(option.id == 4):#Quit
                         gameIsRunning = False
                     option.draw()
+
     elif(gameStatus == 'new'):
         if ev.type == pygame.KEYUP:
             if ev.key == pygame.K_ESCAPE:
@@ -224,6 +224,9 @@ while gameIsRunning:#Main game loop
                                 selectedCharacters.append(players[option.id]) #Add the selected character to the list
                                 option.selected = True
                         elif option.id == startGameID and selectedAmountBots != None and len(selectedCharacters) == (selectedAmountBots.id - len(players) + 1):
+                            screenVectorSize["x"] = 1000
+                            screenVectorSize["y"] = 700
+                            setScreenVectorSize(screenVectorSize, screen)
                             gameStatus = 'Game'
                         else:
                             print("Selection menu: Make sure everything is selected.")
@@ -247,6 +250,17 @@ while gameIsRunning:#Main game loop
                     currentPlayerCounter = 1 #Back to player 1 turn
                 else:
                     currentPlayerCounter += 1 #Next player turn
+
+                #After playing turn is determined, add some logic to the game:
+                #Hit or kill the current player after its his turn
+                #If not dead yet, remove the health with the dice amount
+                if not selectedCharacters[currentPlayerCounter - 1].Health <= 0:
+                    selectedCharacters[currentPlayerCounter - 1].Health -= randomInt
+                else:
+                    selectedCharacters[currentPlayerCounter - 1].Health = 0
+                pygame.time.delay(75) #The game catches the mousebuttondown event so fast that we need to slow it down.
+
+
         screen.blit(board,(0,0))
         dieRect = pygame.Rect((725,50,150,150))
         screen.blit(dice[randomInt], (725,50))
@@ -263,31 +277,28 @@ while gameIsRunning:#Main game loop
                 name = str(x.Name) + " (That's you)"
             else:
                 name = str(x.Name)
-            #scoreBoardLabels.append(scoreBoardFont.render(name + " - Lifepoints: " + str(x.Health) + " | Condition: " + str(x.Condition), 1, (0,0,0)))
+            scoreBoardLabels.append(scoreBoardFont.render(name + " - Lifepoints: " + str(x.Health) + " | Condition: " + str(x.Condition), 1, (0,0,0)))
             pygame.draw.rect(screen, scoreBoardColor, (0,600,screenVectorSize["x"],scoreBoardHeight), 0)
 
         print(currentPlayerCounter)
 
-        #Hit or kill the current player after its his turn
-        if ev.type == pygame.MOUSEBUTTONDOWN:
-            #If not dead yet, remove the health with the dice amount
-            if not selectedCharacters[currentPlayerCounter - 1].Health <= 0:
-                selectedCharacters[currentPlayerCounter - 1].Health -= randomInt
-            else:
-                selectedCharacters[currentPlayerCounter - 1].Health = 0
+        
 
 
         #Render the players on the score board
         labelPixelHeight = 605 #First label location on the score board
+        scoreBoardHeight = 0
         for label in scoreBoardLabels:
             screen.blit(label, (0, labelPixelHeight)) 
             if labelPixelHeight < 705:
-                labelPixelHeight += 25 #5 pixels difference between each label and 20 pixels for the font size which is 20 now.
+                labelPixelHeight += 25 #5 pixels distance between each label and 20 pixels for the font size which is 20 now.
+                scoreBoardHeight += 25
             else:
                 #Now it does not fit the score board screen anymore, the height of it got exceeded.
                 #boardHeight += 25 #Let's extend the board height first
-                screenVectorSize["y"] += 25
-                setScreenVectorSize(screenVectorSize, screen)
+                if not screenVectorSize["y"] >= labelPixelHeight: #If the window/screen height is NOT good enough
+                    screenVectorSize["y"] += 25
+                    setScreenVectorSize(screenVectorSize, screen)
                 scoreBoardHeight += 25
                 labelPixelHeight += 25
         cnt = 0
