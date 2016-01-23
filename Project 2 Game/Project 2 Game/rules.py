@@ -4,5 +4,5 @@ class Rules:
             self.Title = newTitle
             self.Description = newDescription
     def LoadAllRules():
-        rules = ["Rule 1: Read the manual before playing", "Rule 2: Do not cheat"]
+        rules = ["Rule 1: Read the manual before playing", "Rule 2: Each player starts on his own corner"]
         return rules

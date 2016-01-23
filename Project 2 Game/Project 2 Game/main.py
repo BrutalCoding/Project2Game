@@ -9,6 +9,7 @@ from elements import diceload, pawnload
 from Player import *
 from PlayerCards import *
 from rules import *
+from pygame import gfxdraw
 
 Option = options.Option
 pygame.mixer.init()
@@ -24,7 +25,7 @@ selectedAmountBots = None #How many bots he/she wants to play
 #The board can be resized every moment by declaring the function here
 boardVectorSize = {"x": 600, "y": 600}
 def setBoardVectorSize(boardVectorSize):
-    return pygame.transform.scale(pygame.image.load('Images/board.png'),(boardVectorSize["x"],boardVectorSize["y"]))
+    return pygame.transform.smoothscale(pygame.image.load('Images/board.png'),(boardVectorSize["x"],boardVectorSize["y"]))
 board = setBoardVectorSize(boardVectorSize) #Initialize the board size
 
 #The screen can be resized too by declaring the function here
@@ -166,6 +167,8 @@ while gameIsRunning:#Main game loop
         screen.blit(label, (350, 10))
         label = font.render("Choose the characters", 1, (255,255,0))
         screen.blit(label, (350, 150))
+        
+
         for entity in entities:
             drawOptions(entity)
             if ev.type == pygame.MOUSEBUTTONDOWN:
@@ -186,6 +189,10 @@ while gameIsRunning:#Main game loop
                                 option.selected = True
                         elif option.id == startGameID and selectedAmountBots != None and len(selectedCharacters) == (selectedAmountBots.id - len(players) + 1):
                             gameStatus = 'Game'
+                        else:
+                            print("Selection menu: Make sure everything is selected.")
+            
+
     elif(gameStatus == 'Game'):#This means we're about to start a new game, start initialising the screen and its elements.
         if ev.type == pygame.QUIT:
             gameIsRunning = False
@@ -215,7 +222,6 @@ while gameIsRunning:#Main game loop
         for x in selectedCharacters:
             if x == yourChar:
                 name = str(x.Name) + " (That's you)"
-                print("You are: " + str(x.Name))
             else:
                 name = str(x.Name)
             scoreBoardLabels.append(scoreBoardFont.render(name + " - Lifepoints: " + str(x.Health) + " | Condition: " + str(x.Condition), 1, (0,0,0)))
@@ -235,8 +241,11 @@ while gameIsRunning:#Main game loop
                 scoreBoardHeight += 25
                 labelPixelHeight += 25
                     
-        for pawn in pawns:#Loop for all pawns
-            screen.blit(pawns[pawn], (pawnLocations[pawn]))
+        #Loop through selected characters and place related pawns
+        for currentPlayer in range(1, len(selectedCharacters) + 1):
+            for pawn in pawns:
+                if pawn == currentPlayer:
+                    screen.blit(pawns[pawn], (pawnLocations[pawn]))
     elif gameStatus == "rules":
         if ev.type == pygame.QUIT:
             gameIsRunning = False
