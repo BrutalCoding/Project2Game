@@ -184,12 +184,8 @@ while gameIsRunning:#Main game loop
                                     yourChar = players[option.id] #Set yourChar to the selected player
                                 selectedCharacters.append(players[option.id]) #Add the selected character to the list
                                 option.selected = True
-                                
-                        
-                        elif option.id == startGameID:
+                        elif option.id == startGameID and selectedAmountBots != None and len(selectedCharacters) == (selectedAmountBots.id - len(players) + 1):
                             gameStatus = 'Game'
-                        else:
-                            raise ValueError('Whoops, it looks like something went wrong when choosing your selection.')
     elif(gameStatus == 'Game'):#This means we're about to start a new game, start initialising the screen and its elements.
         if ev.type == pygame.QUIT:
             gameIsRunning = False
