@@ -23,7 +23,7 @@ selectedCharacters = [] #List of selected characters from the "new game" screen
 selectedAmountBots = None #How many bots he/she wants to play
 currentPlayerCounter = 1 #Default player
 defaultPawnLocations = []
-maxAmountOfBots = 8 #Min 1 and maximum depends on how many characters are in the game, see 'players' variable.
+maxAmountOfBots = 4 #Minimal 1 and maximum depends on how many characters are in the game, see 'players' variable. E.g. 4 = 3 bots, 1 player.
 pawnLocationsTiles = {}
 
 #The board can be resized every moment by declaring the function here
@@ -225,7 +225,7 @@ while gameIsRunning:#Main game loop
                                 option.selected = True
                         elif option.id == startGameID and selectedAmountBots != None and len(selectedCharacters) == (selectedAmountBots.id - len(players) + 1):
                             screenVectorSize["x"] = 1000
-                            screenVectorSize["y"] = 700
+                            screenVectorSize["y"] = 600
                             setScreenVectorSize(screenVectorSize, screen)
                             gameStatus = 'Game'
                         else:
@@ -290,7 +290,7 @@ while gameIsRunning:#Main game loop
         scoreBoardHeight = 0
         for label in scoreBoardLabels:
             screen.blit(label, (0, labelPixelHeight)) 
-            if labelPixelHeight < 705:
+            if labelPixelHeight < screenVectorSize["y"]:
                 labelPixelHeight += 25 #5 pixels distance between each label and 20 pixels for the font size which is 20 now.
                 scoreBoardHeight += 25
             else:
