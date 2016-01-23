@@ -21,6 +21,9 @@ rules = Rules
 font = pygame.font.Font(None, 40)
 selectedCharacters = [] #List of selected characters from the "new game" screen
 selectedAmountBots = None #How many bots he/she wants to play
+currentPlayerCounter = 1 #Default player
+defaultPawnLocations = []
+maxAmountOfBots = 5 #Min 1 and maximum depends on how many characters are in the game
 
 #The board can be resized every moment by declaring the function here
 boardVectorSize = {"x": 600, "y": 600}
@@ -37,6 +40,15 @@ screen = setScreenVectorSize(screenVectorSize)
 #Define the scoreboard height, that's where the lives and conditions of each player gets displayed
 scoreBoardHeight = 100
 
+#Loop through selected characters and place related pawns
+def setDefaultPawnLocations(defaultPawnLocations):
+    for currentPlayer in range(1, len(selectedCharacters) + 1):
+        for pawn in pawns:
+            if pawn == currentPlayer:
+                pawnLoc = [pawns[pawn], pawnLocations[pawn]]
+                defaultPawnLocations += pawnLoc
+    return defaultPawnLocations
+
 #Reset the selected and amount of characters to zero again in able to reselect later.
 def resetSelections(selectedCharacters, selectedAmountBots):
     if selectedCharacters != None:
@@ -46,10 +58,10 @@ def resetSelections(selectedCharacters, selectedAmountBots):
     return (selectedCharacters, selectedAmountBots)
 
 #Define the images
-pawns = {1:pawnload('Images/Blue.png'), 2:pawnload('Images/Red.png'), 3:pawnload('Images/Green.png'), 4:pawnload('Images/Yellow.png')}
+pawns = {1:pawnload('Images/Blue.png'), 2:pawnload('Images/Red.png'), 3:pawnload('Images/Green.png'), 4:pawnload('Images/Yellow.png'), 5:pawnload('Images/Blue.png')}
 dice = {1:diceload('Images/Die-1.png'), 2:diceload('Images/Die-2.png'), 3:diceload('Images/Die-3.png'), 4:diceload('Images/Die-4.png'), 5:diceload('Images/Die-5.png'), 6:diceload('Images/Die-6.png')}
 boardtiles = tiles()
-pawnLocations = {1:(20,15), 2:(550,15), 3:(550,540), 4:(20,540)}
+pawnLocations = {1:(20,15), 2:(550,15), 3:(550,540), 4:(20,540), 5: (30,15), 6: (100, 15)}
 
 randomInt = 1
 yourChar = None
@@ -85,7 +97,7 @@ playerNumber = 1 #Starting with min 1 and max 4 players
 amountPlayersLabelVector = {"x": 200,"y": 50}
 generateID += 1 #Increment the latest generated id by one so it stays unique
 labelBotName = "Bot"
-for x in range(1,4):
+for x in range(1,maxAmountOfBots):
     if not playerNumber == 1:
         labelBotName = "Bots"
     labelAmountPlayers.append(Option(str(playerNumber) + ' ' + labelBotName, (amountPlayersLabelVector['x'], amountPlayersLabelVector['y']), font, screen, generateID))
@@ -106,7 +118,7 @@ def drawOptions(l):
         else:
             option.hovered = False
         option.draw()
-    return #DANIEL
+    return
 
 gameIsRunning = True #If set to False, the game will stop and the program will exit.
 
@@ -202,8 +214,12 @@ while gameIsRunning:#Main game loop
                 selectedCharacters, selectedAmountBots = resetSelections(selectedCharacters, selectedAmountBots)
         if ev.type == pygame.MOUSEBUTTONDOWN:
             if dieRect.collidepoint(pygame.mouse.get_pos()):
-                for i in range(10):
-                    randomInt = random.randint(1,6)
+                randomInt = random.randint(1,6)
+                if currentPlayerCounter == len(selectedCharacters):
+                    currentPlayerCounter = 1 #Back to player 1 turn
+                else:
+                    currentPlayerCounter += 1 #Next player turn
+
         screenVectorSize["x"] = 1000
         screenVectorSize["y"] = 700
             
@@ -215,8 +231,7 @@ while gameIsRunning:#Main game loop
         scoreBoardFont = pygame.font.Font(None, 20)
         scoreBoardColor = (255,255,255)
 
-        #default is the player itself   
-        currentPlayerCounter = 1
+        #default is the player itself
         scoreBoardLabels = []
         name = None
         for x in selectedCharacters:
@@ -226,8 +241,8 @@ while gameIsRunning:#Main game loop
                 name = str(x.Name)
             scoreBoardLabels.append(scoreBoardFont.render(name + " - Lifepoints: " + str(x.Health) + " | Condition: " + str(x.Condition), 1, (0,0,0)))
             pygame.draw.rect(screen, scoreBoardColor, (0,600,screenVectorSize["x"],scoreBoardHeight), 0)
-            currentPlayerCounter += 1
 
+        print(currentPlayerCounter)
         #Render the players on the score board
         labelPixelHeight = 605 #First label location on the score board
         for label in scoreBoardLabels:
@@ -240,12 +255,22 @@ while gameIsRunning:#Main game loop
                 screenVectorSize["y"] += 25
                 scoreBoardHeight += 25
                 labelPixelHeight += 25
-                    
-        #Loop through selected characters and place related pawns
-        for currentPlayer in range(1, len(selectedCharacters) + 1):
-            for pawn in pawns:
-                if pawn == currentPlayer:
-                    screen.blit(pawns[pawn], (pawnLocations[pawn]))
+        cnt = 0
+        #screen.blit(pawns[1], pawnLocations[1])
+        
+        defaultPawnLocations = setDefaultPawnLocations(defaultPawnLocations)
+        for x in defaultPawnLocations:
+            if cnt == 0:
+                source = x
+                cnt = 1
+            else:
+                dest = x
+                cnt = 0
+                screen.blit(source,(dest[0],dest[1]))
+                
+        
+                
+                
     elif gameStatus == "rules":
         if ev.type == pygame.QUIT:
             gameIsRunning = False
@@ -264,7 +289,6 @@ while gameIsRunning:#Main game loop
         text = font.render("Press 'ESC' to get back to the main menu", 1, (255,255,0))
         textpos = text.get_rect()
         screen.blit(text, (screen.get_rect().centerx / 2, screen.get_size()[1] - 50))
-    #pygame.time.wait(50)
     pygame.display.update()
     
 pygame.quit()
