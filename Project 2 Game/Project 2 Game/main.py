@@ -33,10 +33,13 @@ def setBoardVectorSize(boardVectorSize):
 board = setBoardVectorSize(boardVectorSize) #Initialize the board size
 
 #The screen can be resized too by declaring the function here
-screenVectorSize = {"x": 1920, "y": 1080}
-def setScreenVectorSize(screenVectorSize):
+screenVectorSize = {"x": 200, "y": 260}
+def setScreenVectorSize(screenVectorSize, screen):
+    background = pygame.image.load("images\cardboard_texture.jpg")
+    screen.blit(pygame.transform.scale(background,(screenVectorSize["x"],screenVectorSize["y"])), (0, 0))
     return pygame.display.set_mode((screenVectorSize["x"], screenVectorSize["y"]))
-screen = setScreenVectorSize(screenVectorSize)
+screen = pygame.display.set_mode((screenVectorSize["x"], screenVectorSize["y"]))
+screen = setScreenVectorSize(screenVectorSize, screen)
 
 #Define the scoreboard height, that's where the lives and conditions of each player gets displayed
 scoreBoardHeight = 100
@@ -133,7 +136,6 @@ def drawOptions(l):
     return
 
 gameIsRunning = True #If set to False, the game will stop and the program will exit.
-
 while gameIsRunning:#Main game loop
     #Define the event loop here instead of creating one in each gameStatus (e.g. in the main menu, in the game, in the player select menu etc)
     events = pygame.event.get()
@@ -142,16 +144,17 @@ while gameIsRunning:#Main game loop
                     gameIsRunning = False
 
     #Erase screen, fill everything with black
-    screen.fill((0, 0, 0))
+    screen.fill((0,0,0))
 
-    #Check if the user is focussing on the game again than update the screen, so that the user can switch to other programs/software/windows.
-    if pygame.mouse.get_focused() or ev.type == pygame.MOUSEBUTTONDOWN or (ev.type == pygame.KEYUP and ev.key == pygame.K_ESCAPE):
-        setScreenVectorSize(screenVectorSize)
     
+
+    ##Check if the user is focussing on the game again than update the screen, so that the user can switch to other programs/software/windows.
+    #if pygame.mouse.get_focused() or ev.type == pygame.MOUSEBUTTONDOWN or (ev.type == pygame.KEYUP and ev.key == pygame.K_ESCAPE):
+    #    setScreenVectorSize(screenVectorSize, screen)
+      
     if(gameStatus == 'main'):
         screenVectorSize["x"] = 200
         screenVectorSize["y"] = 260
-        
         #Reset option class so no selections get remembered from the previous time that the user selected amount of players and/or character
         for entity in entities:
                 for option in entity:
@@ -171,12 +174,19 @@ while gameIsRunning:#Main game loop
                     #No need for an else, we don't need to know if someone's aim sucks.
                     if(option.id == 0): #New game
                         gameStatus = 'new'
+
+                        screenVectorSize["x"] = 1000
+                        screenVectorSize["y"] = 600
+                        setScreenVectorSize(screenVectorSize, screen)
                     elif(option.id == 1):#Load game
                         pass
                     elif(option.id == 2):#Options
                         pygame.display.toggle_fullscreen
                     elif(option.id == 3):#Rules
                         gameStatus = "rules"
+                        screenVectorSize["x"] = 1000
+                        screenVectorSize["y"] = 600
+                        setScreenVectorSize(screenVectorSize, screen)
                     elif(option.id == 4):#Quit
                         gameIsRunning = False
                     option.draw()
@@ -185,8 +195,10 @@ while gameIsRunning:#Main game loop
             if ev.key == pygame.K_ESCAPE:
                 gameStatus = 'main'
                 selectedCharacters, selectedAmountBots = resetSelections(selectedCharacters, selectedAmountBots)
-        screenVectorSize["x"] = 1000
-        screenVectorSize["y"] = 600
+                screenVectorSize["x"] = 200
+                screenVectorSize["y"] = 260
+                setScreenVectorSize(screenVectorSize, screen)
+        
         label = font.render("How many bots should play?", 1, (255,255,0))
         screen.blit(label, (350, 10))
         label = font.render("Choose the characters", 1, (255,255,0))
@@ -218,11 +230,15 @@ while gameIsRunning:#Main game loop
             
 
     elif(gameStatus == 'Game'):#This means we're about to start a new game, start initialising the screen and its elements.
+        dieRect = pygame.Rect((725,50,150,150))
         if ev.type == pygame.QUIT:
             gameIsRunning = False
         if ev.type == pygame.KEYUP:
             if ev.key == pygame.K_ESCAPE:
                 gameStatus = 'main'
+                screenVectorSize["x"] = 200
+                screenVectorSize["y"] = 260
+                setScreenVectorSize(screenVectorSize, screen)
                 selectedCharacters, selectedAmountBots = resetSelections(selectedCharacters, selectedAmountBots)
         if ev.type == pygame.MOUSEBUTTONDOWN:
             if dieRect.collidepoint(pygame.mouse.get_pos()):
@@ -231,10 +247,6 @@ while gameIsRunning:#Main game loop
                     currentPlayerCounter = 1 #Back to player 1 turn
                 else:
                     currentPlayerCounter += 1 #Next player turn
-
-        screenVectorSize["x"] = 1000
-        screenVectorSize["y"] = 700
-            
         screen.blit(board,(0,0))
         dieRect = pygame.Rect((725,50,150,150))
         screen.blit(dice[randomInt], (725,50))
@@ -251,15 +263,18 @@ while gameIsRunning:#Main game loop
                 name = str(x.Name) + " (That's you)"
             else:
                 name = str(x.Name)
-            scoreBoardLabels.append(scoreBoardFont.render(name + " - Lifepoints: " + str(x.Health) + " | Condition: " + str(x.Condition), 1, (0,0,0)))
+            #scoreBoardLabels.append(scoreBoardFont.render(name + " - Lifepoints: " + str(x.Health) + " | Condition: " + str(x.Condition), 1, (0,0,0)))
             pygame.draw.rect(screen, scoreBoardColor, (0,600,screenVectorSize["x"],scoreBoardHeight), 0)
 
         print(currentPlayerCounter)
 
-        #Kill player 4 after its his turn
-        if(currentPlayerCounter == 4):
+        #Hit or kill the current player after its his turn
+        if ev.type == pygame.MOUSEBUTTONDOWN:
+            #If not dead yet, remove the health with the dice amount
             if not selectedCharacters[currentPlayerCounter - 1].Health <= 0:
                 selectedCharacters[currentPlayerCounter - 1].Health -= randomInt
+            else:
+                selectedCharacters[currentPlayerCounter - 1].Health = 0
 
 
         #Render the players on the score board
@@ -272,6 +287,7 @@ while gameIsRunning:#Main game loop
                 #Now it does not fit the score board screen anymore, the height of it got exceeded.
                 #boardHeight += 25 #Let's extend the board height first
                 screenVectorSize["y"] += 25
+                setScreenVectorSize(screenVectorSize, screen)
                 scoreBoardHeight += 25
                 labelPixelHeight += 25
         cnt = 0
@@ -286,19 +302,15 @@ while gameIsRunning:#Main game loop
                 dest = x
                 cnt = 0
                 screen.blit(source,(dest[0],dest[1]))
-                
-        
-                
-                
     elif gameStatus == "rules":
         if ev.type == pygame.QUIT:
             gameIsRunning = False
         if ev.type == pygame.KEYUP:
             if ev.key == pygame.K_ESCAPE:
                 gameStatus = 'main'
-
-        screenVectorSize["y"] = 600
-        screenVectorSize["x"] = 1000
+                screenVectorSize["x"] = 200
+                screenVectorSize["y"] = 260
+                setScreenVectorSize(screenVectorSize, screen)
         labelHeight = screen.get_rect().midtop[1]
         for rule in rules.LoadAllRules():
             text = font.render(rule, 1, (217, 30, 24))
@@ -308,7 +320,6 @@ while gameIsRunning:#Main game loop
         text = font.render("Press 'ESC' to get back to the main menu", 1, (255,255,0))
         textpos = text.get_rect()
         screen.blit(text, (screen.get_rect().centerx / 2, screen.get_size()[1] - 50))
-    pygame.display.update()
-    
+    pygame.display.flip()
 pygame.quit()
 sys.exit()
