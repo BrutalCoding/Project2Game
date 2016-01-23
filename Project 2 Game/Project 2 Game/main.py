@@ -23,7 +23,7 @@ selectedCharacters = [] #List of selected characters from the "new game" screen
 selectedAmountBots = None #How many bots he/she wants to play
 currentPlayerCounter = 0 #Default player
 defaultPawnLocations = []
-maxAmountOfBots = 4 #Minimal 1 and maximum depends on how many characters are in the game, see 'players' variable. E.g. 4 = 3 bots, 1 player.
+maxAmountOfBots = 8 #Minimal 1 and maximum depends on how many characters are in the game, see 'players' variable. E.g. 4 = 3 bots, 1 player.
 pawnLocationsTiles = {}
 
 #The board can be resized every moment by declaring the function here
@@ -35,7 +35,7 @@ board = setBoardVectorSize(boardVectorSize) #Initialize the board size
 #The screen can be resized too by declaring the function here
 screenVectorSize = {"x": 200, "y": 260}
 def setScreenVectorSize(screenVectorSize, screen):
-    background = pygame.image.load("images\cardboard_texture.jpg")
+    background = pygame.image.load("Images\cardboard_texture.jpg")
     screen.blit(pygame.transform.scale(background,(screenVectorSize["x"],screenVectorSize["y"])), (0, 0))
     return pygame.display.set_mode((screenVectorSize["x"], screenVectorSize["y"]))
 screen = pygame.display.set_mode((screenVectorSize["x"], screenVectorSize["y"]))
@@ -98,19 +98,21 @@ menu =    [Option("NEW GAME", (10, 10), font, screen, 0),
            Option("RULES", (10, 175), font, screen, 3),
            Option("QUIT", (10, 230), font, screen, 4)]
 
-players =  [Player("Badr Heri",100, 15, PlayerCards.BadrHeri, "card__badr_heri.jpg"),
-            Player("Manny Pecquiao",150, 15, PlayerCards.MannyPecquiao, "placeholder_253_300.png"),
-            Player("Mike Tysen",200, 15, PlayerCards.MikeTysen,"placeholder_253_300.png"),
-            Player("Rocky Belboa",250,15,PlayerCards.RockyBelboa,"placeholder_253_300.png"),
-            Player("Bunya Sakboa",250,15,PlayerCards.RockyBelboa,"placeholder_253_300.png"),
-            Player("Iron Rekt",250,15,PlayerCards.RockyBelboa,"placeholder_253_300.png"),
-            Player("Wout The Ripper",250,15,PlayerCards.RockyBelboa,"placeholder_253_300.png"),
-            Player("Bad Boy",250,15,PlayerCards.RockyBelboa,"placeholder_253_300.png")]
+players =  [Player("Badr Heri",100, 15, PlayerCards.BadrHeri, "card__badr_heri.jpg", "face__badr_heri.jpg"),
+            Player("Manny Pecquiao",150, 15, PlayerCards.MannyPecquiao),
+            Player("Mike Tysen",200, 15, PlayerCards.MikeTysen),
+            Player("Rocky Belboa",250,15,PlayerCards.RockyBelboa),
+            Player("Bunya Sakboa",250,15,PlayerCards.RockyBelboa),
+            Player("Iron Rekt",250,15,PlayerCards.RockyBelboa,"card__badr_heri.jpg","face__iron_reckt.jpg"),
+            Player("Wout The Ripper",250,15,PlayerCards.RockyBelboa),
+            Player("Bad Boy",250,15,PlayerCards.RockyBelboa)]
 
 #Load all images from the Player class
-playerImageDict = {}
+playerImageCardDict = {}
+playerImageFaceDict = {}
 for player in players:
-    playerImageDict.update({player.Name: pygame.image.load("Images\\" + player.ImageCard)})
+    playerImageCardDict.update({player.Name: pygame.transform.smoothscale(pygame.image.load("Images\\" + player.ImageCard), (250,300))})
+    playerImageFaceDict.update({player.Name: pygame.transform.smoothscale(pygame.image.load("Images\\" + player.ImageFace), (250,300))})
 
 #Define entities so that it can also be called again to reset all values such as the selections
 
@@ -228,7 +230,8 @@ while gameIsRunning:#Main game loop
         screen.blit(label, (350, 150))
         
         if latestSelectedChar != None:
-            screen.blit(playerImageDict[latestSelectedChar.Name],(350,300))
+            screen.blit(playerImageFaceDict[latestSelectedChar.Name],(100,300)) #Image of the character
+            screen.blit(playerImageCardDict[latestSelectedChar.Name],(350,300)) #Image of the score card
 
         for entity in entities:
             drawOptions(entity)
@@ -240,10 +243,16 @@ while gameIsRunning:#Main game loop
                                 if selectedAmountBots:
                                     selectedAmountBots.selected = False
                                     selectedAmountBots = None
-                            option.selected = True
                             selectedAmountBots = option
+                            yourChar = None
+                            latestSelectedChar = None
+                            selectedCharacters = []
+                            for character in entities[0]:
+                                character.selected = False
+                            option.selected = True
                         elif option.id <= amountOfCharacters and int(option.id) != startGameID:#Set which character player 1 is.
-                            if not players[option.id] in selectedCharacters and selectedAmountBots != None and len(selectedCharacters) < (selectedAmountBots.id - len(players) + 1): #To prevent double (or more) selections, check if the character already got chosen before
+                            #To prevent double (or more) selections, check if the character already got chosen before
+                            if not players[option.id] in selectedCharacters and selectedAmountBots != None and len(selectedCharacters) < (selectedAmountBots.id - len(players) + 1): 
                                 if len(selectedCharacters) == 0: #Assign first selection to yourChar
                                     yourChar = players[option.id] #Set yourChar to the selected player
                                 
@@ -272,6 +281,9 @@ while gameIsRunning:#Main game loop
                 screenVectorSize["y"] = 260
                 setScreenVectorSize(screenVectorSize, screen)
                 selectedCharacters, selectedAmountBots = resetSelections(selectedCharacters, selectedAmountBots)
+                yourChar = None
+                latestSelectedChar = None
+                selectedCharacters = []
         if ev.type == pygame.MOUSEBUTTONDOWN:
             if dieRect.collidepoint(pygame.mouse.get_pos()):
                 randomInt = random.randint(1,6)
