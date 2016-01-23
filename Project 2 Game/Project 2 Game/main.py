@@ -36,6 +36,14 @@ screen = setScreenVectorSize(screenVectorSize)
 #Define the scoreboard height, that's where the lives and conditions of each player gets displayed
 scoreBoardHeight = 100
 
+#Reset the selected and amount of characters to zero again in able to reselect later.
+def resetSelections(selectedCharacters, selectedAmountBots):
+    if selectedCharacters != None:
+        selectedCharacters.clear()
+    if selectedAmountBots != None:
+        selectedAmountBots = None
+    return (selectedCharacters, selectedAmountBots)
+
 #Define the images
 pawns = {1:pawnload('Images/Blue.png'), 2:pawnload('Images/Red.png'), 3:pawnload('Images/Green.png'), 4:pawnload('Images/Yellow.png')}
 dice = {1:diceload('Images/Die-1.png'), 2:diceload('Images/Die-2.png'), 3:diceload('Images/Die-3.png'), 4:diceload('Images/Die-4.png'), 5:diceload('Images/Die-5.png'), 6:diceload('Images/Die-6.png')}
@@ -96,7 +104,8 @@ def drawOptions(l):
             option.hovered = True
         else:
             option.hovered = False
-        option.draw()   
+        option.draw()
+    return #DANIEL
 
 gameIsRunning = True #If set to False, the game will stop and the program will exit.
 
@@ -150,7 +159,7 @@ while gameIsRunning:#Main game loop
         if ev.type == pygame.KEYUP:
             if ev.key == pygame.K_ESCAPE:
                 gameStatus = 'main'
-
+                selectedCharacters, selectedAmountBots = resetSelections(selectedCharacters, selectedAmountBots)
         screenVectorSize["x"] = 1000
         screenVectorSize["y"] = 600
         label = font.render("How many bots should play?", 1, (255,255,0))
@@ -170,7 +179,7 @@ while gameIsRunning:#Main game loop
                             option.selected = True
                             selectedAmountBots = option
                         elif option.id <= amountOfCharacters and int(option.id) != startGameID:#Set which character player 1 is.
-                            if not players[option.id] in selectedCharacters and len(selectedCharacters) < (selectedAmountBots.id - len(players) + 1): #To prevent double (or more) selections, check if the character already got chosen before
+                            if not players[option.id] in selectedCharacters and selectedAmountBots != None and len(selectedCharacters) < (selectedAmountBots.id - len(players) + 1): #To prevent double (or more) selections, check if the character already got chosen before
                                 if len(selectedCharacters) == 0: #Assign first selection to yourChar
                                     yourChar = players[option.id] #Set yourChar to the selected player
                                 selectedCharacters.append(players[option.id]) #Add the selected character to the list
@@ -187,7 +196,7 @@ while gameIsRunning:#Main game loop
         if ev.type == pygame.KEYUP:
             if ev.key == pygame.K_ESCAPE:
                 gameStatus = 'main'
-                selectedCharacters.clear() #Reset the selected characters to zero again in able to reselect later.
+                selectedCharacters, selectedAmountBots = resetSelections(selectedCharacters, selectedAmountBots)
         if ev.type == pygame.MOUSEBUTTONDOWN:
             if dieRect.collidepoint(pygame.mouse.get_pos()):
                 for i in range(10):
