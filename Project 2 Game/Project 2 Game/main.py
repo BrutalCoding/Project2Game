@@ -24,11 +24,12 @@ selectedAmountBots = None #How many bots he/she wants to play
 currentPlayerCounter = 0 #Default player
 defaultPawnLocations = [] #The top left corner but all with a little bit of offset so the pawns are not on top of each other
 defaultTileLocations = [] #All tiles that are possible to move on to (with a pawn)
-maxAmountOfBots = 4 #Minimal 1 and maximum depends on how many characters are in the game, see 'players' variable. E.g. 4 = 3 bots, 1 player.
+maxAmountOfBots = 8 #Minimal 1 and maximum depends on how many characters are in the game, see 'players' variable. E.g. 4 = 3 bots, 1 player.
 pawnLocationsTiles = {}
 scoreBoardHeight = 0 #Define the scoreboard height, that's where the lives and conditions of each player gets displayed
 players = Player
 randomDiceNumber = 1
+firstDieIsThrown = False
 
 #The board can be resized every moment by declaring the function here
 boardVectorSize = {"x": 600, "y": 600}
@@ -46,7 +47,7 @@ screen = pygame.display.set_mode((screenVectorSize["x"], screenVectorSize["y"]))
 screen = setScreenVectorSize(screenVectorSize, screen)
 
 #Loop through selected characters and place related pawns
-def setDefaultPawnLocations(selectedCharacters, pawns,currentPlayerCounter, randomDiceNumber):
+def setDefaultPawnLocations(selectedCharacters, pawns,currentPlayerCounter, randomDiceNumber, firstDieIsThrown):
     #Board game main loop. Every movement is here.
     if ev.type == pygame.MOUSEBUTTONDOWN:
         if dieRect.collidepoint(pygame.mouse.get_pos()):
@@ -69,7 +70,8 @@ def setDefaultPawnLocations(selectedCharacters, pawns,currentPlayerCounter, rand
                 currentPlayerCounter = 0
             else:
                 currentPlayerCounter += 1
-            return currentPlayerCounter, randomDiceNumber
+            firstDieIsThrown = True
+            return currentPlayerCounter, randomDiceNumber, firstDieIsThrown
     elif( pygame.key.get_pressed()[pygame.K_SPACE] != 0 ):
         print("SPACE PRESSED")
         currentTile = selectedCharacters[currentPlayerCounter].Tile
@@ -91,26 +93,36 @@ def setDefaultPawnLocations(selectedCharacters, pawns,currentPlayerCounter, rand
             currentPlayerCounter = 0
         else:
             currentPlayerCounter += 1
-        return currentPlayerCounter, randomDiceNumber
+        return currentPlayerCounter, randomDiceNumber,firstDieIsThrown
     else:
         #Update player position
-        cnt = 1
+        cntCorner = 1
+        cntPlayer = 1
         for p in selectedCharacters:
-            screen.blit(pawns[cnt], p.Tile)
-            if cnt == 4:
-                cnt = 1
+            if not firstDieIsThrown:
+                #If no one has thrown the die yet, give each player their own tile.
+                if cntCorner == 1:
+                    moveToTile = boardtiles[0]
+                elif cntCorner == 2:
+                    moveToTile = boardtiles[10]
+                elif cntCorner == 3:
+                    moveToTile = boardtiles[20]
+                elif cntCorner == 4:
+                    moveToTile = boardtiles[30]
+
+                #Reset to corner 1 if the latest corner (4) has been reached already.
+                if cntCorner == 4:
+                    cntCorner = 1
+                else:
+                    cntCorner += 1
             else:
-                cnt += 1
+                moveToTile = p.Tile
+            p.Tile = moveToTile
+            screen.blit(pawns[cntPlayer], moveToTile)
+            cntPlayer += 1
         screen.blit(dice[randomDiceNumber], (725,50))
-            #for pawn in pawns:
-            #    if pawn == tempCurrentPlayer:
-            #        currentPawnRect = pawns[pawn].get_rect()
-            #        currentPawnRect.move(boardtiles[1])
 
-            #        #If 8 players play, each corner will have 2 overlapping pawns of the same color.
-            #        screen.blit(pawns[pawn], selectedCharacters[currentPlayerCounter - 1].Tile)
-
-    return currentPlayerCounter, randomDiceNumber
+    return currentPlayerCounter, randomDiceNumber,firstDieIsThrown
 
 #Define and initialize the sounds of the game
 pygame.mixer.init()
@@ -133,36 +145,30 @@ def resetSelections(selectedCharacters, selectedAmountBots):
         selectedAmountBots = None
     return (selectedCharacters, selectedAmountBots)
 
-#Define the images
-pawns = {1:pawnload('Images/Blue.png'), 2:pawnload('Images/Red.png'), 3:pawnload('Images/Green.png'), 4:pawnload('Images/Yellow.png'), 5:pawnload('Images/Blue.png'), 6:pawnload('Images/Red.png'), 7:pawnload('Images/Green.png'), 8:pawnload('Images/Yellow.png')}
-dice = {1:diceload('Images/Die-1.png'), 2:diceload('Images/Die-2.png'), 3:diceload('Images/Die-3.png'), 4:diceload('Images/Die-4.png'), 5:diceload('Images/Die-5.png'), 6:diceload('Images/Die-6.png')}
-boardtiles = tiles()
-
-
-#pawnLocations = {1:(20,15), 2:(550,15), 3:(550,540), 4:(20,540), 5: (30,15), 6: (100, 15)}
-    
-
 randomInt = 1
 yourChar = None #First selection made is the player
 latestSelectedChar = None #Latest character selection that was made
-print (tiles)
+
 # A global dict value that will contain all the Pygame
 # Surface objects returned by pygame.image.load().
-
 menu =    [Option("NEW GAME", (10, 10), font, screen, 0),
            Option("LOAD GAME", (10, 65), font, screen, 1),
            Option("OPTIONS", (10, 120), font, screen, 2),
            Option("RULES", (10, 175), font, screen, 3),
            Option("QUIT", (10, 230), font, screen, 4)]
 
+#Define the images
+pawns =     {1:pawnload('Images/Blue.png'), 2:pawnload('Images/Red.png'), 3:pawnload('Images/Green.png'), 4:pawnload('Images/Yellow.png'), 5:pawnload('Images/Blue.png'), 6:pawnload('Images/Red.png'), 7:pawnload('Images/Green.png'), 8:pawnload('Images/head__iron_rekt.png')}
+dice =      {1:diceload('Images/Die-1.png'), 2:diceload('Images/Die-2.png'), 3:diceload('Images/Die-3.png'), 4:diceload('Images/Die-4.png'), 5:diceload('Images/Die-5.png'), 6:diceload('Images/Die-6.png')}
+boardtiles = tiles()
 players =  [Player("Badr Heri",100, 15, PlayerCards.BadrHeri,boardtiles[0],"card__badr_heri.jpg", "face__badr_heri.jpg"),
-            Player("Manny Pecquiao",150, 15, PlayerCards.MannyPecquiao,boardtiles[10]),
-            Player("Mike Tysen",200, 15, PlayerCards.MikeTysen,boardtiles[20]),
-            Player("Rocky Belboa",250,15,PlayerCards.RockyBelboa,boardtiles[39]),
-            Player("Bunya Sakboa",250,15,PlayerCards.RockyBelboa,boardtiles[0]),
-            Player("Iron Rekt",250,15,PlayerCards.RockyBelboa,boardtiles[10],"card__badr_heri.jpg","face__iron_reckt.jpg"),
-            Player("Wout The Ripper",250,15,PlayerCards.RockyBelboa,boardtiles[20]),
-            Player("Bad Boy",250,15,PlayerCards.RockyBelboa,boardtiles[39])]
+            Player("Manny Pecquiao",150, 15, PlayerCards.MannyPecquiao,boardtiles[0],"card__manny_pecquiao.jpg","face__manny_pecquiao.jpg"),
+            Player("Mike Tysen",200, 15, PlayerCards.MikeTysen,boardtiles[0],"card__mike_tysen.jpg","face__mike_tysen.jpg"),
+            Player("Rocky Belboa",250,15,PlayerCards.RockyBelboa,boardtiles[0],"card__rocky_belboa.jpg","face__rocky_belboa.jpg"),
+            Player("Bunya Sakboa",250,15,PlayerCards.RockyBelboa,boardtiles[0],"card__badr_heri.jpg", "face__bunya_sakboa.jpg"),
+            Player("Iron Rekt",250,15,PlayerCards.RockyBelboa,boardtiles[0],"card__badr_heri.jpg","face__iron_reckt.jpg"),
+            Player("Wout The Ripper",250,15,PlayerCards.RockyBelboa,boardtiles[0],"card__badr_heri.jpg"),
+            Player("Bad Boy",250,15,PlayerCards.RockyBelboa,boardtiles[0],"card__badr_heri.jpg")]
 
 #Load all images from the Player class
 playerImageCardDict = {}
@@ -337,13 +343,15 @@ while gameIsRunning:#Main game loop
                 screenVectorSize["y"] = 260
                 setScreenVectorSize(screenVectorSize, screen)
                 selectedCharacters, selectedAmountBots = resetSelections(selectedCharacters, selectedAmountBots)
+                selectedCharacters = [] #List of selected characters from the "new game" screen
+                firstDieIsThrown = False
                 yourChar = None
                 latestSelectedChar = None
-                selectedCharacters = []
+                player = Player #Reset all lives/conditions etc by recreating the Player class
         screen.blit(board,(0,0))
 
         #Return the new player number so that the global variable can be updated instead of local.
-        currentPlayerCounter, randomDiceNumber = setDefaultPawnLocations(selectedCharacters, pawns, currentPlayerCounter, randomDiceNumber)
+        currentPlayerCounter, randomDiceNumber, firstDieIsThrown = setDefaultPawnLocations(selectedCharacters, pawns, currentPlayerCounter, randomDiceNumber,firstDieIsThrown)
         #draw labels on scoreboard with lifepoints/conditions p/player
         scoreBoardFont = pygame.font.Font(None, 20)
         scoreBoardColor = (255,255,255)
@@ -356,7 +364,7 @@ while gameIsRunning:#Main game loop
                 name = str(x.Name) + " (That's you)"
             else:
                 name = str(x.Name)
-            if x == selectedCharacters[currentPlayerCounter - 1]:
+            if x == selectedCharacters[currentPlayerCounter]:
                 labelColor = (217, 30, 24) #'Thunderbird' red
             else:
                 labelColor = (0,0,0) #Black
