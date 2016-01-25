@@ -98,6 +98,7 @@ while True:#Main game loop
                     if ev.type == pygame.MOUSEBUTTONUP:
                         for option in x:
                             if option.rect.collidepoint(pygame.mouse.get_pos()):
+                                print(option.id)
                                 if int(option.id) <= 4:#Set amount players that will play the game
                                     amountPlayers = int(option.id)
                                     chosen.append(amountPlayers)
