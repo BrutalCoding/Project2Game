@@ -15,11 +15,14 @@ gameStatus = 'main'
 font = pygame.font.Font(None, 40)
 board = pygame.transform.scale(pygame.image.load('Images/board.png'),(600,600))
 optionscreen = pygame.display.set_mode((200, 260))
-pawns = {1:pawnload('Images/Blue.png'), 2:pawnload('Images/Red.png'), 3:pawnload('Images/Green.png'), 4:pawnload('Images/Yellow.png')}
+pawns = {1:pawnload('Images/1.jpg'), 2:pawnload('Images/Red.png'), 3:pawnload('Images/Green.png'), 4:pawnload('Images/Yellow.png')}
 dice = {1:diceload('Images/Die-1.png'), 2:diceload('Images/Die-2.png'), 3:diceload('Images/Die-3.png'), 4:diceload('Images/Die-4.png'), 5:diceload('Images/Die-5.png'), 6:diceload('Images/Die-6.png')}
 boardtiles = tiles()
-#pawnLocations = {1:boardtiles[0], 2:(0,0), 3:(0,0), 4:(0,0)} The actual code, the code below is temporary.
-pawnLocations = {1:(20,15), 2:(550,15), 3:(550,540), 4:(20,540)}
+tempInt = 0
+#pawnLocations = {1:boardtiles[tempInt], 2:(0,0), 3:(0,0), 4:(0,0)} #The number is the pawn, the other thing is the location of said pawn.
+#pawnLocations = {1:(20,15), 2:(550,15), 3:(550,540), 4:(20,540)}
+pawnLocations = {1:boardtiles[1], 2:(0,0), 3:(0,0), 4:(0,0)}
+print(boardtiles)
 
 randomInt = 1
 amountPlayers = 0
@@ -74,7 +77,7 @@ while True:#Main game loop
                         if(option.id == 0): #New game
                             gameStatus = 'new'
                         elif(option.id == 1):#Load game
-                            pass
+                            gameStatus = 'game'
                         elif(option.id == 2):#Options
                             pass
                         elif(option.id == 3):#Rules
@@ -103,15 +106,16 @@ while True:#Main game loop
                                     chosen.append(yourCharID)
                                 elif option.id == 10:
                                     gameStatus = 'Game'
-                                option.selected = True
-    elif(gameStatus == 'Game'):#This means we're about to start a new game, start initialising the screen and its elements.        
+                                option.selected = True #Character selection screen
+    elif(gameStatus == 'game'):#This means we're about to start a new game, start initialising the screen and its elements.      
+             #The number is the pawn, the other thing is the location of said pawn.  
+            
+            screen.blit(pawns[1], (pawnLocations[1]))
             screen = pygame.display.set_mode((1000, 600))           
             screen.blit(board,(0,0))
             dieRect = pygame.Rect((725,50,150,150))
             ##pygame.draw.rect(screen,(0,255,0),(725,50,150,150))
             screen.blit(dice[randomInt], (725,50))
-            for pawn in pawns:#Loop for all pawns
-                screen.blit(pawns[pawn], (pawnLocations[pawn]))
             for ev in events:#Event listener again.
                 keys=pygame.key.get_pressed()
                 if ev.type == pygame.QUIT:
@@ -120,9 +124,17 @@ while True:#Main game loop
                     if ev.key == pygame.K_ESCAPE:
                         gameStatus = 'main'
                 if ev.type == pygame.MOUSEBUTTONDOWN:
+                    #print('mouse detect', tempInt, pawnLocations[1])
+                    #print(pygame.mouse.get_pos())
+                    #tempInt += 1
                     if dieRect.collidepoint(pygame.mouse.get_pos()):
                         for i in range(10):
                             randomInt = random.randint(1,6)
+                            for pawn in pawns:#Loop for all pawns
+                            #print(pawnLocations[1])
+                            #screen.blit(pygame.transform.rotate(pawns[1], 90), (pawnLocations[pawn]))
+                                
+                                tempInt += randomInt
         
     pygame.display.update()
 
