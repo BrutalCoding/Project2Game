@@ -22,21 +22,14 @@ randomInt = 1
 
 print (tiles)
 
-        
 menu = [Option("NEW GAME", (10, 10), font, optionscreen, 0), Option("LOAD GAME", (10, 65), font, optionscreen, 1),
            Option("OPTIONS", (10, 120), font, optionscreen, 2), Option("RULES", (10, 175), font, optionscreen, 3),
            Option("QUIT", (10, 230), font, optionscreen, 4)]
-
-intro = 'Sound/menu.mid'
-pygame.mixer.music.load(intro)
-pygame.mixer.music.play()
-
 while True:#Main game loop
-    events = pygame.event.get()    
+    events = pygame.event.get()
     if(gameStatus == 'main'):#This is true if we're in the main menu
         screen = pygame.display.set_mode((200, 260))
         screen.fill((0, 0, 0))
-        
         for option in menu:#Draw all options on the screen
             if option.rect.collidepoint(pygame.mouse.get_pos()):
                 option.hovered = True
@@ -54,7 +47,6 @@ while True:#Main game loop
                         #No need for an else, we don't need to know if someone's aim sucks.
                         print(option.id)
                         if(option.id == 0): #New game
-                            pygame.mixer.music.stop()
                             gameStatus = 'new'
                         elif(option.id == 1):#Load game
                             pass
@@ -83,9 +75,8 @@ while True:#Main game loop
                         gameStatus = 'main'
                 if ev.type == pygame.MOUSEBUTTONDOWN:
                     if dieRect.collidepoint(pygame.mouse.get_pos()):
-                        file = 'Sound/die-sound.wav'
-                        pygame.mixer.music.load(file)
-                        pygame.mixer.music.play()
+                        #hier komt sound
+                        
                         for i in range(10):
                             randomInt = random.randint(1,6)
     pygame.display.update()
