@@ -47,6 +47,7 @@
     <Compile Include="rules.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="SuperFighters.py" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />

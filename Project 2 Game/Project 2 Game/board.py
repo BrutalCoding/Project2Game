@@ -1,4 +1,5 @@
-﻿def tiles():#Algorithm to decide where tiles are
+﻿import pygame
+def tiles():#Algorithm to decide where tiles are
     tiles = {}
     posx = 20
     posy = 15
@@ -10,6 +11,7 @@
                 posx += 45
             elif i == 0:
                 #Top left corner
+                #pygame.rect(0,0,50,50)
                 posx = 20
             elif i == 1:
                 #From top left corner to the first small tile right of it
