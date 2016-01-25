@@ -1,4 +1,5 @@
-﻿import sys,pygame
+﻿import sys
+import pygame
 import options
 import random
 from Player import *
@@ -23,13 +24,15 @@ selectedAmountBots = None #How many bots he/she wants to play
 currentPlayerCounter = 0 #Default player
 defaultPawnLocations = [] #The top left corner but all with a little bit of offset so the pawns are not on top of each other
 defaultTileLocations = [] #All tiles that are possible to move on to (with a pawn)
-maxAmountOfBots = 4 #Minimal 1 and maximum depends on how many characters are in the game, see 'players' variable. E.g. 4 = 3 bots, 1 player.
+maxAmountOfBots = 8 #Minimal 1 and maximum depends on how many characters are in the game, see 'players' variable. E.g. 4 = 3 bots, 1 player.
 pawnLocationsTiles = {}
 scoreBoardHeight = 0 #Define the scoreboard height, that's where the lives and conditions of each player gets displayed
 players = Player
 randomDiceNumber = 1
 firstDieIsThrown = False
+mainMenuSize = [800, 600]
 background = pygame.image.load("Images\cardboard_texture.jpg")
+
 #The board can be resized every moment by declaring the function here
 boardVectorSize = {"x": 600, "y": 600}
 def setBoardVectorSize(boardVectorSize):
@@ -37,14 +40,14 @@ def setBoardVectorSize(boardVectorSize):
 board = setBoardVectorSize(boardVectorSize) #Initialize the board size
 
 #The screen can be resized too by declaring the function here
-screenVectorSize = {"x": 200, "y": 260}
+screenVectorSize = {"x": mainMenuSize[0], "y": mainMenuSize[1]}
 def setScreenVectorSize(screenVectorSize, screen):
     return pygame.display.set_mode((screenVectorSize["x"], screenVectorSize["y"]))
 screen = pygame.display.set_mode((screenVectorSize["x"], screenVectorSize["y"]))
 screen = setScreenVectorSize(screenVectorSize, screen)
 
 #Loop through selected characters and place related pawns
-def setDefaultPawnLocations(selectedCharacters, pawns,currentPlayerCounter, randomDiceNumber, firstDieIsThrown):
+def PawnLocations(selectedCharacters, pawns,currentPlayerCounter, randomDiceNumber, firstDieIsThrown):
     #Board game main loop. Every movement is here.
     if ev.type == pygame.MOUSEBUTTONDOWN:
         if dieRect.collidepoint(pygame.mouse.get_pos()):
@@ -60,13 +63,7 @@ def setDefaultPawnLocations(selectedCharacters, pawns,currentPlayerCounter, rand
                     print("Player #" + str(currentPlayerCounter) +  " - Current tile: " + str(x[1]) + " - Next tile: " + str(boardtiles[newTileNumber]))
                     selectedCharacters[currentPlayerCounter].Tile = boardtiles[newTileNumber]
                     print("Player #" + str(currentPlayerCounter) +  " moved to next tile: " + str(boardtiles[newTileNumber]))
-
-                    if selectedCharacters[currentPlayerCounter].Tile == boardtiles[5]:
-                        print ("FIGHTER IS COMING")
-                        selectedCharacters[currentPlayerCounter].CalculateHealth(20)
-                screen.blit(pawns[currentPlayerCounter + 1], currentTile)
-
-            
+            screen.blit(pawns[currentPlayerCounter + 1], currentTile)
             pygame.time.delay(150)
             #If the counter is at the last character, start at the first player again.
             if currentPlayerCounter == len(selectedCharacters) - 1: 
@@ -124,6 +121,7 @@ def setDefaultPawnLocations(selectedCharacters, pawns,currentPlayerCounter, rand
             screen.blit(pawns[cntPlayer], moveToTile)
             cntPlayer += 1
         screen.blit(dice[randomDiceNumber], (725,50))
+
     return currentPlayerCounter, randomDiceNumber,firstDieIsThrown
 
 #Define and initialize the sounds of the game
@@ -153,11 +151,12 @@ latestSelectedChar = None #Latest character selection that was made
 
 # A global dict value that will contain all the Pygame
 # Surface objects returned by pygame.image.load().
-menu =    [Option("NEW GAME", (10, 10), font, screen, 0),
-           Option("LOAD GAME", (10, 65), font, screen, 1),
-           Option("OPTIONS", (10, 120), font, screen, 2),
-           Option("RULES", (10, 175), font, screen, 3),
-           Option("QUIT", (10, 230), font, screen, 4)]
+xM = 75
+menu =    [Option("NEW GAME", (screen.get_rect().centerx - xM, 120), font, screen, 0),
+           Option("LOAD GAME", (screen.get_rect().centerx - xM, 180), font, screen, 1),
+           Option("OPTIONS", (screen.get_rect().centerx - xM, 240), font, screen, 2),
+           Option("RULES", (screen.get_rect().centerx - xM, 300), font, screen, 3),
+           Option("QUIT", (screen.get_rect().centerx - xM, 360), font, screen, 4)]
 
 #Define the images
 pawns =     {1:pawnload('Images/Blue.png'), 2:pawnload('Images/Red.png'), 3:pawnload('Images/Green.png'), 4:pawnload('Images/Yellow.png'), 5:pawnload('Images/Blue.png'), 6:pawnload('Images/Red.png'), 7:pawnload('Images/Green.png'), 8:pawnload('Images/head__iron_rekt.png')}
@@ -228,7 +227,11 @@ def drawOptions(l):
         option.draw()
     return
 gameIsRunning = True #If set to False, the game will stop and the program will exit.
-while gameIsRunning:#Main game loop
+
+#--------------------#
+# ↓ Main game loop ↓ #
+#--------------------#
+while gameIsRunning:
     #Define the event loop here instead of creating one in each gameStatus (e.g. in the main menu, in the game, in the player select menu etc)
     events = pygame.event.get()
     for ev in events:
@@ -237,9 +240,11 @@ while gameIsRunning:#Main game loop
 
     #Erase screen, fill everything with black
     screen.fill((0,0,0))
-      
+# main menu
     if(gameStatus == 'main'):
         screen.blit(pygame.transform.scale(background,(screenVectorSize["x"],screenVectorSize["y"])), (0, 0))
+        #screenVectorSize["x"] = 200
+        #screenVectorSize["y"] = 260
         #Reset option class so no selections get remembered from the previous time that the user selected amount of players and/or character
         for entity in entities:
                 for option in entity:
@@ -269,20 +274,20 @@ while gameIsRunning:#Main game loop
                         pass
                     elif(option.id == 3):#Rules
                         gameStatus = "rules"
-                        screenVectorSize["x"] = 1000
-                        screenVectorSize["y"] = 600
+                        screenVectorSize["x"] = mainMenuSize[0]
+                        screenVectorSize["y"] = mainMenuSize[1]
                         setScreenVectorSize(screenVectorSize, screen)
                     elif(option.id == 4):#Quit
                         gameIsRunning = False
                     option.draw()
-
+# New game/ select player
     elif(gameStatus == 'new'):
         if ev.type == pygame.KEYUP:
             if ev.key == pygame.K_ESCAPE:
                 gameStatus = 'main'
                 selectedCharacters, selectedAmountBots = resetSelections(selectedCharacters, selectedAmountBots)
-                screenVectorSize["x"] = 200
-                screenVectorSize["y"] = 260
+                screenVectorSize["x"] = mainMenuSize[0]
+                screenVectorSize["y"] = mainMenuSize[1]
                 setScreenVectorSize(screenVectorSize, screen)
                 setDefaultSoundSystem("Sounds\Intro_Soft_Touch.mp3", 1000)
         
@@ -331,7 +336,7 @@ while gameIsRunning:#Main game loop
                         else:
                             print("Selection menu: Make sure everything is selected.")
             
-
+# Display board game
     elif(gameStatus == 'Game'):#This means we're about to start a new game, start initialising the screen and its elements.
         dieRect = pygame.Rect((725,50,150,150))
         if ev.type == pygame.QUIT:
@@ -340,8 +345,8 @@ while gameIsRunning:#Main game loop
             if ev.key == pygame.K_ESCAPE:
                 gameStatus = 'main'
                 setDefaultSoundSystem("Sounds\Intro_Soft_Touch.mp3", 1000)
-                screenVectorSize["x"] = 200
-                screenVectorSize["y"] = 260
+                screenVectorSize["x"] = mainMenuSize[0]
+                screenVectorSize["y"] = mainMenuSize[1]
                 setScreenVectorSize(screenVectorSize, screen)
                 selectedCharacters, selectedAmountBots = resetSelections(selectedCharacters, selectedAmountBots)
                 selectedCharacters = [] #List of selected characters from the "new game" screen
@@ -352,7 +357,7 @@ while gameIsRunning:#Main game loop
         screen.blit(board,(0,0))
 
         #Return the new player number so that the global variable can be updated instead of local.
-        currentPlayerCounter, randomDiceNumber, firstDieIsThrown = setDefaultPawnLocations(selectedCharacters, pawns, currentPlayerCounter, randomDiceNumber,firstDieIsThrown)
+        currentPlayerCounter, randomDiceNumber, firstDieIsThrown = PawnLocations(selectedCharacters, pawns, currentPlayerCounter, randomDiceNumber,firstDieIsThrown)
         #draw labels on scoreboard with lifepoints/conditions p/player
         scoreBoardFont = pygame.font.Font(None, 20)
         scoreBoardColor = (255,255,255)
@@ -389,22 +394,22 @@ while gameIsRunning:#Main game loop
                 scoreBoardHeight += 25
                 labelPixelHeight += 25
         cnt = 0
-
+# display rules
     elif gameStatus == "rules":
         if ev.type == pygame.QUIT:
             gameIsRunning = False
         if ev.type == pygame.KEYUP:
             if ev.key == pygame.K_ESCAPE:
                 gameStatus = 'main'
-                screenVectorSize["x"] = 200
-                screenVectorSize["y"] = 260
+                screenVectorSize["x"] = mainMenuSize[0]
+                screenVectorSize["y"] = mainMenuSize[1]
                 setScreenVectorSize(screenVectorSize, screen)
         labelHeight = screen.get_rect().midtop[1]
         for rule in rules.LoadAllRules():
             text = font.render(rule, 1, (217, 30, 24))
             textpos = text.get_rect()
             labelHeight += 25
-            screen.blit(text, (screen.get_rect().centerx / 2, labelHeight))
+            screen.blit(text, (screen.get_rect().centerx / 4, labelHeight))
         text = font.render("Press 'ESC' to get back to the main menu", 1, (255,255,0))
         textpos = text.get_rect()
         screen.blit(text, (screen.get_rect().centerx / 2, screen.get_size()[1] - 50))
