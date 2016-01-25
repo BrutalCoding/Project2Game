@@ -29,23 +29,69 @@
     <PtvsTargetsFile>$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets</PtvsTargetsFile>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="board.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="elements.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="main.py" />
+    <Compile Include="menu.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="options.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Player.py" />
+    <Compile Include="PlayerCards.py" />
+    <Compile Include="rules.py">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <InterpreterReference Include="{2af0f10d-7135-4994-9156-5d01c9c11b7e}\2.7" />
     <InterpreterReference Include="{2af0f10d-7135-4994-9156-5d01c9c11b7e}\3.4" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />
+    <Folder Include="Sounds\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Images\board.jpg" />
+    <Content Include="Images\1.jpg" />
+    <Content Include="Images\blue.png" />
     <Content Include="Images\board.png" />
+    <Content Include="Images\cardboard_texture.jpg" />
+    <Content Include="Images\card__badr_heri.jpg" />
+    <Content Include="Images\card__manny_pecquiao.jpg" />
+    <Content Include="Images\card__mike_tysen.jpg" />
+    <Content Include="Images\card__rocky_belboa.jpg" />
     <Content Include="Images\circle.jpg" />
+    <Content Include="Images\Die-1.png" />
+    <Content Include="Images\Die-2.png" />
+    <Content Include="Images\Die-3.png" />
+    <Content Include="Images\Die-4.png" />
+    <Content Include="Images\Die-5.png" />
+    <Content Include="Images\Die-6.png" />
+    <Content Include="Images\face_iron.jpg" />
+    <Content Include="Images\face__badr_heri.jpg" />
+    <Content Include="Images\face__bunya_sakboa.jpg" />
+    <Content Include="Images\face__iron_reckt.jpg" />
+    <Content Include="Images\face__manny_pecquiao.jpg" />
+    <Content Include="Images\face__mike_tysen.jpg" />
+    <Content Include="Images\face__mike_tysen.psd" />
+    <Content Include="Images\face__rocky_belboa.jpg" />
+    <Content Include="Images\face__rocky_belboa.psd" />
+    <Content Include="Images\green.png" />
+    <Content Include="Images\head__iron_rekt.png" />
+    <Content Include="Images\placeholder_253_300.png" />
+    <Content Include="Images\placeholder_500_500.png" />
+    <Content Include="Images\red.png" />
     <Content Include="Images\test.PNG" />
+    <Content Include="Images\yellow.png" />
+    <Content Include="Sounds\Intro_1_Hyped.mp3" />
+    <Content Include="Sounds\Intro_1_Soft_Pump.mp3" />
+    <Content Include="Sounds\Intro_Soft_Touch.mp3" />
+    <Content Include="Sounds\tik.m4a" />
+    <Content Include="Sounds\tik.wav" />
   </ItemGroup>
   <Import Project="$(PtvsTargetsFile)" Condition="Exists($(PtvsTargetsFile))" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" Condition="!Exists($(PtvsTargetsFile))" />
