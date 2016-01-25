@@ -63,7 +63,11 @@ def PawnLocations(selectedCharacters, pawns,currentPlayerCounter, randomDiceNumb
                     print("Player #" + str(currentPlayerCounter) +  " - Current tile: " + str(x[1]) + " - Next tile: " + str(boardtiles[newTileNumber]))
                     selectedCharacters[currentPlayerCounter].Tile = boardtiles[newTileNumber]
                     print("Player #" + str(currentPlayerCounter) +  " moved to next tile: " + str(boardtiles[newTileNumber]))
+                    if selectedCharacters[currentPlayerCounter].Tile == boardtiles[5]:
+                        print("Fighter is coming!")
             screen.blit(pawns[currentPlayerCounter + 1], currentTile)
+
+            
             pygame.time.delay(150)
             #If the counter is at the last character, start at the first player again.
             if currentPlayerCounter == len(selectedCharacters) - 1: 
