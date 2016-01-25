@@ -1,10 +1,3 @@
-'''
-Created on 19 jan. 2016
-
-@author: Bunyamin Sakar
-
-'''
-
 class Player:
     def __init__(self,health,condition,card,position):
         self.Health = health

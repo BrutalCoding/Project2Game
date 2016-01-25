@@ -49,9 +49,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <InterpreterReference Include="{2af0f10d-7135-4994-9156-5d01c9c11b7e}\3.4" />
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="Images\" />
     <Folder Include="Sounds\" />
   </ItemGroup>
@@ -92,6 +89,9 @@
     <Content Include="Sounds\Intro_Soft_Touch.mp3" />
     <Content Include="Sounds\tik.m4a" />
     <Content Include="Sounds\tik.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterpreterReference Include="{2af0f10d-7135-4994-9156-5d01c9c11b7e}\3.4" />
   </ItemGroup>
   <Import Project="$(PtvsTargetsFile)" Condition="Exists($(PtvsTargetsFile))" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" Condition="!Exists($(PtvsTargetsFile))" />
