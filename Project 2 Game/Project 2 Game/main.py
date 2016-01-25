@@ -24,13 +24,13 @@ selectedAmountBots = None #How many bots he/she wants to play
 currentPlayerCounter = 0 #Default player
 defaultPawnLocations = [] #The top left corner but all with a little bit of offset so the pawns are not on top of each other
 defaultTileLocations = [] #All tiles that are possible to move on to (with a pawn)
-maxAmountOfBots = 8 #Minimal 1 and maximum depends on how many characters are in the game, see 'players' variable. E.g. 4 = 3 bots, 1 player.
+maxAmountOfBots = 4 #Minimal 1 and maximum depends on how many characters are in the game, see 'players' variable. E.g. 4 = 3 bots, 1 player.
 pawnLocationsTiles = {}
 scoreBoardHeight = 0 #Define the scoreboard height, that's where the lives and conditions of each player gets displayed
 players = Player
 randomDiceNumber = 1
 firstDieIsThrown = False
-
+background = pygame.image.load("Images\cardboard_texture.jpg")
 #The board can be resized every moment by declaring the function here
 boardVectorSize = {"x": 600, "y": 600}
 def setBoardVectorSize(boardVectorSize):
@@ -40,8 +40,6 @@ board = setBoardVectorSize(boardVectorSize) #Initialize the board size
 #The screen can be resized too by declaring the function here
 screenVectorSize = {"x": 200, "y": 260}
 def setScreenVectorSize(screenVectorSize, screen):
-    background = pygame.image.load("Images\cardboard_texture.jpg")
-    screen.blit(pygame.transform.scale(background,(screenVectorSize["x"],screenVectorSize["y"])), (0, 0))
     return pygame.display.set_mode((screenVectorSize["x"], screenVectorSize["y"]))
 screen = pygame.display.set_mode((screenVectorSize["x"], screenVectorSize["y"]))
 screen = setScreenVectorSize(screenVectorSize, screen)
@@ -63,7 +61,13 @@ def setDefaultPawnLocations(selectedCharacters, pawns,currentPlayerCounter, rand
                     print("Player #" + str(currentPlayerCounter) +  " - Current tile: " + str(x[1]) + " - Next tile: " + str(boardtiles[newTileNumber]))
                     selectedCharacters[currentPlayerCounter].Tile = boardtiles[newTileNumber]
                     print("Player #" + str(currentPlayerCounter) +  " moved to next tile: " + str(boardtiles[newTileNumber]))
-            screen.blit(pawns[currentPlayerCounter + 1], currentTile)
+
+                    if selectedCharacters[currentPlayerCounter].Tile == boardtiles[5]:
+                        print ("FIGHTER IS COMING")
+                        selectedCharacters[currentPlayerCounter].CalculateHealth(20)
+                screen.blit(pawns[currentPlayerCounter + 1], currentTile)
+
+            
             pygame.time.delay(150)
             #If the counter is at the last character, start at the first player again.
             if currentPlayerCounter == len(selectedCharacters) - 1: 
@@ -121,7 +125,6 @@ def setDefaultPawnLocations(selectedCharacters, pawns,currentPlayerCounter, rand
             screen.blit(pawns[cntPlayer], moveToTile)
             cntPlayer += 1
         screen.blit(dice[randomDiceNumber], (725,50))
-
     return currentPlayerCounter, randomDiceNumber,firstDieIsThrown
 
 #Define and initialize the sounds of the game
@@ -237,8 +240,7 @@ while gameIsRunning:#Main game loop
     screen.fill((0,0,0))
       
     if(gameStatus == 'main'):
-        screenVectorSize["x"] = 200
-        screenVectorSize["y"] = 260
+        screen.blit(pygame.transform.scale(background,(screenVectorSize["x"],screenVectorSize["y"])), (0, 0))
         #Reset option class so no selections get remembered from the previous time that the user selected amount of players and/or character
         for entity in entities:
                 for option in entity:

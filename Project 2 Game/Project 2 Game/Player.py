@@ -1,4 +1,4 @@
-import pygame
+﻿import pygame
 class Player:
     def __init__(self,name,health,condition,card,tile, imagecard="placeholder_253_300.png", imageface="placeholder_253_300.png"):
         self.Name = name
@@ -13,7 +13,7 @@ class Player:
         return self.Health - damage
     
     def CalculateCondition(conditionLose):
-        return self.Condition - conditionLose
+        return self.Condition + conditionLose
 
     def loadDefaultValues(self):
         self.Health = 100
