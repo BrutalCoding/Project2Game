@@ -2,6 +2,7 @@
 import pygame
 import options
 import random
+from selectScreen import *
 from Player import *
 from PlayerCards import *
 from board import tiles
@@ -33,8 +34,8 @@ menu = [Option("NEW GAME", (10, 10), font, optionscreen, 0), Option("LOAD GAME",
            Option("OPTIONS", (10, 120), font, optionscreen, 2), Option("RULES", (10, 175), font, optionscreen, 3),
            Option("QUIT", (10, 230), font, optionscreen, 4)]
 
-labelAmountPlayers = [Option('1 player', (200, 50), font, optionscreen, 1), Option('2 players', (350, 50), font, optionscreen, 2),
-            Option('3 players', (500, 50), font, optionscreen, 3), Option('4 player', (650, 50), font, optionscreen, 4)]
+labelAmountPlayers = [Option('2 players', (300, 50), font, optionscreen, 2),
+            Option('3 players', (450, 50), font, optionscreen, 3), Option('4 player', (600, 50), font, optionscreen, 4)]
 
 selectScreenButtons = [Option("Start game", (800, 550), font, optionscreen, 10)]
 
@@ -45,14 +46,6 @@ playerLabels = [Option("Badr Heri", (100, 200), font, optionscreen, 5), Option("
                 Option("Mike Tysen", (550, 200), font, optionscreen, 7), Option("Rocky Belboa", (730, 200), font, optionscreen, 8)]
 
 entities = [playerLabels, labelAmountPlayers, selectScreenButtons]
-
-def drawOptions(l):
-    for option in l:#Draw all options on the screen
-        if option.rect.collidepoint(pygame.mouse.get_pos()):
-            option.hovered = True
-        else:
-            option.hovered = False
-        option.draw()   
 
 while True:#Main game loop
     events = pygame.event.get()
@@ -92,28 +85,21 @@ while True:#Main game loop
             screen.blit(label, (350, 10))
             label = font.render("Choose your character", 1, (255,255,0))
             screen.blit(label, (350, 150))
+        
             for x in entities:
-                drawOptions(x)
-                for ev in events:
-                    if ev.type == pygame.MOUSEBUTTONUP:
-                        for option in x:
-                            if option.rect.collidepoint(pygame.mouse.get_pos()):
-                                if int(option.id) <= 4:#Set amount players that will play the game
-                                    amountPlayers = int(option.id)
-                                    chosen.append(amountPlayers)
-                                elif int(option.id) > 4 and int(option.id) < 10:#Set which character player 1 is.
-                                    if option.id == 5:
-                                        yourChar = players[0]
-                                    elif option.id == 6:
-                                        yourChar = players[1]
-                                    elif option.id == 7:
-                                        yourChar = players[2]
-                                    elif option.id == 8:
-                                        yourChar = players[3]
-                                    chosen.append(yourChar)
-                                elif option.id == 10:
-                                    gameStatus = 'Game'
-                                option.selected = True
+                    selectScreen.drawOptions(x)
+                    for ev in events:
+                        if ev.type == pygame.MOUSEBUTTONUP:
+                            for option in x:
+                                if option.rect.collidepoint(pygame.mouse.get_pos()):
+                                    if option.id == 10:
+                                        gameStatus = 'Game'
+                                    else:
+                                        amountPlayers = selectScreen.setAmountPlayers(option.id)
+                                        yourChar = selectScreen.selectCharacter(option.id, players)
+                        elif ev.type == pygame.KEYUP:
+                            if ev.key == pygame.K_ESCAPE:
+                                gameStatus = 'main'
     elif(gameStatus == 'Game'):#This means we're about to start a new game, start initialising the screen and its elements.        
             screen = pygame.display.set_mode((1000, 600))           
             screen.blit(board,(0,0))
