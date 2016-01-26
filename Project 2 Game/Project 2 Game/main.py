@@ -10,6 +10,7 @@ from Player import *
 from PlayerCards import *
 from rules import *
 from pygame import gfxdraw
+from SuperFighters import *
 
 Option = options.Option
 pygame.mixer.init()
@@ -24,7 +25,7 @@ selectedAmountBots = None #How many bots he/she wants to play
 currentPlayerCounter = 0 #Default player
 defaultPawnLocations = [] #The top left corner but all with a little bit of offset so the pawns are not on top of each other
 defaultTileLocations = [] #All tiles that are possible to move on to (with a pawn)
-maxAmountOfBots = 8 #Minimal 1 and maximum depends on how many characters are in the game, see 'players' variable. E.g. 4 = 3 bots, 1 player.
+maxAmountOfBots = 4  #MAX 4 OR GIUSEPPE WILL HAVE YOUR TESTICLES                                                                                                                                                              #Minimal 1 and maximum depends on how many characters are in the game, see 'players' variable. E.g. 4 = 3 bots, 1 player.
 pawnLocationsTiles = {}
 scoreBoardHeight = 0 #Define the scoreboard height, that's where the lives and conditions of each player gets displayed
 players = Player
@@ -63,8 +64,42 @@ def PawnLocations(selectedCharacters, pawns,currentPlayerCounter, randomDiceNumb
                     print("Player #" + str(currentPlayerCounter) +  " - Current tile: " + str(x[1]) + " - Next tile: " + str(boardtiles[newTileNumber]))
                     selectedCharacters[currentPlayerCounter].Tile = boardtiles[newTileNumber]
                     print("Player #" + str(currentPlayerCounter) +  " moved to next tile: " + str(boardtiles[newTileNumber]))
-                    if selectedCharacters[currentPlayerCounter].Tile == boardtiles[5]:
+                    if selectedCharacters[currentPlayerCounter].Tile == boardtiles[5] or selectedCharacters[currentPlayerCounter].Tile == boardtiles[15] or selectedCharacters[currentPlayerCounter].Tile == boardtiles[25] or selectedCharacters[currentPlayerCounter].Tile == boardtiles[35]:
+                        #superfighters = SuperFighters()
+                        superfighter = random.choice(list(SuperFighters))
+                        randominteger = random.randint(1,6)
+                        damage = superfighter.value[randominteger]
+                        print(superfighter, ' does ', damage)
+                        selectedCharacters[currentPlayerCounter].Health -= damage
                         print("Fighter is coming!")
+                    curplaypos = selectedCharacters[currentPlayerCounter].Tile #Current player's position on board
+                    #if curplaypos == boardtiles[0,1,9,10,11,19,20,21,29,30,31,39]:
+                    if curplaypos in (boardtiles[0], boardtiles[1], boardtiles[9], boardtiles[10], boardtiles[11], boardtiles[19], boardtiles[20], boardtiles[21], boardtiles[29], boardtiles[30], boardtiles[31], boardtiles[39]):
+                        if currentPlayerCounter == 0 and curplaypos == boardtiles[0] and curplaypos == boardtiles[39] and curplaypos == boardtiles[1]:
+                            pass #Don't fight
+                        elif currentPlayerCounter != 0 and curplaypos in (boardtiles[currentPlayerCounter * 10], boardtiles[(currentPlayerCounter * 10) - 1], boardtiles[(currentPlayerCounter * 10) + 1]):
+                            pass
+                        else: #Fight code
+
+                            pass
+
+                            
+                        
+                            
+                        
+                        
+
+
+                        #if currentPlayerCounter != boardtiles[currentPlayerCounter]:
+
+
+
+
+                    
+
+                     
+
+                    
             screen.blit(pawns[currentPlayerCounter + 1], currentTile)
 
             
@@ -167,13 +202,13 @@ pawns =     {1:pawnload('Images/Blue.png'), 2:pawnload('Images/Red.png'), 3:pawn
 dice =      {1:diceload('Images/Die-1.png'), 2:diceload('Images/Die-2.png'), 3:diceload('Images/Die-3.png'), 4:diceload('Images/Die-4.png'), 5:diceload('Images/Die-5.png'), 6:diceload('Images/Die-6.png')}
 boardtiles = tiles()
 players =  [Player("Badr Heri",100, 15, PlayerCards.BadrHeri,boardtiles[0],"card__badr_heri.jpg", "face__badr_heri.jpg"),
-            Player("Manny Pecquiao",150, 15, PlayerCards.MannyPecquiao,boardtiles[0],"card__manny_pecquiao.jpg","face__manny_pecquiao.jpg"),
-            Player("Mike Tysen",200, 15, PlayerCards.MikeTysen,boardtiles[0],"card__mike_tysen.jpg","face__mike_tysen.jpg"),
-            Player("Rocky Belboa",250,15,PlayerCards.RockyBelboa,boardtiles[0],"card__rocky_belboa.jpg","face__rocky_belboa.jpg"),
-            Player("Bunya Sakboa",250,15,PlayerCards.RockyBelboa,boardtiles[0],"card__badr_heri.jpg", "face__bunya_sakboa.jpg"),
-            Player("Iron Rekt",250,15,PlayerCards.RockyBelboa,boardtiles[0],"card__badr_heri.jpg","face__iron_reckt.jpg"),
-            Player("Wout The Ripper",250,15,PlayerCards.RockyBelboa,boardtiles[0],"card__badr_heri.jpg"),
-            Player("Bad Boy",250,15,PlayerCards.RockyBelboa,boardtiles[0],"card__badr_heri.jpg")]
+            Player("Manny Pecquiao",100, 15, PlayerCards.MannyPecquiao,boardtiles[0],"card__manny_pecquiao.jpg","face__manny_pecquiao.jpg"),
+            Player("Mike Tysen",100, 15, PlayerCards.MikeTysen,boardtiles[0],"card__mike_tysen.jpg","face__mike_tysen.jpg"),
+            Player("Rocky Belboa",100,15,PlayerCards.RockyBelboa,boardtiles[0],"card__rocky_belboa.jpg","face__rocky_belboa.jpg"),
+            Player("Bunya Sakboa",100,15,PlayerCards.RockyBelboa,boardtiles[0],"card__badr_heri.jpg", "face__bunya_sakboa.jpg"),
+            Player("Iron Rekt",100,15,PlayerCards.RockyBelboa,boardtiles[0],"card__badr_heri.jpg","face__iron_reckt.jpg"),
+            Player("Wout The Ripper",100,15,PlayerCards.RockyBelboa,boardtiles[0],"card__badr_heri.jpg"),
+            Player("Bad Boy",100,15,PlayerCards.RockyBelboa,boardtiles[0],"card__badr_heri.jpg")]
 
 #Load all images from the Player class
 playerImageCardDict = {}
