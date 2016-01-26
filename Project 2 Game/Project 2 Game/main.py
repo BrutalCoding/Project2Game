@@ -5,12 +5,13 @@ import random
 from Player import *
 from PlayerCards import *
 from board import tiles
-from elements import diceload, pawnload
+from elements import diceload, pawnload, playerload
 from Player import *
 from PlayerCards import *
 from rules import *
 from pygame import gfxdraw
 from SuperFighters import *
+
 
 Option = options.Option
 pygame.mixer.init()
@@ -48,7 +49,7 @@ screen = pygame.display.set_mode((screenVectorSize["x"], screenVectorSize["y"]))
 screen = setScreenVectorSize(screenVectorSize, screen)
 
 #Loop through selected characters and place related pawns
-def PawnLocations(selectedCharacters, pawns,currentPlayerCounter, randomDiceNumber, firstDieIsThrown):
+def  PawnLocations(selectedCharacters, pawns,currentPlayerCounter, randomDiceNumber, firstDieIsThrown, gameStatus):
     #Board game main loop. Every movement is here.
     if ev.type == pygame.MOUSEBUTTONDOWN:
         if dieRect.collidepoint(pygame.mouse.get_pos()):
@@ -80,16 +81,19 @@ def PawnLocations(selectedCharacters, pawns,currentPlayerCounter, randomDiceNumb
                         elif currentPlayerCounter != 0 and curplaypos in (boardtiles[currentPlayerCounter * 10], boardtiles[(currentPlayerCounter * 10) - 1], boardtiles[(currentPlayerCounter * 10) + 1]):
                             pass
                         else: #Fight code
-
-                            pass
-
-                            
-                        
-                            
-                        
-                        
-
-
+                            print('Fight started (else)')
+                            gameStatus = 'fight'
+                            #Sequence
+                            #Attacker lands on another player's square
+                            #Attacker throws die and gets a number
+                            #Attacker chooses the amount of damage he'd like to do
+                            #Attacker's stamina gets deducted by the amount corresponding to the damage he chose.
+                            #Defender throws die and gets number
+                            #Defender chooses the amount of damage he'd like to do
+                            #Defender's stamina gets deducted by the amount corresponding to the damage he chose.
+                            #Game calculates highest damage - lowest damage and deals this to the player with the lowest damage
+                            #Preferably make ai choose damage higher than taken damage within stamina limits
+                            #pass
                         #if currentPlayerCounter != boardtiles[currentPlayerCounter]:
 
 
@@ -110,7 +114,7 @@ def PawnLocations(selectedCharacters, pawns,currentPlayerCounter, randomDiceNumb
             else:
                 currentPlayerCounter += 1
             firstDieIsThrown = True
-            return currentPlayerCounter, randomDiceNumber, firstDieIsThrown
+            return currentPlayerCounter, randomDiceNumber, firstDieIsThrown, gameStatus
     elif( pygame.key.get_pressed()[pygame.K_SPACE] != 0 ):
         print("SPACE PRESSED")
         currentTile = selectedCharacters[currentPlayerCounter].Tile
@@ -132,7 +136,7 @@ def PawnLocations(selectedCharacters, pawns,currentPlayerCounter, randomDiceNumb
             currentPlayerCounter = 0
         else:
             currentPlayerCounter += 1
-        return currentPlayerCounter, randomDiceNumber,firstDieIsThrown
+        return currentPlayerCounter, randomDiceNumber,firstDieIsThrown,gameStatus
     else:
         #Update player position
         cntCorner = 1
@@ -161,7 +165,7 @@ def PawnLocations(selectedCharacters, pawns,currentPlayerCounter, randomDiceNumb
             cntPlayer += 1
         screen.blit(dice[randomDiceNumber], (725,50))
 
-    return currentPlayerCounter, randomDiceNumber,firstDieIsThrown
+    return currentPlayerCounter, randomDiceNumber,firstDieIsThrown,gameStatus
 
 #Define and initialize the sounds of the game
 pygame.mixer.init()
@@ -200,6 +204,7 @@ menu =    [Option("NEW GAME", (screen.get_rect().centerx - xM, 120), font, scree
 #Define the images
 pawns =     {1:pawnload('Images/Blue.png'), 2:pawnload('Images/Red.png'), 3:pawnload('Images/Green.png'), 4:pawnload('Images/Yellow.png'), 5:pawnload('Images/Blue.png'), 6:pawnload('Images/Red.png'), 7:pawnload('Images/Green.png'), 8:pawnload('Images/head__iron_rekt.png')}
 dice =      {1:diceload('Images/Die-1.png'), 2:diceload('Images/Die-2.png'), 3:diceload('Images/Die-3.png'), 4:diceload('Images/Die-4.png'), 5:diceload('Images/Die-5.png'), 6:diceload('Images/Die-6.png')}
+playerImages = {1:playerload('Images/mike.png'), 2:playerload('Images/paquiao.png'), 3:playerload('Images/mohammed.png'), 4:playerload('Images/rocky.png')}
 boardtiles = tiles()
 players =  [Player("Badr Heri",100, 15, PlayerCards.BadrHeri,boardtiles[0],"card__badr_heri.jpg", "face__badr_heri.jpg"),
             Player("Manny Pecquiao",100, 15, PlayerCards.MannyPecquiao,boardtiles[0],"card__manny_pecquiao.jpg","face__manny_pecquiao.jpg"),
@@ -280,6 +285,7 @@ while gameIsRunning:
     #Erase screen, fill everything with black
     screen.fill((0,0,0))
 # main menu
+    #print(gameStatus)
     if(gameStatus == 'main'):
         screen.blit(pygame.transform.scale(background,(screenVectorSize["x"],screenVectorSize["y"])), (0, 0))
         #screenVectorSize["x"] = 200
@@ -396,7 +402,7 @@ while gameIsRunning:
         screen.blit(board,(0,0))
 
         #Return the new player number so that the global variable can be updated instead of local.
-        currentPlayerCounter, randomDiceNumber, firstDieIsThrown = PawnLocations(selectedCharacters, pawns, currentPlayerCounter, randomDiceNumber,firstDieIsThrown)
+        currentPlayerCounter, randomDiceNumber, firstDieIsThrown, gameStatus = PawnLocations(selectedCharacters, pawns, currentPlayerCounter, randomDiceNumber,firstDieIsThrown, gameStatus)
         #draw labels on scoreboard with lifepoints/conditions p/player
         scoreBoardFont = pygame.font.Font(None, 20)
         scoreBoardColor = (255,255,255)
@@ -452,6 +458,59 @@ while gameIsRunning:
         text = font.render("Press 'ESC' to get back to the main menu", 1, (255,255,0))
         textpos = text.get_rect()
         screen.blit(text, (screen.get_rect().centerx / 2, screen.get_size()[1] - 50))
+    elif gameStatus == "fight":
+        #print('We\'re in the fight gameStatus')
+
+        screen.fill((0,0,0))
+        screen.blit(playerImages[currentPlayerCounter+1],(0,(screenVectorSize["y"]-240)))
+        landedTile = selectedCharacters[currentPlayerCounter].Tile
+
+        curplaypos = selectedCharacters[currentPlayerCounter - 1].Tile #currentPlayerCounter got updated to the next player, but we want the previous player.
+        key = None
+        #Find index number in boardtiles
+        for x in boardtiles.items():
+            if x[1] == curplaypos:
+                if x[0] != 0 and x[0] != 39 and x[0] != 1: #If its not the top left corner (Blue corner)
+                    key = int(round(x[0], 0) / 10) #Going to fight player 1, 2 or 3 and not player 0.
+                else:
+                    key = 0 #Going to fight player 0 (first player, that means its going to fight you.
+        
+
+        if curplaypos in (boardtiles[0], boardtiles[1], boardtiles[9], boardtiles[10], boardtiles[11], boardtiles[19], boardtiles[20], boardtiles[21], boardtiles[29], boardtiles[30], boardtiles[31], boardtiles[39]):
+            if (currentPlayerCounter - 1) == 0 and curplaypos == boardtiles[0] and curplaypos == boardtiles[39] and curplaypos == boardtiles[1]:
+                print('Player #', (currentPlayerCounter - 1),' cant go fight himself - Hello',key)
+                pass #Don't fight
+            elif (currentPlayerCounter - 1) != 0 and curplaypos in (boardtiles[(currentPlayerCounter - 1) * 10], boardtiles[((currentPlayerCounter - 1) * 10) - 1], boardtiles[((currentPlayerCounter - 1) * 10) + 1]):
+                print('Player #', currentPlayerCounter,' cant go fight himself - Goodbye',key)
+                pass
+            else: #Fight code
+                print('Player #', (currentPlayerCounter - 1),' is going to fight player',key)
+
+
+                gameStatus = 'fight'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        if ev.type == pygame.MOUSEBUTTONDOWN:
+            gameStatus = 'Game'
+
+
+
+        #screen.blit(text, text)
+
+        #pass
     pygame.display.flip()
 pygame.quit()
 sys.exit()
