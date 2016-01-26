@@ -29,6 +29,8 @@ maxAmountOfBots = 8 #Minimal 1 and maximum depends on how many characters are in
 pawnLocationsTiles = {}
 scoreBoardHeight = 0 #Define the scoreboard height, that's where the lives and conditions of each player gets displayed
 players = Player
+tileSelected = False
+cardName = None
 randomDiceNumber = 1
 firstDieIsThrown = False
 mainMenuSize = [800, 600]
@@ -140,7 +142,7 @@ def setDefaultSoundSystem(soundFileLocation, fadeOutms=500, volume=1):
         pygame.mixer.music.load(soundFileLocation)
         pygame.mixer.music.play(-1)
     return
-setDefaultSoundSystem("Sounds\Intro_Soft_Touch.mp3", 1000)
+#setDefaultSoundSystem("Sounds\Intro_Soft_Touch.mp3", 1000)
 
 randomInt = 1
 yourChar = None #First selection made is the player
@@ -231,7 +233,7 @@ while gameIsRunning:
                         screenVectorSize["x"] = 1000
                         screenVectorSize["y"] = 600
                         setScreenVectorSize(screenVectorSize, screen)
-                        setDefaultSoundSystem("Sounds\Intro_1_Hyped.mp3", 1000)
+                        #setDefaultSoundSystem("Sounds\Intro_1_Hyped.mp3", 1000)
                         
                     elif(option.id == 1):#Load game
                         pass
@@ -297,19 +299,20 @@ while gameIsRunning:
                             screenVectorSize["y"] = 600
                             setScreenVectorSize(screenVectorSize, screen)
                             gameStatus = 'Game'
-                            setDefaultSoundSystem("Sounds\Intro_1_Soft_Pump.mp3", 1000, 0.3)
+                            #setDefaultSoundSystem("Sounds\Intro_1_Soft_Pump.mp3", 1000, 0.3)
                         else:
                             print("Selection menu: Make sure everything is selected.")
             
 # Display board game
     elif(gameStatus == 'Game'):#This means we're about to start a new game, start initialising the screen and its elements.
+        
         dieRect = pygame.Rect((725,50,150,150))
         if ev.type == pygame.QUIT:
             gameIsRunning = False
         if ev.type == pygame.KEYUP:
             if ev.key == pygame.K_ESCAPE:
                 gameStatus = 'main'
-                setDefaultSoundSystem("Sounds\Intro_Soft_Touch.mp3", 1000)
+                #setDefaultSoundSystem("Sounds\Intro_Soft_Touch.mp3", 1000)
                 screenVectorSize["x"] = mainMenuSize[0]
                 screenVectorSize["y"] = mainMenuSize[1]
                 setScreenVectorSize(screenVectorSize, screen)
@@ -319,8 +322,27 @@ while gameIsRunning:
                 yourChar = None
                 latestSelectedChar = None
                 player = Player #Reset all lives/conditions etc by recreating the Player class
+        if ev.type == pygame.MOUSEBUTTONDOWN:
+            clickPosition = pygame.mouse.get_pos()#Check if player tile is selected
+            if (clickPosition[0] >= 0 and clickPosition[0] <= 75) and (clickPosition[1] >= 0 and clickPosition[1] <= 75):
+                tileSelected = True
+                cardName = selectedCharacters[0].Name
+            elif (clickPosition[0] >= 525 and clickPosition[0] <= 600) and (clickPosition[1] >= 0 and clickPosition[1] <= 75):
+                tileSelected = True
+                cardName = selectedCharacters[1].Name
+            elif (clickPosition[0] >= 525 and clickPosition[0] <= 600) and (clickPosition[1] >= 525 and clickPosition[1] <= 600):
+                if len(selectedCharacters) >= 3:
+                    tileSelected = True
+                    cardName = selectedCharacters[2].Name
+            elif (clickPosition[0] >= 0 and clickPosition[0] <= 75) and (clickPosition[1] >= 525 and clickPosition[1] <= 600):
+                if len(selectedCharacters) >= 4:
+                    tileSelected = True
+                    cardName = selectedCharacters[3].Name
+            else:
+                tileSelected = False
         screen.blit(board,(0,0))
-
+        if tileSelected:#If player tile is selected, display character card referenced to character chosen by player
+            screen.blit(playerImageCardDict[cardName],(660,289))
         #Return the new player number so that the global variable can be updated instead of local.
         currentPlayerCounter, randomDiceNumber, firstDieIsThrown = PawnLocations(selectedCharacters, pawns, currentPlayerCounter, randomDiceNumber,firstDieIsThrown)
         #draw labels on scoreboard with lifepoints/conditions p/player
