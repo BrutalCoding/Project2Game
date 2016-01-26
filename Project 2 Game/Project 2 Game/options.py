@@ -20,11 +20,11 @@ class Option:
     
     def get_color(self):
         if self.hovered:
-            return (255, 255, 255)
+            return (255, 0, 0)
         elif self.selected:
             return (255, 255, 0)
         else:
-            return (100, 100, 100)
+            return (255, 255, 255)
         
     def set_rect(self):
         self.set_rend()
