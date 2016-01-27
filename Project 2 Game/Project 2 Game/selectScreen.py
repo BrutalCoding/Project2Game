@@ -1,63 +1,57 @@
-import sys
 import pygame
 import options
-import random
 
-pygame.init()
-Font = pygame.font.Font(None, 40)
-events = pygame.event.get()
-amountPlayers = 0
-yourChar = None
-
-def drawOptions(l):
+class selectScreen:
+    #Reset the selected and amount of characters to zero again in able to reselect later.
+    def resetSelections(selectedCharacters, selectedAmountBots):
+        if selectedCharacters != None:
+            selectedCharacters.clear()
+        if selectedAmountBots != None:
+            selectedAmountBots = None
+        return (selectedCharacters, selectedAmountBots)
+    
+    #Draw all the labels on the screen
+    def drawOptions(l):
         for option in l:#Draw all options on the screen
             if option.rect.collidepoint(pygame.mouse.get_pos()):
                 option.hovered = True
             else:
                 option.hovered = False
-            option.draw()   
-
-def setAmountPlayers(id):
-    if int(id) <= 4:#Set amount players that will play the game
-        amountPlayers = int(id)
-
-def selectCharacter(id):
-    if int(id) > 4 and int(id) < 10:#Set which character player 1 is.
-        if id == 5:
-            yourChar = players[0]
-        elif id == 6:
-            yourChar = players[1]
-        elif id == 7:
-            yourChar = players[2]
-        elif id == 8:
-            yourChar = players[3]
-        chosen.append(yourChar)
-
-
-class selectScreen:
-    def __init__(self):
-        self.Amount
-        
+            option.draw()
     
-    def Run(self):
-        entities = self
-        screen = pygame.display.set_mode((1000, 600))
-        label = Font.render("Choose amount players", 1, (255,255,0))
-        screen.blit(label, (350, 10))
-        label = Font.render("Choose your character", 1, (255,255,0))
-        screen.blit(label, (350, 150))
+    #Make the bot labels
+    def makeBotLabels(generateID, maxAmountOfBots, font, screen, Option):
+        labelAmountPlayers = []
+        playerNumber = 1 #Starting with min 1 and max 4 players
+        amountPlayersLabelVector = {"x": 200,"y": 50}
+        generateID += 1 #Increment the latest generated id by one so it stays unique
+        labelBotName = "Bot"
+        for x in range(1,maxAmountOfBots):
+            if not playerNumber == 1:
+                labelBotName = "Bots"
+            labelAmountPlayers.append(Option(str(playerNumber) + ' ' + labelBotName, (amountPlayersLabelVector['x'], amountPlayersLabelVector['y']), font, screen, generateID))
+            generateID += 1
+            playerNumber += 1
+            if amountPlayersLabelVector["x"] > 600:
+                amountPlayersLabelVector["x"] = 200
+                amountPlayersLabelVector["y"] += 50
+            else:
+                amountPlayersLabelVector['x'] += 150
+        return (labelAmountPlayers, generateID)
+
+    #Make the player labels
+    def makePlayerLabels(players, Option, font, screen):
+        playerLabels = []
+        playerLabelVector = {"x": 100,"y": 200}#x,y coordinates on the screen for the label to be displayed
+        generateID = 0 #Generate an ID for each player
+        for x in players:
+            playerLabels.append(Option(x.Name, (playerLabelVector["x"], playerLabelVector["y"]), font, screen, generateID))
+            generateID += 1
+            playerNameRectWidth = len(x.Name) * 20 
+            if playerLabelVector["x"] > 600:
+                playerLabelVector["x"] = 50
+                playerLabelVector["y"] += 50
+            else:
+                playerLabelVector["x"] += playerNameRectWidth
+        return (playerLabels, generateID)
         
-        for x in entities:
-                drawOptions(x)
-                for ev in events:
-                    if ev.type == pygame.MOUSEBUTTONUP:
-                        for option in x:
-                            if option.rect.collidepoint(pygame.mouse.get_pos()):
-                                if option.id == 10:
-                                    gameStatus = 'Game'
-                                else:
-                                    setAmountPlayers(option.id)
-                                    selectCharacter(option.id)
-                    elif ev.type == pygame.KEYUP:
-                        if ev.key == pygame.K_ESCAPE:
-                            gameStatus = 'main'
