@@ -24,6 +24,7 @@ font = pygame.font.Font(None, 40)
 selectedCharacters = [] #List of selected characters from the "new game" screen
 selectedAmountBots = None #How many bots he/she wants to play
 currentPlayerCounter = 0 #Default player
+tempCurrentPlayerCounter = 0 #Only used in the gamestatus 'fight'
 defaultPawnLocations = [] #The top left corner but all with a little bit of offset so the pawns are not on top of each other
 defaultTileLocations = [] #All tiles that are possible to move on to (with a pawn)
 maxAmountOfBots = 4  #MAX 4 OR GIUSEPPE WILL HAVE YOUR TESTICLES                                                                                                                                                              #Minimal 1 and maximum depends on how many characters are in the game, see 'players' variable. E.g. 4 = 3 bots, 1 player.
@@ -49,11 +50,11 @@ screen = pygame.display.set_mode((screenVectorSize["x"], screenVectorSize["y"]))
 screen = setScreenVectorSize(screenVectorSize, screen)
 
 #Loop through selected characters and place related pawns
-def  PawnLocations(selectedCharacters, pawns,currentPlayerCounter, randomDiceNumber, firstDieIsThrown, gameStatus):
+def  PawnLocations(selectedCharacters, pawns,currentPlayerCounter, randomDiceNumber, firstDieIsThrown, gameStatus, tempCurrentPlayerCounter):
     #Board game main loop. Every movement is here.
     if ev.type == pygame.MOUSEBUTTONDOWN:
         if dieRect.collidepoint(pygame.mouse.get_pos()):
-            randomDiceNumber = random.randint(1,6)
+            randomDiceNumber = 1 #random.randint(1,6)
             currentTile = selectedCharacters[currentPlayerCounter].Tile
             for x in boardtiles.items():
                 if x[1] == currentTile:
@@ -69,17 +70,17 @@ def  PawnLocations(selectedCharacters, pawns,currentPlayerCounter, randomDiceNum
                         #superfighters = SuperFighters()
                         superfighter = random.choice(list(SuperFighters))
                         randominteger = random.randint(1,6)
-                        damage = superfighter.value[randominteger]
+                        damage = superfighter.value[randominteger - 1]
                         print(superfighter, ' does ', damage)
                         selectedCharacters[currentPlayerCounter].Health -= damage
                         print("Fighter is coming!")
                     curplaypos = selectedCharacters[currentPlayerCounter].Tile #Current player's position on board
                     #if curplaypos == boardtiles[0,1,9,10,11,19,20,21,29,30,31,39]:
                     if curplaypos in (boardtiles[0], boardtiles[1], boardtiles[9], boardtiles[10], boardtiles[11], boardtiles[19], boardtiles[20], boardtiles[21], boardtiles[29], boardtiles[30], boardtiles[31], boardtiles[39]):
-                        if currentPlayerCounter == 0 and curplaypos == boardtiles[0] and curplaypos == boardtiles[39] and curplaypos == boardtiles[1]:
-                            pass #Don't fight
+                        if currentPlayerCounter == 0 and (curplaypos == boardtiles[0] or curplaypos == boardtiles[39] or curplaypos == boardtiles[1]):
+                            print ("NOT GOING TO FIGHT 1")
                         elif currentPlayerCounter != 0 and curplaypos in (boardtiles[currentPlayerCounter * 10], boardtiles[(currentPlayerCounter * 10) - 1], boardtiles[(currentPlayerCounter * 10) + 1]):
-                            pass
+                            print ("NOT GOING TO FIGHT 2")
                         else: #Fight code
                             print('Fight started (else)')
                             gameStatus = 'fight'
@@ -113,8 +114,14 @@ def  PawnLocations(selectedCharacters, pawns,currentPlayerCounter, randomDiceNum
                 currentPlayerCounter = 0
             else:
                 currentPlayerCounter += 1
+
+            if tempCurrentPlayerCounter == len(selectedCharacters) - 1: 
+                tempCurrentPlayerCounter = 0
+            else:
+                tempCurrentPlayerCounter += 1
+            
             firstDieIsThrown = True
-            return currentPlayerCounter, randomDiceNumber, firstDieIsThrown, gameStatus
+            return currentPlayerCounter, randomDiceNumber, firstDieIsThrown, gameStatus,tempCurrentPlayerCounter
     elif( pygame.key.get_pressed()[pygame.K_SPACE] != 0 ):
         print("SPACE PRESSED")
         currentTile = selectedCharacters[currentPlayerCounter].Tile
@@ -136,7 +143,7 @@ def  PawnLocations(selectedCharacters, pawns,currentPlayerCounter, randomDiceNum
             currentPlayerCounter = 0
         else:
             currentPlayerCounter += 1
-        return currentPlayerCounter, randomDiceNumber,firstDieIsThrown,gameStatus
+        return currentPlayerCounter, randomDiceNumber,firstDieIsThrown,gameStatus,tempCurrentPlayerCounter
     else:
         #Update player position
         cntCorner = 1
@@ -165,7 +172,7 @@ def  PawnLocations(selectedCharacters, pawns,currentPlayerCounter, randomDiceNum
             cntPlayer += 1
         screen.blit(dice[randomDiceNumber], (725,50))
 
-    return currentPlayerCounter, randomDiceNumber,firstDieIsThrown,gameStatus
+    return currentPlayerCounter, randomDiceNumber,firstDieIsThrown,gameStatus,tempCurrentPlayerCounter
 
 #Define and initialize the sounds of the game
 pygame.mixer.init()
@@ -206,10 +213,10 @@ pawns =     {1:pawnload('Images/Blue.png'), 2:pawnload('Images/Red.png'), 3:pawn
 dice =      {1:diceload('Images/Die-1.png'), 2:diceload('Images/Die-2.png'), 3:diceload('Images/Die-3.png'), 4:diceload('Images/Die-4.png'), 5:diceload('Images/Die-5.png'), 6:diceload('Images/Die-6.png')}
 playerImages = {1:playerload('Images/mike.png'), 2:playerload('Images/paquiao.png'), 3:playerload('Images/mohammed.png'), 4:playerload('Images/rocky.png')}
 boardtiles = tiles()
-players =  [Player("Badr Heri",100, 15, PlayerCards.BadrHeri,boardtiles[0],"card__badr_heri.jpg", "face__badr_heri.jpg"),
-            Player("Manny Pecquiao",100, 15, PlayerCards.MannyPecquiao,boardtiles[0],"card__manny_pecquiao.jpg","face__manny_pecquiao.jpg"),
-            Player("Mike Tysen",100, 15, PlayerCards.MikeTysen,boardtiles[0],"card__mike_tysen.jpg","face__mike_tysen.jpg"),
-            Player("Rocky Belboa",100,15,PlayerCards.RockyBelboa,boardtiles[0],"card__rocky_belboa.jpg","face__rocky_belboa.jpg"),
+players =  [Player("Mohammed Ali",100, 15, PlayerCards.MohammedAli,boardtiles[0],"card__badr_heri.jpg", "face__badr_heri.jpg", "mohammed.png"),
+            Player("Manny Pecquiao",100, 15, PlayerCards.MannyPecquiao,boardtiles[0],"card__manny_pecquiao.jpg","face__manny_pecquiao.jpg", "paquiao.png"),
+            Player("Mike Tysen",100, 15, PlayerCards.MikeTysen,boardtiles[0],"card__mike_tysen.jpg","face__mike_tysen.jpg", "mike.png"),
+            Player("Rocky Belboa",100,15,PlayerCards.RockyBelboa,boardtiles[0],"card__rocky_belboa.jpg","face__rocky_belboa.jpg", "rocky.png"),
             Player("Bunya Sakboa",100,15,PlayerCards.RockyBelboa,boardtiles[0],"card__badr_heri.jpg", "face__bunya_sakboa.jpg"),
             Player("Iron Rekt",100,15,PlayerCards.RockyBelboa,boardtiles[0],"card__badr_heri.jpg","face__iron_reckt.jpg"),
             Player("Wout The Ripper",100,15,PlayerCards.RockyBelboa,boardtiles[0],"card__badr_heri.jpg"),
@@ -402,7 +409,7 @@ while gameIsRunning:
         screen.blit(board,(0,0))
 
         #Return the new player number so that the global variable can be updated instead of local.
-        currentPlayerCounter, randomDiceNumber, firstDieIsThrown, gameStatus = PawnLocations(selectedCharacters, pawns, currentPlayerCounter, randomDiceNumber,firstDieIsThrown, gameStatus)
+        currentPlayerCounter, randomDiceNumber, firstDieIsThrown, gameStatus,tempCurrentPlayerCounter = PawnLocations(selectedCharacters, pawns, currentPlayerCounter, randomDiceNumber,firstDieIsThrown, gameStatus,tempCurrentPlayerCounter)
         #draw labels on scoreboard with lifepoints/conditions p/player
         scoreBoardFont = pygame.font.Font(None, 20)
         scoreBoardColor = (255,255,255)
@@ -460,53 +467,47 @@ while gameIsRunning:
         screen.blit(text, (screen.get_rect().centerx / 2, screen.get_size()[1] - 50))
     elif gameStatus == "fight":
         #print('We\'re in the fight gameStatus')
-
         screen.fill((0,0,0))
-        screen.blit(playerImages[currentPlayerCounter+1],(0,(screenVectorSize["y"]-240)))
-        landedTile = selectedCharacters[currentPlayerCounter].Tile
+        if tempCurrentPlayerCounter == 4:
+            tempCurrentPlayerCounter = 3
+        else:
+            tempCurrentPlayerCounter = currentPlayerCounter - 1
+        ImageFighter = pygame.image.load("Images\\" + selectedCharacters[tempCurrentPlayerCounter].ImageFighter)
+        screen.blit(ImageFighter, (250,300))
+        landedTile = selectedCharacters[tempCurrentPlayerCounter].Tile
 
-        curplaypos = selectedCharacters[currentPlayerCounter - 1].Tile #currentPlayerCounter got updated to the next player, but we want the previous player.
-        key = None
+        curplaypos = selectedCharacters[tempCurrentPlayerCounter].Tile #currentPlayerCounter got updated to the next player, but we want the previous player.
+
         #Find index number in boardtiles
         for x in boardtiles.items():
             if x[1] == curplaypos:
-                if x[0] != 0 and x[0] != 39 and x[0] != 1: #If its not the top left corner (Blue corner)
-                    key = int(round(x[0], 0) / 10) #Going to fight player 1, 2 or 3 and not player 0.
+                if not x[0] in (0,39,1): #If its not the top left corner (Blue corner)
+                    tempCurrentPlayerCounter = int(round(x[0] / 10)) #Going to fight player 1, 2 or 3 and not player 0.
                 else:
-                    key = 0 #Going to fight player 0 (first player, that means its going to fight you.
+                    tempCurrentPlayerCounter = 0 #Going to fight player 0 (first player, that means its going to fight you.
         
 
         if curplaypos in (boardtiles[0], boardtiles[1], boardtiles[9], boardtiles[10], boardtiles[11], boardtiles[19], boardtiles[20], boardtiles[21], boardtiles[29], boardtiles[30], boardtiles[31], boardtiles[39]):
-            if (currentPlayerCounter - 1) == 0 and curplaypos == boardtiles[0] and curplaypos == boardtiles[39] and curplaypos == boardtiles[1]:
-                print('Player #', (currentPlayerCounter - 1),' cant go fight himself - Hello',key)
+            if (tempCurrentPlayerCounter) == 0 and curplaypos == boardtiles[0] or curplaypos == boardtiles[39] or curplaypos == boardtiles[1]:
+                print('Player #', (tempCurrentPlayerCounter - 1),' cant go fight himself - Hello',tempCurrentPlayerCounter)
                 pass #Don't fight
-            elif (currentPlayerCounter - 1) != 0 and curplaypos in (boardtiles[(currentPlayerCounter - 1) * 10], boardtiles[((currentPlayerCounter - 1) * 10) - 1], boardtiles[((currentPlayerCounter - 1) * 10) + 1]):
-                print('Player #', currentPlayerCounter,' cant go fight himself - Goodbye',key)
+            elif (tempCurrentPlayerCounter) != 0 and curplaypos in (boardtiles[(tempCurrentPlayerCounter) * 10], boardtiles[((tempCurrentPlayerCounter) * 10) - 1], boardtiles[((tempCurrentPlayerCounter) * 10) + 1]):
+                print('Player #', tempCurrentPlayerCounter,' cant go fight himself - Goodbye',tempCurrentPlayerCounter)
                 pass
             else: #Fight code
-                print('Player #', (currentPlayerCounter - 1),' is going to fight player',key)
+                print('Player #', (tempCurrentPlayerCounter -1),' is going to fight player',tempCurrentPlayerCounter)
 
 
-                gameStatus = 'fight'
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        ImageOpponent = pygame.image.load("Images\\" + selectedCharacters[tempCurrentPlayerCounter].ImageFighter)
+        screen.blit(ImageOpponent, (400,300))
+        
+        if(tempCurrentPlayerCounter == 3):
+            tempCurrentPlayerCounter = 0
         if ev.type == pygame.MOUSEBUTTONDOWN:
             gameStatus = 'Game'
 
-
+        if currentPlayerCounter == len(selectedCharacters) - 1:
+            currentPlayerCounter == 0
 
         #screen.blit(text, text)
 
