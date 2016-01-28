@@ -11,7 +11,7 @@ from PlayerCards import *
 from rules import *
 from pygame import gfxdraw
 from SuperFighters import *
-
+from selectScreen import *
 
 Option = options.Option
 pygame.mixer.init()
@@ -40,6 +40,8 @@ background = pygame.image.load("Images\Background.png")
 selectBackground = pygame.image.load("Images\EmptyBackground.png")
 botChosen = False
 charChosen = False
+tileSelected = False
+enableSound = True
 
 #Font init
 pygame.font.init()
@@ -194,13 +196,12 @@ pygame.mixer.init()
 def setDefaultSoundFadeOut(fadeOutms):
     pygame.mixer.music.fadeout(fadeOutms)
     return True
-def setDefaultSoundSystem(soundFileLocation, fadeOutms=500, volume=1):
-    if(setDefaultSoundFadeOut(fadeOutms)):
+def setDefaultSoundSystem(enableSound, soundFileLocation, fadeOutms=500, volume=1):
+    if(setDefaultSoundFadeOut(fadeOutms)) and enableSound:
         pygame.mixer.music.set_volume(volume)
         pygame.mixer.music.load(soundFileLocation)
         pygame.mixer.music.play(-1)
-    return
-setDefaultSoundSystem("Sounds\Intro_Soft_Touch.mp3", 1000)
+setDefaultSoundSystem(enableSound,"Sounds\Intro_Soft_Touch.mp3", 1000)
 
 #Reset the selected and amount of characters to zero again in able to reselect later.
 def resetSelections(selectedCharacters, selectedAmountBots, latestSelectedChar):
@@ -290,6 +291,7 @@ startGameID = generateID + 1
 mainMenuGameID = startGameID + 1
 selectScreenButtons = [Option("Start game", (575, 550), font_all, screen, startGameID),
                        Option("Main", (25, 550), font_all, screen, mainMenuGameID)] # go back to main menu
+buttonw = [Option("Disable sound!", (300, 100), font, screen, 99), Option("Enable sound!", (300, 200), font, screen, 98)]
 entities = [playerLabels, labelAmountPlayers, selectScreenButtons]
 
 def drawOptions(l):
@@ -341,12 +343,15 @@ while gameIsRunning:
                         screenVectorSize["x"] = mainMenuSize[0]
                         screenVectorSize["y"] = mainMenuSize[1]
                         setScreenVectorSize(screenVectorSize, screen)
-                        setDefaultSoundSystem("Sounds\Intro_1_Hyped.mp3", 1000)
+                        setDefaultSoundSystem(enableSound,"Sounds\Intro_1_Hyped.mp3", 1000)
                         
                     elif(option.id == 1):#Load game
                         pass
                     elif(option.id == 2):#Options
-                        pass
+                        gameStatus = "options"
+                        screenVectorSize["x"] = mainMenuSize[0]
+                        screenVectorSize["y"] = mainMenuSize[1]
+                        setScreenVectorSize(screenVectorSize, screen)
                     elif(option.id == 3):#Rules
                         gameStatus = "rules"
                         screenVectorSize["x"] = mainMenuSize[0]
@@ -364,7 +369,7 @@ while gameIsRunning:
                 screenVectorSize["x"] = mainMenuSize[0]
                 screenVectorSize["y"] = mainMenuSize[1]
                 setScreenVectorSize(screenVectorSize, screen)
-                setDefaultSoundSystem("Sounds\Intro_Soft_Touch.mp3", 1000)
+                setDefaultSoundSystem(enableSound, "Sounds\Intro_Soft_Touch.mp3", 1000)
 
 
         
@@ -422,11 +427,11 @@ while gameIsRunning:
                             screenVectorSize["y"] = 600
                             setScreenVectorSize(screenVectorSize, screen)
                             gameStatus = 'Game'
-                            setDefaultSoundSystem("Sounds\Intro_1_Soft_Pump.mp3", 1000, 0.3)
+                            setDefaultSoundSystem(enableSound,"Sounds\Intro_1_Soft_Pump.mp3", 1000, 0.3)
                         elif option.id == mainMenuGameID:
                             selectedCharacters, selectedAmountBots, latestSelectedChar = resetSelections(selectedCharacters, selectedAmountBots, latestSelectedChar)
                             gameStatus = 'main'
-                            setDefaultSoundSystem("Sounds\Intro_Soft_Touch.mp3", 1000)
+                            setDefaultSoundSystem(enableSound,"Sounds\Intro_Soft_Touch.mp3", 1000)
                         else:
                             if selectedAmountBots == None:#check if bot is selected
                                 botChosen = True
@@ -441,7 +446,7 @@ while gameIsRunning:
         if ev.type == pygame.KEYUP:
             if ev.key == pygame.K_ESCAPE:
                 gameStatus = 'main'
-                setDefaultSoundSystem("Sounds\Intro_Soft_Touch.mp3", 1000)
+                setDefaultSoundSystem(enableSound,"Sounds\Intro_Soft_Touch.mp3", 1000)
                 screenVectorSize["x"] = mainMenuSize[0]
                 screenVectorSize["y"] = mainMenuSize[1]
                 setScreenVectorSize(screenVectorSize, screen)
@@ -451,8 +456,28 @@ while gameIsRunning:
                 yourChar = None
                 #latestSelectedChar = None
                 player = Player #Reset all lives/conditions etc by recreating the Player class
+        if ev.type == pygame.MOUSEBUTTONDOWN:
+            clickPosition = pygame.mouse.get_pos()#Check if player tile is selected
+            if (clickPosition[0] >= 0 and clickPosition[0] <= 75) and (clickPosition[1] >= 0 and clickPosition[1] <= 75):
+                tileSelected = True
+                cardName = selectedCharacters[0].Name
+            elif (clickPosition[0] >= 525 and clickPosition[0] <= 600) and (clickPosition[1] >= 0 and clickPosition[1] <= 75):
+                tileSelected = True
+                cardName = selectedCharacters[1].Name
+            elif (clickPosition[0] >= 525 and clickPosition[0] <= 600) and (clickPosition[1] >= 525 and clickPosition[1] <= 600):
+                if len(selectedCharacters) >= 3:
+                    tileSelected = True
+                    cardName = selectedCharacters[2].Name
+            elif (clickPosition[0] >= 0 and clickPosition[0] <= 75) and (clickPosition[1] >= 525 and clickPosition[1] <= 600):
+                if len(selectedCharacters) >= 4:
+                    tileSelected = True
+                    cardName = selectedCharacters[3].Name
+            else:
+                print(pygame.mixer.get_num_channels())
+                tileSelected = False
         screen.blit(board,(0,0))
-
+        if tileSelected:#If player tile is selected, display character card referenced to character chosen by player
+            screen.blit(playerImageCardDict[cardName],(660,289))
         #Return the new player number so that the global variable can be updated instead of local.
         currentPlayerCounter, randomDiceNumber, firstDieIsThrown, gameStatus,tempCurrentPlayerCounter = PawnLocations(selectedCharacters, pawns, currentPlayerCounter, randomDiceNumber,firstDieIsThrown, gameStatus,tempCurrentPlayerCounter)
         #draw labels on scoreboard with lifepoints/conditions p/player
@@ -491,6 +516,33 @@ while gameIsRunning:
                 scoreBoardHeight += 25
                 labelPixelHeight += 25
         cnt = 0
+    elif gameStatus == "options":
+        label = font.render("Option menu", 1, (255,255,0))
+        screen.blit(label, (300, 50))
+        geluid = pygame.mixer.get_num_channels()
+        selectScreen.drawOptions(buttonw)
+        if ev.type == pygame.MOUSEBUTTONDOWN:
+            for option in buttonw:
+                if option.rect.collidepoint(pygame.mouse.get_pos()):
+                    if option.id == 99:
+                        enableSound = False
+                        pygame.mixer.music.stop()
+                    elif option.id == 98:
+                        enableSound = True
+        if ev.type == pygame.KEYUP:
+            if ev.key == pygame.K_ESCAPE:
+                gameStatus = 'main'
+                #mainmenusound#
+                setDefaultSoundSystem(enableSound,"Sounds\Intro_Soft_Touch.mp3", 1000)
+                screenVectorSize["x"] = mainMenuSize[0]
+                screenVectorSize["y"] = mainMenuSize[1]
+                setScreenVectorSize(screenVectorSize, screen)
+                selectedCharacters, selectedAmountBots = selectScreen.resetSelections(selectedCharacters, selectedAmountBots)
+                selectedCharacters = [] #List of selected characters from the "new game" screen
+                firstDieIsThrown = False
+                yourChar = None
+                latestSelectedChar = None
+                player = Player #Reset all lives/conditions etc by recreating the Player class
 # display rules
     elif gameStatus == "rules":
         screen.blit(pygame.transform.scale(selectBackground,(screenVectorSize["x"],screenVectorSize["y"])), (0, 0))

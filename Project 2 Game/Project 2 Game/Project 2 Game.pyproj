@@ -50,6 +50,7 @@
     <Compile Include="rules.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="selectScreen.py" />
     <Compile Include="SuperFighters.py" />
   </ItemGroup>
   <ItemGroup>
