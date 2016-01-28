@@ -73,7 +73,7 @@ def  PawnLocations(selectedCharacters, pawns,currentPlayerCounter, randomDiceNum
     #Board game main loop. Every movement is here.
     if ev.type == pygame.MOUSEBUTTONDOWN:
         if dieRect.collidepoint(pygame.mouse.get_pos()):
-            randomDiceNumber = 1 #random.randint(1,6)
+            randomDiceNumber = random.randint(1,6)
             currentTile = selectedCharacters[currentPlayerCounter].Tile
             for x in boardtiles.items():
                 if x[1] == currentTile:
@@ -204,7 +204,7 @@ def setDefaultSoundSystem(enableSound, soundFileLocation, fadeOutms=500, volume=
         pygame.mixer.music.set_volume(volume)
         pygame.mixer.music.load(soundFileLocation)
         pygame.mixer.music.play(-1)
-setDefaultSoundSystem(enableSound,"Sounds\Intro_Soft_Touch.mp3", 1000)
+setDefaultSoundSystem(enableSound,"Sounds\Intro_Soft_Touch.mp3", 300)
 
 #Reset the selected and amount of characters to zero again in able to reselect later.
 def resetSelections(selectedCharacters, selectedAmountBots, latestSelectedChar):
@@ -346,7 +346,7 @@ while gameIsRunning:
                         screenVectorSize["x"] = mainMenuSize[0]
                         screenVectorSize["y"] = mainMenuSize[1]
                         setScreenVectorSize(screenVectorSize, screen)
-                        setDefaultSoundSystem(enableSound,"Sounds\Intro_1_Hyped.mp3", 1000)
+                        setDefaultSoundSystem(enableSound,"Sounds\Intro_1_Hyped.mp3", 300)
                         
                     elif(option.id == 1):#Load game
                         pass
@@ -372,7 +372,7 @@ while gameIsRunning:
                 screenVectorSize["x"] = mainMenuSize[0]
                 screenVectorSize["y"] = mainMenuSize[1]
                 setScreenVectorSize(screenVectorSize, screen)
-                setDefaultSoundSystem(enableSound, "Sounds\Intro_Soft_Touch.mp3", 1000)
+                setDefaultSoundSystem(enableSound, "Sounds\Intro_Soft_Touch.mp3", 300)
 
 
         
@@ -430,11 +430,11 @@ while gameIsRunning:
                             screenVectorSize["y"] = 600
                             setScreenVectorSize(screenVectorSize, screen)
                             gameStatus = 'Game'
-                            setDefaultSoundSystem(enableSound,"Sounds\Intro_1_Soft_Pump.mp3", 1000, 0.3)
+                            setDefaultSoundSystem(enableSound,"Sounds\Intro_1_Soft_Pump.mp3", 300, 0.3)
                         elif option.id == mainMenuGameID:
                             selectedCharacters, selectedAmountBots, latestSelectedChar = resetSelections(selectedCharacters, selectedAmountBots, latestSelectedChar)
                             gameStatus = 'main'
-                            setDefaultSoundSystem(enableSound,"Sounds\Intro_Soft_Touch.mp3", 1000)
+                            setDefaultSoundSystem(enableSound,"Sounds\Intro_Soft_Touch.mp3", 300)
                         else:
                             if selectedAmountBots == None:#check if bot is selected
                                 botChosen = True
@@ -449,7 +449,7 @@ while gameIsRunning:
         if ev.type == pygame.KEYUP:
             if ev.key == pygame.K_ESCAPE:
                 gameStatus = 'main'
-                setDefaultSoundSystem(enableSound,"Sounds\Intro_Soft_Touch.mp3", 1000)
+                setDefaultSoundSystem(enableSound,"Sounds\Intro_Soft_Touch.mp3", 300)
                 screenVectorSize["x"] = mainMenuSize[0]
                 screenVectorSize["y"] = mainMenuSize[1]
                 setScreenVectorSize(screenVectorSize, screen)
@@ -536,7 +536,7 @@ while gameIsRunning:
             if ev.key == pygame.K_ESCAPE:
                 gameStatus = 'main'
                 #mainmenusound#
-                setDefaultSoundSystem(enableSound,"Sounds\Intro_Soft_Touch.mp3", 1000)
+                setDefaultSoundSystem(enableSound,"Sounds\Intro_Soft_Touch.mp3", 300)
                 screenVectorSize["x"] = mainMenuSize[0]
                 screenVectorSize["y"] = mainMenuSize[1]
                 setScreenVectorSize(screenVectorSize, screen)
@@ -607,8 +607,12 @@ while gameIsRunning:
         screen.blit(ImageOpponent, (800,0)) #Blit defender in top right
 
         screen.blit(pygame.image.load("Images\\" + selectedCharacters[currentPlayerCounter].ImageCard), (0,0))
-
-        screen.blit(dice[fighterDieInt], (((screen.get_width() /2)-95), (screen.get_height()/2)-95))
+        
+        #If the first turn has not begun yet, display a placeholder for the dice. Else show what dice was thrown.
+        if fighterCurrentPlayerCounter == 0:
+            screen.blit(pawns[8], (((screen.get_width() /2)-95), (screen.get_height()/2)-95))
+        else:
+            screen.blit(dice[fighterDieInt], (((screen.get_width() /2)-95), (screen.get_height()/2)-95))
         fightDie = pygame.Rect(((screen.get_width() /2)-95), (screen.get_height()/2)-95, 190, 190)
         if fightDie.collidepoint(pygame.mouse.get_pos()) and fighterCurrentPlayerCounter < 2: #If there are still turns left and
             if ev.type == pygame.MOUSEBUTTONDOWN:
@@ -618,8 +622,6 @@ while gameIsRunning:
 
         if(tempCurrentPlayerCounter == 3):
             tempCurrentPlayerCounter = 0
-        
-            
 
         if currentPlayerCounter == len(selectedCharacters) - 1:
             currentPlayerCounter == 0
@@ -628,6 +630,8 @@ while gameIsRunning:
         if fighterCurrentPlayerCounter == 2:
             if ev.type == pygame.KEYUP:
                 if ev.key == pygame.K_SPACE:
+                    setDefaultSoundSystem(enableSound,"Sounds\Intro_1_Soft_Pump.mp3", 300, 0.3)
+                    fighterCurrentPlayerCounter = 0
                     gameStatus = 'Game'
 
         #screen.blit(text, text)
