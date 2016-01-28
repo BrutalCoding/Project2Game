@@ -29,7 +29,7 @@
     <PtvsTargetsFile>$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets</PtvsTargetsFile>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Ai.py">
+    <Compile Include="AI.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="board.py">
@@ -96,6 +96,7 @@
     <Content Include="Images\rocky.png" />
     <Content Include="Images\test.PNG" />
     <Content Include="Images\yellow.png" />
+    <Content Include="Sounds\fight.mp3" />
     <Content Include="Sounds\Intro_1_Hyped.mp3" />
     <Content Include="Sounds\Intro_1_Soft_Pump.mp3" />
     <Content Include="Sounds\Intro_Soft_Touch.mp3" />
