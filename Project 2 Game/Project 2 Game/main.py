@@ -563,6 +563,7 @@ while gameIsRunning:
         text = font.render("Press 'ESC' to get back to the main menu", 1, (255,255,0))
         textpos = text.get_rect()
         screen.blit(text, (screen.get_rect().centerx / 4, screen.get_size()[1] - 50))
+
     elif gameStatus == "fight":
         #print('We\'re in the fight gameStatus')
         screen.fill((0,0,0))
@@ -597,13 +598,14 @@ while gameIsRunning:
 
 
         ImageOpponent = pygame.image.load("Images\\" + selectedCharacters[tempCurrentPlayerCounter].ImageFighter)
-        screen.blit(ImageFighter, (250,300)) #Blit attacker in bottom down
-        screen.blit(ImageOpponent, (400,300)) #Blit defender in top right
+        screen.blit(ImageFighter, (0,450)) #Blit attacker in bottom down
+        screen.blit(ImageOpponent, (800,0)) #Blit defender in top right
         
         if(tempCurrentPlayerCounter == 3):
             tempCurrentPlayerCounter = 0
         if ev.type == pygame.MOUSEBUTTONDOWN:
             gameStatus = 'Game'
+            
 
         if currentPlayerCounter == len(selectedCharacters) - 1:
             currentPlayerCounter == 0
