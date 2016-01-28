@@ -237,8 +237,8 @@ while gameIsRunning:
                         screenVectorSize["x"] = 1000
                         screenVectorSize["y"] = 600
                         setScreenVectorSize(screenVectorSize, screen)
-                        #selectscreensound#setDefaultSoundSystem("Sounds\Intro_1_Hyped.mp3", 1000)
-                        
+                        #selectscreensound#
+                        setDefaultSoundSystem(enableSound,"Sounds\Intro_1_Hyped.mp3", 1000)
                     elif(option.id == 1):#Load game
                         pass
                     elif(option.id == 2):#Options
@@ -263,7 +263,8 @@ while gameIsRunning:
                 screenVectorSize["x"] = mainMenuSize[0]
                 screenVectorSize["y"] = mainMenuSize[1]
                 setScreenVectorSize(screenVectorSize, screen)
-                #mainmenusound#setDefaultSoundSystem("Sounds\Intro_Soft_Touch.mp3", 1000)
+                #mainmenusound#
+                setDefaultSoundSystem(enableSound,"Sounds\Intro_Soft_Touch.mp3", 1000)
         
         label = font.render("How many bots should play?", 1, (255,255,0))
         screen.blit(label, (350, 10))
@@ -306,7 +307,8 @@ while gameIsRunning:
                             screenVectorSize["y"] = 600
                             setScreenVectorSize(screenVectorSize, screen)
                             gameStatus = 'Game'
-                            #gameboardsound#setDefaultSoundSystem("Sounds\Intro_1_Soft_Pump.mp3", 1000, 0.3)
+                            #gameboardsound#
+                            setDefaultSoundSystem(enableSound,"Sounds\Intro_1_Soft_Pump.mp3", 1000, 0.3)
                         else:
                             print("Selection menu: Make sure everything is selected.")
             
@@ -319,7 +321,8 @@ while gameIsRunning:
         if ev.type == pygame.KEYUP:
             if ev.key == pygame.K_ESCAPE:
                 gameStatus = 'main'
-                #mainmenusound#setDefaultSoundSystem("Sounds\Intro_Soft_Touch.mp3", 1000)
+                #mainmenusound#
+                setDefaultSoundSystem(enableSound,"Sounds\Intro_Soft_Touch.mp3", 1000)
                 screenVectorSize["x"] = mainMenuSize[0]
                 screenVectorSize["y"] = mainMenuSize[1]
                 setScreenVectorSize(screenVectorSize, screen)
