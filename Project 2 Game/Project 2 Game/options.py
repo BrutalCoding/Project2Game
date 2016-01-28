@@ -1,4 +1,4 @@
-class Option:
+﻿class Option:
     hovered = False
     selected = False
     def __init__(self, text, pos, font, screen, id):
