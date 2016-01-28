@@ -63,10 +63,10 @@
     <Content Include="Images\blue.png" />
     <Content Include="Images\board.png" />
     <Content Include="Images\cardboard_texture.jpg" />
-    <Content Include="Images\card__badr_heri.jpg" />
-    <Content Include="Images\card__manny_pecquiao.jpg" />
-    <Content Include="Images\card__mike_tysen.jpg" />
-    <Content Include="Images\card__rocky_belboa.jpg" />
+    <Content Include="Images\card__manny_pecquiao.png" />
+    <Content Include="Images\card__mike_tysen.png" />
+    <Content Include="Images\card__mohammed_ali.png" />
+    <Content Include="Images\card__rocky_belboa.png" />
     <Content Include="Images\circle.jpg" />
     <Content Include="Images\Die-1.png" />
     <Content Include="Images\Die-2.png" />

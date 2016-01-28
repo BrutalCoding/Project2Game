@@ -212,14 +212,14 @@ pawns =     {1:pawnload('Images/Blue.png'), 2:pawnload('Images/Red.png'), 3:pawn
 dice =      {1:diceload('Images/Die-1.png'), 2:diceload('Images/Die-2.png'), 3:diceload('Images/Die-3.png'), 4:diceload('Images/Die-4.png'), 5:diceload('Images/Die-5.png'), 6:diceload('Images/Die-6.png')}
 playerImages = {1:playerload('Images/mike.png'), 2:playerload('Images/paquiao.png'), 3:playerload('Images/mohammed.png'), 4:playerload('Images/rocky.png')}
 boardtiles = tiles()
-players =  [Player("Mohammed Ali",100, 15, PlayerCards.MohammedAli,boardtiles[0],"card__badr_heri.jpg", "face__badr_heri.jpg", "mohammed.png"),
-            Player("Manny Pecquiao",100, 15, PlayerCards.MannyPecquiao,boardtiles[0],"card__manny_pecquiao.jpg","face__manny_pecquiao.jpg", "paquiao.png"),
-            Player("Mike Tysen",100, 15, PlayerCards.MikeTysen,boardtiles[0],"card__mike_tysen.jpg","face__mike_tysen.jpg", "mike.png"),
-            Player("Rocky Belboa",100,15,PlayerCards.RockyBelboa,boardtiles[0],"card__rocky_belboa.jpg","face__rocky_belboa.jpg", "rocky.png"),
-            Player("Bunya Sakboa",100,15,PlayerCards.RockyBelboa,boardtiles[0],"card__badr_heri.jpg", "face__bunya_sakboa.jpg"),
-            Player("Iron Rekt",100,15,PlayerCards.RockyBelboa,boardtiles[0],"card__badr_heri.jpg","face__iron_reckt.jpg"),
-            Player("Wout The Ripper",100,15,PlayerCards.RockyBelboa,boardtiles[0],"card__badr_heri.jpg"),
-            Player("Bad Boy",100,15,PlayerCards.RockyBelboa,boardtiles[0],"card__badr_heri.jpg")]
+players =  [Player("Mohammed Ali",100, 15, PlayerCards.MohammedAli,boardtiles[0],"card__mohammed_ali.png", "mohammed.png", "mohammed.png"),
+            Player("Manny Pecquiao",100, 15, PlayerCards.MannyPecquiao,boardtiles[0],"card__manny_pecquiao.png","face__manny_pecquiao.jpg", "paquiao.png"),
+            Player("Mike Tysen",100, 15, PlayerCards.MikeTysen,boardtiles[0],"card__mike_tysen.png","face__mike_tysen.jpg", "mike.png"),
+            Player("Rocky Belboa",100,15,PlayerCards.RockyBelboa,boardtiles[0],"card__rocky_belboa.png","face__rocky_belboa.jpg", "rocky.png"),
+            Player("Bunya Sakboa",100,15,PlayerCards.RockyBelboa,boardtiles[0],"card__mohammed_ali.png", "face__bunya_sakboa.jpg"),
+            Player("Iron Rekt",100,15,PlayerCards.RockyBelboa,boardtiles[0],"card__mohammed_ali.png","face__iron_reckt.jpg"),
+            Player("Wout The Ripper",100,15,PlayerCards.RockyBelboa,boardtiles[0],"card__mohammed_ali.png"),
+            Player("Bad Boy",100,15,PlayerCards.RockyBelboa,boardtiles[0],"card__mohammed_ali.png")]
 
 #Load all images from the Player class
 playerImageCardDict = {}
@@ -550,7 +550,7 @@ while gameIsRunning:
         landedTile = selectedCharacters[tempCurrentPlayerCounter].Tile
 
         curplaypos = selectedCharacters[tempCurrentPlayerCounter].Tile #currentPlayerCounter got updated to the next player, but we want the previous player.
-        screen.blit(pygame.image.load("Images\\" + selectedCharacters[tempCurrentPlayerCounter].ImageCard), (screen.get_width() - 250, screen.get_height() - 295))
+        screen.blit(pygame.transform.smoothscale(pygame.image.load("Images\\" + selectedCharacters[tempCurrentPlayerCounter].ImageCard),(250,295)), (screen.get_width() - 250, screen.get_height() - 295))
         #Find index number in boardtiles
         for x in boardtiles.items():
             if x[1] == curplaypos:
@@ -575,11 +575,12 @@ while gameIsRunning:
         screen.blit(ImageFighter, (0,450)) #Blit attacker in bottom down
         screen.blit(ImageOpponent, (800,0)) #Blit defender in top right
 
-        screen.blit(pygame.image.load("Images\\" + selectedCharacters[currentPlayerCounter].ImageCard), (0,0))
+        screen.blit(pygame.transform.smoothscale(pygame.image.load("Images\\" + selectedCharacters[currentPlayerCounter].ImageCard),(250,295)), (0,0))
         
         #If the first turn has not begun yet, display a placeholder for the dice. Else show what dice was thrown.
         if fighterCurrentPlayerCounter == 0:
-            screen.blit(pawns[8], (((screen.get_width() /2)-95), (screen.get_height()/2)-95))
+            diePlaceholder = pygame.image.load("Images\\head__iron_rekt.png")
+            screen.blit(diePlaceholder, (((screen.get_width() /2)-95), (screen.get_height()/2)-95))
         else:
             screen.blit(dice[fighterDieInt], (((screen.get_width() /2)-95), (screen.get_height()/2)-95))
         fightDie = pygame.Rect(((screen.get_width() /2)-95), (screen.get_height()/2)-95, 190, 190)
