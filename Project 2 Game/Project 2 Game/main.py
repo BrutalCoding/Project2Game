@@ -20,9 +20,9 @@ pygame.font.init()
 #Init variables
 gameStatus = 'main'
 rules = Rules
-font = pygame.font.Font(None, 35)
+font = pygame.font.Font(None, 25)
 font_path = "./Fonts/Brushstrike.ttf"
-fontSPM = pygame.font.Font(font_path, 40)
+fontSPM = pygame.font.Font(font_path, 35)
 font_path = "./Fonts/Superstar.ttf"
 font_all = pygame.font.Font(font_path, 40)
 selectedCharacters = [] #List of selected characters from the "new game" screen
@@ -40,6 +40,10 @@ mainMenuSize = [800, 600]
 mainBackground = pygame.image.load("Images\FighterMenu.png")
 background = pygame.image.load("Images\Background.png")
 selectBackground = pygame.image.load("Images\EmptyBackground.png")
+botChosen = False
+charChosen = False
+
+
 
 #The board can be resized every moment by declaring the function here
 boardVectorSize = {"x": 600, "y": 600}
@@ -147,11 +151,11 @@ setDefaultSoundSystem("Sounds\Intro_Soft_Touch.mp3", 1000)
 
 #Reset the selected and amount of characters to zero again in able to reselect later.
 def resetSelections(selectedCharacters, selectedAmountBots, latestSelectedChar):
-    if selectedCharacters != None:
+    if selectedCharacters is not None:
         selectedCharacters.clear()
-    if selectedAmountBots != None:
+    if selectedAmountBots is not None:
         selectedAmountBots = None
-    if latestSelectedChar != None:
+    if latestSelectedChar is not None:
         latestSelectedChar = None
     return (selectedCharacters, selectedAmountBots, latestSelectedChar)
 
@@ -172,14 +176,10 @@ menu =    [Option("NEW GAME", (screen.get_rect().centerx - xM, 180), font_all, s
 pawns =     {1:pawnload('Images/Blue.png'), 2:pawnload('Images/Red.png'), 3:pawnload('Images/Green.png'), 4:pawnload('Images/Yellow.png'), 5:pawnload('Images/Blue.png'), 6:pawnload('Images/Red.png'), 7:pawnload('Images/Green.png'), 8:pawnload('Images/head__iron_rekt.png')}
 dice =      {1:diceload('Images/Die-1.png'), 2:diceload('Images/Die-2.png'), 3:diceload('Images/Die-3.png'), 4:diceload('Images/Die-4.png'), 5:diceload('Images/Die-5.png'), 6:diceload('Images/Die-6.png')}
 boardtiles = tiles()
-players =  [Player("Badr Heri",100, 15, PlayerCards.BadrHeri,boardtiles[0],"card__badr_heri.jpg", "face__badr_heri.jpg"),
-            Player("Manny Pecquiao",150, 15, PlayerCards.MannyPecquiao,boardtiles[0],"card__manny_pecquiao.jpg","face__manny_pecquiao.jpg"),
-            Player("Mike Tysen",200, 15, PlayerCards.MikeTysen,boardtiles[0],"card__mike_tysen.jpg","face__mike_tysen.jpg"),
-            Player("Rocky Belboa",250,15,PlayerCards.RockyBelboa,boardtiles[0],"card__rocky_belboa.jpg","face__rocky_belboa.jpg"),
-            Player("Bunya Sakboa",250,15,PlayerCards.RockyBelboa,boardtiles[0],"card__badr_heri.jpg", "face__bunya_sakboa.jpg"),
-            Player("Iron Rekt",250,15,PlayerCards.RockyBelboa,boardtiles[0],"card__badr_heri.jpg","face__iron_reckt.jpg"),
-            Player("Wout The Ripper",250,15,PlayerCards.RockyBelboa,boardtiles[0],"card__badr_heri.jpg"),
-            Player("Bad Boy",250,15,PlayerCards.RockyBelboa,boardtiles[0],"card__badr_heri.jpg")]
+players =  [Player("Muhammad Ali",100, 15, PlayerCards.BadrHeri,boardtiles[0],"card__badr_heri.jpg", "muhammed_ali.png"),
+            Player("Manny Pecquiao",150, 15, PlayerCards.MannyPecquiao,boardtiles[0],"card__manny_pecquiao.jpg","pecquiao.png"),
+            Player("Mike Tysen",200, 15, PlayerCards.MikeTysen,boardtiles[0],"card__mike_tysen.jpg","mike.png"),
+            Player("Rocky Belboa",250,15,PlayerCards.RockyBelboa,boardtiles[0],"card__rocky_belboa.jpg","rocky.png")]
 
 #Load all images from the Player class
 playerImageCardDict = {}
@@ -197,10 +197,9 @@ generateID = 0 #Generate an ID for each player
 for x in players:
     playerLabels.append(Option(x.Name, (playerLabelVector["x"], playerLabelVector["y"]), font, screen, generateID))
     generateID += 1
-    playerNameRectWidth = len(x.Name) * 20 
+    playerNameRectWidth = len(x.Name) * 15 
     if playerLabelVector["x"] > 600:
         playerLabelVector["x"] = 50
-        playerLabelVector["y"] += 50
     else:
         playerLabelVector["x"] += playerNameRectWidth
 amountOfCharacters = generateID #This is the amount of players adding + 1 because it started from ID 0
@@ -208,7 +207,7 @@ amountOfCharacters = generateID #This is the amount of players adding + 1 becaus
 
 labelAmountPlayers = []
 playerNumber = 1 #Starting with min 1 and max 4 players
-amountPlayersLabelVector = {"x": 200,"y": 50}
+amountPlayersLabelVector = {"x": 150,"y": 50}
 generateID += 1 #Increment the latest generated id by one so it stays unique
 labelBotName = "Bot"
 for x in range(1,maxAmountOfBots):
@@ -226,8 +225,8 @@ for x in range(1,maxAmountOfBots):
 #Increment the latest generated id and give it to the clickable button
 startGameID = generateID + 1
 mainMenuGameID = startGameID + 1
-selectScreenButtons = [Option("Start game", (560, 550), font_all, screen, startGameID),
-                       Option("Main", (250, 550), font_all, screen, mainMenuGameID)] # go back to main menu
+selectScreenButtons = [Option("Start game", (575, 550), font_all, screen, startGameID),
+                       Option("Main", (25, 550), font_all, screen, mainMenuGameID)] # go back to main menu
 entities = [playerLabels, labelAmountPlayers, selectScreenButtons]
 
 def drawOptions(l):
@@ -304,17 +303,31 @@ while gameIsRunning:
                 setDefaultSoundSystem("Sounds\Intro_Soft_Touch.mp3", 1000)
 
         screen.blit(pygame.transform.scale(selectBackground,(screenVectorSize["x"],screenVectorSize["y"])), (0, 0))
-        label = fontSPM.render("How many bots should play?", 1, (255,0,0))
-        screen.blit(label, (screen.get_rect().centerx / 6, 100))
-        label = fontSPM.render("Choose the characters", 1, (255,0,0))
+        label = fontSPM.render("Choose bots", 1, (255,0,0))
+        screen.blit(label, (screen.get_rect().centerx / 6, 20))
+        label = fontSPM.render("Choose your fighter", 1, (255,0,0))
         screen.blit(label, (screen.get_rect().centerx / 2, 150))
         
+
         if latestSelectedChar != None:
             screen.blit(playerImageFaceDict[latestSelectedChar.Name],(100,300)) #Image of the character
             screen.blit(playerImageCardDict[latestSelectedChar.Name],(350,300)) #Image of the score card
 
+        playerX = 70
+        for fighter in players:
+                screen.blit(playerImageFaceDict[fighter.Name],(playerX,200))
+                playerX += 200
+
         for entity in entities:
             drawOptions(entity)
+
+            if botChosen == True:
+                selectchar = font.render("Make sure a bot is selected", 1,(255,0,0))
+                screen.blit(selectchar, (screen.get_rect().centerx / 2, 500))
+            elif charChosen == True:
+                selectchar = font.render("Make sure a character is selected", 1,(255,0,0))
+                screen.blit(selectchar, (screen.get_rect().centerx / 2, 500))
+
             if ev.type == pygame.MOUSEBUTTONDOWN:
                 for option in entity:
                     if option.rect.collidepoint(pygame.mouse.get_pos()):
@@ -327,6 +340,7 @@ while gameIsRunning:
                             yourChar = None
                             latestSelectedChar = None
                             selectedCharacters = []
+                            botChosen = False
                             for character in entities[0]:
                                 character.selected = False
                             option.selected = True
@@ -337,7 +351,7 @@ while gameIsRunning:
                                     yourChar = players[option.id] #Set yourChar to the selected player
                                 
                                 latestSelectedChar = players[option.id]
-
+                                charChosen = False
                                 selectedCharacters.append(latestSelectedChar) #Add the selected character to the list
                                 option.selected = True
                         elif option.id == startGameID and selectedAmountBots != None and len(selectedCharacters) == (selectedAmountBots.id - len(players) + 1):
@@ -349,8 +363,12 @@ while gameIsRunning:
                         elif option.id == mainMenuGameID:
                             selectedCharacters, selectedAmountBots, latestSelectedChar = resetSelections(selectedCharacters, selectedAmountBots, latestSelectedChar)
                             gameStatus = 'main'
+                            setDefaultSoundSystem("Sounds\Intro_Soft_Touch.mp3", 1000)
                         else:
-                            print("Selection menu: Make sure everything is selected.")
+                            if selectedAmountBots == None:#check if bot is selected
+                                botChosen = True
+                            elif latestSelectedChar == None:# check if character is selected
+                                charChosen = True
             
 # Display board game
     elif(gameStatus == 'Game'):#This means we're about to start a new game, start initialising the screen and its elements.
@@ -364,11 +382,10 @@ while gameIsRunning:
                 screenVectorSize["x"] = mainMenuSize[0]
                 screenVectorSize["y"] = mainMenuSize[1]
                 setScreenVectorSize(screenVectorSize, screen)
-                selectedCharacters, selectedAmountBots = resetSelections(selectedCharacters, selectedAmountBots)
+                selectedCharacters, selectedAmountBots, latestSelectedChar = resetSelections(selectedCharacters, selectedAmountBots, latestSelectedChar)
                 selectedCharacters = [] #List of selected characters from the "new game" screen
                 firstDieIsThrown = False
                 yourChar = None
-                latestSelectedChar = None
                 player = Player #Reset all lives/conditions etc by recreating the Player class
         screen.blit(board,(0,0))
 
@@ -412,7 +429,7 @@ while gameIsRunning:
         cnt = 0
 # display rules
     elif gameStatus == "rules":
-        screen.blit(pygame.transform.scale(background,(screenVectorSize["x"],screenVectorSize["y"])), (0, 0))
+        screen.blit(pygame.transform.scale(selectBackground,(screenVectorSize["x"],screenVectorSize["y"])), (0, 0))
         if ev.type == pygame.QUIT:
             gameIsRunning = False
         if ev.type == pygame.KEYUP:
