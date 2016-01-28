@@ -29,6 +29,9 @@
     <PtvsTargetsFile>$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets</PtvsTargetsFile>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Ai.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="board.py">
       <SubType>Code</SubType>
     </Compile>
@@ -47,9 +50,7 @@
     <Compile Include="rules.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="selectScreen.py">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="selectScreen.py" />
     <Compile Include="SuperFighters.py" />
   </ItemGroup>
   <ItemGroup>
@@ -58,6 +59,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Images\1.jpg" />
+    <Content Include="Images\Background.png" />
     <Content Include="Images\blue.png" />
     <Content Include="Images\board.png" />
     <Content Include="Images\cardboard_texture.jpg" />
@@ -72,6 +74,7 @@
     <Content Include="Images\Die-4.png" />
     <Content Include="Images\Die-5.png" />
     <Content Include="Images\Die-6.png" />
+    <Content Include="Images\EmptyBackground.png" />
     <Content Include="Images\face_iron.jpg" />
     <Content Include="Images\face__badr_heri.jpg" />
     <Content Include="Images\face__bunya_sakboa.jpg" />
@@ -81,11 +84,16 @@
     <Content Include="Images\face__mike_tysen.psd" />
     <Content Include="Images\face__rocky_belboa.jpg" />
     <Content Include="Images\face__rocky_belboa.psd" />
+    <Content Include="Images\FighterMenu.png" />
     <Content Include="Images\green.png" />
     <Content Include="Images\head__iron_rekt.png" />
+    <Content Include="Images\mike.png" />
+    <Content Include="Images\muhammed_ali.png" />
+    <Content Include="Images\pecquiao.png" />
     <Content Include="Images\placeholder_253_300.png" />
     <Content Include="Images\placeholder_500_500.png" />
     <Content Include="Images\red.png" />
+    <Content Include="Images\rocky.png" />
     <Content Include="Images\test.PNG" />
     <Content Include="Images\yellow.png" />
     <Content Include="Sounds\Intro_1_Hyped.mp3" />

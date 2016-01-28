@@ -1,4 +1,4 @@
-'''
+﻿'''
 Created on 19 jan. 2016
 
 @author: Bunyamin Sakar
@@ -105,7 +105,7 @@ class PlayerCards(Enum):
              }
         }
     
-    BadrHeri = {
+    MohammedAli = {
             1:{
                 1:{"damage":1,"condition":-1},
                 2:{"damage":9,"condition":-2},
