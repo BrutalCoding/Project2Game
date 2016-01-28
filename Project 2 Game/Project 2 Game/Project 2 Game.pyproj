@@ -53,13 +53,10 @@
     <Compile Include="SuperFighters.py" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Fonts\" />
     <Folder Include="Images\" />
     <Folder Include="Sounds\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Fonts\Brushstrike.ttf" />
-    <Content Include="Fonts\Superstar.ttf" />
     <Content Include="Images\1.jpg" />
     <Content Include="Images\Background.png" />
     <Content Include="Images\blue.png" />
@@ -90,9 +87,7 @@
     <Content Include="Images\green.png" />
     <Content Include="Images\head__iron_rekt.png" />
     <Content Include="Images\mike.png" />
-    <Content Include="Images\mohammed.png" />
     <Content Include="Images\muhammed_ali.png" />
-    <Content Include="Images\paquiao.png" />
     <Content Include="Images\pecquiao.png" />
     <Content Include="Images\placeholder_253_300.png" />
     <Content Include="Images\placeholder_500_500.png" />
