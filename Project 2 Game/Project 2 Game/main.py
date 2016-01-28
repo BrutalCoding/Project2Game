@@ -43,7 +43,8 @@ botChosen = False
 charChosen = False
 tileSelected = False
 enableSound = True
-
+fighterDieInt = 1
+fighterCurrentPlayerCounter = 0 #When a player lands on a corner, this variable will be assigned to the current fighter.
 #Font init
 pygame.font.init()
 font = pygame.font.Font(None, 25)
@@ -606,26 +607,28 @@ while gameIsRunning:
         screen.blit(ImageOpponent, (800,0)) #Blit defender in top right
 
         screen.blit(pygame.image.load("Images\\" + selectedCharacters[currentPlayerCounter].ImageCard), (0,0))
-        #screen.blit(attackerCard, (0,0))
 
-        
-        #95
-
-        
-        fightDie = pygame.Rect(((screen.get_width() / 2))-95, (screen.get_height() / 2)-95, 190, 190)
-        #dieRect = pygame.Rect((725,50,150,150))
-
+        screen.blit(dice[fighterDieInt], (((screen.get_width() /2)-95), (screen.get_height()/2)-95))
+        fightDie = pygame.Rect(((screen.get_width() /2)-95), (screen.get_height()/2)-95, 190, 190)
+        if fightDie.collidepoint(pygame.mouse.get_pos()) and fighterCurrentPlayerCounter < 2: #If there are still turns left and
+            if ev.type == pygame.MOUSEBUTTONDOWN:
+                    fighterDieInt = random.randint(1,6)
+                    pygame.time.delay(150)
+                    fighterCurrentPlayerCounter += 1
 
         if(tempCurrentPlayerCounter == 3):
             tempCurrentPlayerCounter = 0
-        if ev.type == pygame.KEYUP:
-            if ev.key == pygame.K_e:
-                pygame.mixer.music.stop()
-                gameStatus = 'Game'
+        
             
 
         if currentPlayerCounter == len(selectedCharacters) - 1:
             currentPlayerCounter == 0
+
+        #Player 0 and Player 1 exists, if it is 2 (which means both players have had their turns already) then reset it back to 0 for the next fight
+        if fighterCurrentPlayerCounter == 2:
+            if ev.type == pygame.KEYUP:
+                if ev.key == pygame.K_SPACE:
+                    gameStatus = 'Game'
 
         #screen.blit(text, text)
 
