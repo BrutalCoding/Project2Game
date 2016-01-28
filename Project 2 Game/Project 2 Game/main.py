@@ -13,6 +13,7 @@ from pygame import gfxdraw
 from SuperFighters import *
 from selectScreen import *
 
+
 Option = options.Option
 pygame.mixer.init()
 pygame.init()
@@ -100,6 +101,7 @@ def  PawnLocations(selectedCharacters, pawns,currentPlayerCounter, randomDiceNum
                             print ("NOT GOING TO FIGHT 2")
                         else: #Fight code
                             print('Fight started (else)')
+                            setDefaultSoundSystem(enableSound, "Sounds\Fight.mp3")
                             gameStatus = 'fight'
                             #Sequence
                             #Attacker lands on another player's square
@@ -566,6 +568,8 @@ while gameIsRunning:
 
     elif gameStatus == "fight":
         #print('We\'re in the fight gameStatus')
+        dieRect = None
+        
         screen.fill((0,0,0))
         if tempCurrentPlayerCounter == 4:
             tempCurrentPlayerCounter = 3
@@ -576,7 +580,7 @@ while gameIsRunning:
         landedTile = selectedCharacters[tempCurrentPlayerCounter].Tile
 
         curplaypos = selectedCharacters[tempCurrentPlayerCounter].Tile #currentPlayerCounter got updated to the next player, but we want the previous player.
-
+        screen.blit(pygame.image.load("Images\\" + selectedCharacters[tempCurrentPlayerCounter].ImageCard), (screen.get_width() - 250, screen.get_height() - 295))
         #Find index number in boardtiles
         for x in boardtiles.items():
             if x[1] == curplaypos:
@@ -600,11 +604,24 @@ while gameIsRunning:
         ImageOpponent = pygame.image.load("Images\\" + selectedCharacters[tempCurrentPlayerCounter].ImageFighter)
         screen.blit(ImageFighter, (0,450)) #Blit attacker in bottom down
         screen.blit(ImageOpponent, (800,0)) #Blit defender in top right
+
+        screen.blit(pygame.image.load("Images\\" + selectedCharacters[currentPlayerCounter].ImageCard), (0,0))
+        #screen.blit(attackerCard, (0,0))
+
         
+        #95
+
+        
+        fightDie = pygame.Rect(((screen.get_width() / 2))-95, (screen.get_height() / 2)-95, 190, 190)
+        #dieRect = pygame.Rect((725,50,150,150))
+
+
         if(tempCurrentPlayerCounter == 3):
             tempCurrentPlayerCounter = 0
-        if ev.type == pygame.MOUSEBUTTONDOWN:
-            gameStatus = 'Game'
+        if ev.type == pygame.KEYUP:
+            if ev.key == pygame.K_e:
+                pygame.mixer.music.stop()
+                gameStatus = 'Game'
             
 
         if currentPlayerCounter == len(selectedCharacters) - 1:
