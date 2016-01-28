@@ -12,7 +12,7 @@ from rules import *
 from pygame import gfxdraw
 from SuperFighters import *
 from selectScreen import *
-
+from WindowsScreen import *
 
 Option = options.Option
 pygame.mixer.init()
@@ -86,15 +86,12 @@ def  PawnLocations(selectedCharacters, pawns,currentPlayerCounter, randomDiceNum
                     selectedCharacters[currentPlayerCounter].Tile = boardtiles[newTileNumber]
                     print("Player #" + str(currentPlayerCounter) +  " moved to next tile: " + str(boardtiles[newTileNumber]))
                     if selectedCharacters[currentPlayerCounter].Tile == boardtiles[5] or selectedCharacters[currentPlayerCounter].Tile == boardtiles[15] or selectedCharacters[currentPlayerCounter].Tile == boardtiles[25] or selectedCharacters[currentPlayerCounter].Tile == boardtiles[35]:
-                        #superfighters = SuperFighters()
                         superfighter = random.choice(list(SuperFighters))
                         randominteger = random.randint(1,6)
                         damage = superfighter.value[randominteger - 1]
-                        print(superfighter, ' does ', damage)
+                        print("Fighter is coming! |", superfighter, ' does ', damage)
                         selectedCharacters[currentPlayerCounter].Health -= damage
-                        print("Fighter is coming!")
                     curplaypos = selectedCharacters[currentPlayerCounter].Tile #Current player's position on board
-                    #if curplaypos == boardtiles[0,1,9,10,11,19,20,21,29,30,31,39]:
                     if curplaypos in (boardtiles[0], boardtiles[1], boardtiles[9], boardtiles[10], boardtiles[11], boardtiles[19], boardtiles[20], boardtiles[21], boardtiles[29], boardtiles[30], boardtiles[31], boardtiles[39]):
                         if currentPlayerCounter == 0 and (curplaypos == boardtiles[0] or curplaypos == boardtiles[39] or curplaypos == boardtiles[1]):
                             print ("NOT GOING TO FIGHT 1")
@@ -114,20 +111,7 @@ def  PawnLocations(selectedCharacters, pawns,currentPlayerCounter, randomDiceNum
                             #Defender's stamina gets deducted by the amount corresponding to the damage he chose.
                             #Game calculates highest damage - lowest damage and deals this to the player with the lowest damage
                             #Preferably make ai choose damage higher than taken damage within stamina limits
-                            #pass
-                        #if currentPlayerCounter != boardtiles[currentPlayerCounter]:
-
-
-
-
-                    
-
-                     
-
-                    
             screen.blit(pawns[currentPlayerCounter + 1], currentTile)
-
-            
             pygame.time.delay(150)
             #If the counter is at the last character, start at the first player again.
             if currentPlayerCounter == len(selectedCharacters) - 1: 
@@ -141,29 +125,7 @@ def  PawnLocations(selectedCharacters, pawns,currentPlayerCounter, randomDiceNum
                 tempCurrentPlayerCounter += 1
             
             firstDieIsThrown = True
-            return currentPlayerCounter, randomDiceNumber, firstDieIsThrown, gameStatus,tempCurrentPlayerCounter
-    elif( pygame.key.get_pressed()[pygame.K_SPACE] != 0 ):
-        print("SPACE PRESSED")
-        currentTile = selectedCharacters[currentPlayerCounter].Tile
-        for x in boardtiles.items():
-            if x[1] == currentTile:
-                #To prevent that newTileNumber gets number 40 (Since it goes from 0 to 39)
-                if x[0] + 1 != 40:
-                    newTileNumber = x[0] + 1
-                else:
-                    newTileNumber = 0
-                print("Player #" + str(currentPlayerCounter) +  " - Current tile: " + str(x[1]) + " - Next tile: " + str(boardtiles[newTileNumber]))
-                selectedCharacters[currentPlayerCounter].Tile = boardtiles[newTileNumber]
-                print("Player #" + str(currentPlayerCounter) +  " moved to next tile: " + str(boardtiles[newTileNumber]))
-        screen.blit(pawns[currentPlayerCounter + 1], currentTile)
-        pygame.time.delay(150)
-
-        #If the counter is at the last character, start at the first player again.
-        if currentPlayerCounter == len(selectedCharacters) - 1: 
-            currentPlayerCounter = 0
-        else:
-            currentPlayerCounter += 1
-        return currentPlayerCounter, randomDiceNumber,firstDieIsThrown,gameStatus,tempCurrentPlayerCounter
+            return currentPlayerCounter, randomDiceNumber, firstDieIsThrown, gameStatus,tempCurrentPlayerCounter,selectedCharacters[currentPlayerCounter].Health
     else:
         #Update player position
         cntCorner = 1
@@ -191,8 +153,20 @@ def  PawnLocations(selectedCharacters, pawns,currentPlayerCounter, randomDiceNum
             screen.blit(pawns[cntPlayer], moveToTile)
             cntPlayer += 1
         screen.blit(dice[randomDiceNumber], (725,50))
+        playersAlive = 0
+        for fighter in selectedCharacters:
+            if fighter.Health > 0:
+                playersAlive += 1
+            else:
+                fighter.Health = 0 #Reset it to 0 instead of displaying a negative value.
+        if playersAlive == 1:
+            message = str(selectedCharacters[currentPlayerCounter].Name) + " just won the game!"
+            ImageBGLink = "Images/EmptyBackground.png"
+            brushLink = "Fonts/Brushstrike.ttf"
+            screenMessage = WindowsScreen(screen,message,ImageBGLink,brushLink)
+            screen.blit(screenMessage.surf, (0, 0))
 
-    return currentPlayerCounter, randomDiceNumber,firstDieIsThrown,gameStatus,tempCurrentPlayerCounter
+    return currentPlayerCounter, randomDiceNumber,firstDieIsThrown,gameStatus,tempCurrentPlayerCounter,selectedCharacters[currentPlayerCounter].Health
 
 #Define and initialize the sounds of the game
 pygame.mixer.init()
@@ -385,11 +359,6 @@ while gameIsRunning:
         if latestSelectedChar != None:
             screen.blit(playerImageFaceDict[latestSelectedChar.Name],(100,300)) #Image of the character
             screen.blit(playerImageCardDict[latestSelectedChar.Name],(350,300)) #Image of the score card
-
-        playerX = 70
-        for fighter in players:
-                screen.blit(playerImageFaceDict[fighter.Name],(playerX,200))
-                playerX += 200
             
         for entity in entities:
             drawOptions(entity)
@@ -482,7 +451,7 @@ while gameIsRunning:
         if tileSelected:#If player tile is selected, display character card referenced to character chosen by player
             screen.blit(playerImageCardDict[cardName],(660,289))
         #Return the new player number so that the global variable can be updated instead of local.
-        currentPlayerCounter, randomDiceNumber, firstDieIsThrown, gameStatus,tempCurrentPlayerCounter = PawnLocations(selectedCharacters, pawns, currentPlayerCounter, randomDiceNumber,firstDieIsThrown, gameStatus,tempCurrentPlayerCounter)
+        currentPlayerCounter, randomDiceNumber, firstDieIsThrown, gameStatus,tempCurrentPlayerCounter,selectedCharacters[currentPlayerCounter].Health = PawnLocations(selectedCharacters, pawns, currentPlayerCounter, randomDiceNumber,firstDieIsThrown, gameStatus,tempCurrentPlayerCounter)
         #draw labels on scoreboard with lifepoints/conditions p/player
         scoreBoardFont = pygame.font.Font(None, 20)
         scoreBoardColor = (255,255,255)

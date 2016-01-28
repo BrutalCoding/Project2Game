@@ -29,9 +29,6 @@
     <PtvsTargetsFile>$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets</PtvsTargetsFile>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="AI.py">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="board.py">
       <SubType>Code</SubType>
     </Compile>
@@ -52,6 +49,9 @@
     </Compile>
     <Compile Include="selectScreen.py" />
     <Compile Include="SuperFighters.py" />
+    <Compile Include="WindowsScreen.py">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />
