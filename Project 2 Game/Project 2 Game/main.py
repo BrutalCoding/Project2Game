@@ -35,6 +35,7 @@ randomDiceNumber = 1
 firstDieIsThrown = False
 mainMenuSize = [800, 600]
 background = pygame.image.load("Images\cardboard_texture.jpg")
+enableSound = True
 
 #The board can be resized every moment by declaring the function here
 boardVectorSize = {"x": 600, "y": 600}
@@ -136,13 +137,15 @@ pygame.mixer.init()
 def setDefaultSoundFadeOut(fadeOutms):
     pygame.mixer.music.fadeout(fadeOutms)
     return True
-def setDefaultSoundSystem(soundFileLocation, fadeOutms=500, volume=1):
-    if(setDefaultSoundFadeOut(fadeOutms)):
+def setDefaultSoundSystem(enableSound, soundFileLocation, fadeOutms=500, volume=1):
+    if(setDefaultSoundFadeOut(fadeOutms)) and enableSound:
         pygame.mixer.music.set_volume(volume)
         pygame.mixer.music.load(soundFileLocation)
         pygame.mixer.music.play(-1)
-    return
-#setDefaultSoundSystem("Sounds\Intro_Soft_Touch.mp3", 1000)
+    #return
+#mainmenusound#
+setDefaultSoundSystem(enableSound,"Sounds\Intro_Soft_Touch.mp3", 1000)
+
 
 randomInt = 1
 yourChar = None #First selection made is the player
@@ -191,6 +194,7 @@ generateID = labelAmountPlayers[1]
 #Increment the latest generated id and give it to the clickable button
 startGameID = generateID + 1
 selectScreenButtons = [Option("Start game", (800, 550), font, screen, startGameID)]
+buttonw = [Option("Disable sound!", (300, 100), font, screen, 99), Option("Enable sound!", (300, 200), font, screen, 98)]
 entities = [playerLabels[0], labelAmountPlayers[0], selectScreenButtons]
 
 gameIsRunning = True #If set to False, the game will stop and the program will exit.
@@ -233,12 +237,15 @@ while gameIsRunning:
                         screenVectorSize["x"] = 1000
                         screenVectorSize["y"] = 600
                         setScreenVectorSize(screenVectorSize, screen)
-                        #setDefaultSoundSystem("Sounds\Intro_1_Hyped.mp3", 1000)
+                        #selectscreensound#setDefaultSoundSystem("Sounds\Intro_1_Hyped.mp3", 1000)
                         
                     elif(option.id == 1):#Load game
                         pass
                     elif(option.id == 2):#Options
-                        pass
+                        gameStatus = 'options'
+                        screenVectorSize["x"] = mainMenuSize[0]
+                        screenVectorSize["y"] = mainMenuSize[1]
+                        setScreenVectorSize(screenVectorSize, screen)
                     elif(option.id == 3):#Rules
                         gameStatus = "rules"
                         screenVectorSize["x"] = mainMenuSize[0]
@@ -256,7 +263,7 @@ while gameIsRunning:
                 screenVectorSize["x"] = mainMenuSize[0]
                 screenVectorSize["y"] = mainMenuSize[1]
                 setScreenVectorSize(screenVectorSize, screen)
-                setDefaultSoundSystem("Sounds\Intro_Soft_Touch.mp3", 1000)
+                #mainmenusound#setDefaultSoundSystem("Sounds\Intro_Soft_Touch.mp3", 1000)
         
         label = font.render("How many bots should play?", 1, (255,255,0))
         screen.blit(label, (350, 10))
@@ -299,7 +306,7 @@ while gameIsRunning:
                             screenVectorSize["y"] = 600
                             setScreenVectorSize(screenVectorSize, screen)
                             gameStatus = 'Game'
-                            #setDefaultSoundSystem("Sounds\Intro_1_Soft_Pump.mp3", 1000, 0.3)
+                            #gameboardsound#setDefaultSoundSystem("Sounds\Intro_1_Soft_Pump.mp3", 1000, 0.3)
                         else:
                             print("Selection menu: Make sure everything is selected.")
             
@@ -312,7 +319,7 @@ while gameIsRunning:
         if ev.type == pygame.KEYUP:
             if ev.key == pygame.K_ESCAPE:
                 gameStatus = 'main'
-                #setDefaultSoundSystem("Sounds\Intro_Soft_Touch.mp3", 1000)
+                #mainmenusound#setDefaultSoundSystem("Sounds\Intro_Soft_Touch.mp3", 1000)
                 screenVectorSize["x"] = mainMenuSize[0]
                 screenVectorSize["y"] = mainMenuSize[1]
                 setScreenVectorSize(screenVectorSize, screen)
@@ -339,6 +346,7 @@ while gameIsRunning:
                     tileSelected = True
                     cardName = selectedCharacters[3].Name
             else:
+                print(pygame.mixer.get_num_channels())
                 tileSelected = False
         screen.blit(board,(0,0))
         if tileSelected:#If player tile is selected, display character card referenced to character chosen by player
@@ -382,6 +390,33 @@ while gameIsRunning:
                 labelPixelHeight += 25
         cnt = 0
 # display rules
+    elif gameStatus == "options":
+        label = font.render("Option menu", 1, (255,255,0))
+        screen.blit(label, (300, 50))
+        geluid = pygame.mixer.get_num_channels()
+        selectScreen.drawOptions(buttonw)
+        if ev.type == pygame.MOUSEBUTTONDOWN:
+            for option in buttonw:
+                if option.rect.collidepoint(pygame.mouse.get_pos()):
+                    if option.id == 99:
+                        enableSound = False
+                        pygame.mixer.music.stop()
+                    elif option.id == 98:
+                        enableSound = True
+        if ev.type == pygame.KEYUP:
+            if ev.key == pygame.K_ESCAPE:
+                gameStatus = 'main'
+                #mainmenusound#
+                setDefaultSoundSystem(enableSound,"Sounds\Intro_Soft_Touch.mp3", 1000)
+                screenVectorSize["x"] = mainMenuSize[0]
+                screenVectorSize["y"] = mainMenuSize[1]
+                setScreenVectorSize(screenVectorSize, screen)
+                selectedCharacters, selectedAmountBots = selectScreen.resetSelections(selectedCharacters, selectedAmountBots)
+                selectedCharacters = [] #List of selected characters from the "new game" screen
+                firstDieIsThrown = False
+                yourChar = None
+                latestSelectedChar = None
+                player = Player #Reset all lives/conditions etc by recreating the Player class
     elif gameStatus == "rules":
         if ev.type == pygame.QUIT:
             gameIsRunning = False
