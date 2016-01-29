@@ -185,14 +185,14 @@ def setDefaultSoundSystem(enableSound, soundFileLocation, fadeOutms=500, volume=
 setDefaultSoundSystem(enableSound,"Sounds\Intro_Soft_Touch.mp3", 300)
 
 #Reset the selected and amount of characters to zero again in able to reselect later.
-def resetSelections(selectedCharacters, selectedAmountBots, latestSelectedChar):
-    if selectedCharacters is not None:
-        selectedCharacters.clear()
-    if selectedAmountBots is not None:
-        selectedAmountBots = None
-    if latestSelectedChar is not None:
-        latestSelectedChar = None
-    return (selectedCharacters, selectedAmountBots, latestSelectedChar)
+#def resetSelections(selectedCharacters, selectedAmountBots, latestSelectedChar):
+#    if selectedCharacters is not None:
+#        selectedCharacters.clear()
+#    if selectedAmountBots is not None:
+#        selectedAmountBots = None
+#    if latestSelectedChar is not None:
+#        latestSelectedChar = None
+#    return (selectedCharacters, selectedAmountBots, latestSelectedChar)
 
 
 
@@ -342,7 +342,7 @@ while gameIsRunning:
         if ev.type == pygame.KEYUP:
             if ev.key == pygame.K_ESCAPE:
                 gameStatus = 'main'
-                selectedCharacters, selectedAmountBots, latestSelectedChar = resetSelections(selectedCharacters, selectedAmountBots, latestSelectedChar)
+                selectedCharacters, selectedAmountBots, latestSelectedChar = selectScreen.resetSelections(selectedCharacters, selectedAmountBots, latestSelectedChar)
                 screenVectorSize["x"] = mainMenuSize[0]
                 screenVectorSize["y"] = mainMenuSize[1]
                 setScreenVectorSize(screenVectorSize, screen)
@@ -401,7 +401,7 @@ while gameIsRunning:
                             gameStatus = 'Game'
                             setDefaultSoundSystem(enableSound,"Sounds\Intro_1_Soft_Pump.mp3", 300, 0.3)
                         elif option.id == mainMenuGameID:
-                            selectedCharacters, selectedAmountBots, latestSelectedChar = resetSelections(selectedCharacters, selectedAmountBots, latestSelectedChar)
+                            selectedCharacters, selectedAmountBots, latestSelectedChar = selectScreen.resetSelections(selectedCharacters, selectedAmountBots, latestSelectedChar)
                             gameStatus = 'main'
                             setDefaultSoundSystem(enableSound,"Sounds\Intro_Soft_Touch.mp3", 300)
                         else:
@@ -422,7 +422,7 @@ while gameIsRunning:
                 screenVectorSize["x"] = mainMenuSize[0]
                 screenVectorSize["y"] = mainMenuSize[1]
                 setScreenVectorSize(screenVectorSize, screen)
-                selectedCharacters, selectedAmountBots, latestSelectedChar = resetSelections(selectedCharacters, selectedAmountBots, latestSelectedChar)
+                selectedCharacters, selectedAmountBots, latestSelectedChar = selectScreen.resetSelections(selectedCharacters, selectedAmountBots, latestSelectedChar)
                 selectedCharacters = [] #List of selected characters from the "new game" screen
                 firstDieIsThrown = False
                 yourChar = None
@@ -510,7 +510,7 @@ while gameIsRunning:
                         enableSound = True
                         option.selected = True
                     elif option.id == mainMenuGameID:
-                            selectedCharacters, selectedAmountBots, latestSelectedChar = resetSelections(selectedCharacters, selectedAmountBots, latestSelectedChar)
+                            selectedCharacters, selectedAmountBots, latestSelectedChar = selectScreen.resetSelections(selectedCharacters, selectedAmountBots, latestSelectedChar)
                             gameStatus = 'main'
                             setDefaultSoundSystem(enableSound,"Sounds\Intro_Soft_Touch.mp3", 1000)
         if ev.type == pygame.KEYUP:
