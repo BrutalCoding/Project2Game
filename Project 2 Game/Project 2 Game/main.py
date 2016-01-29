@@ -288,8 +288,8 @@ while gameIsRunning:
     #Define the event loop here instead of creating one in each gameStatus (e.g. in the main menu, in the game, in the player select menu etc)
     events = pygame.event.get()
     for ev in events:
-            if ev.type == pygame.QUIT:
-                    gameIsRunning = False
+        if ev.type == pygame.QUIT:
+                gameIsRunning = False
 
     #Erase screen, fill everything with black
     screen.fill((0,0,0))
@@ -348,8 +348,6 @@ while gameIsRunning:
                 setScreenVectorSize(screenVectorSize, screen)
                 setDefaultSoundSystem(enableSound, "Sounds\Intro_Soft_Touch.mp3", 300)
 
-
-        
         screen.blit(pygame.transform.scale(selectBackground,(screenVectorSize["x"],screenVectorSize["y"])), (0, 0))
         label = fontSPM.render("Choose bots", 1, (255,0,0))
         screen.blit(label, (screen.get_rect().centerx / 6, 20))
@@ -413,21 +411,6 @@ while gameIsRunning:
 # Display board game
     elif(gameStatus == 'Game'):#This means we're about to start a new game, start initialising the screen and its elements.
         dieRect = pygame.Rect((725,50,150,150))
-        if ev.type == pygame.QUIT:
-            gameIsRunning = False
-        if ev.type == pygame.KEYUP:
-            if ev.key == pygame.K_ESCAPE:
-                gameStatus = 'main'
-                setDefaultSoundSystem(enableSound,"Sounds\Intro_Soft_Touch.mp3", 300)
-                screenVectorSize["x"] = mainMenuSize[0]
-                screenVectorSize["y"] = mainMenuSize[1]
-                setScreenVectorSize(screenVectorSize, screen)
-                selectedCharacters, selectedAmountBots, latestSelectedChar = resetSelections(selectedCharacters, selectedAmountBots, latestSelectedChar)
-                selectedCharacters = [] #List of selected characters from the "new game" screen
-                firstDieIsThrown = False
-                yourChar = None
-                #latestSelectedChar = None
-                player = Player #Reset all lives/conditions etc by recreating the Player class
         if ev.type == pygame.MOUSEBUTTONDOWN:
             clickPosition = pygame.mouse.get_pos()#Check if player tile is selected
             if (clickPosition[0] >= 0 and clickPosition[0] <= 75) and (clickPosition[1] >= 0 and clickPosition[1] <= 75):
@@ -488,6 +471,21 @@ while gameIsRunning:
                 scoreBoardHeight += 25
                 labelPixelHeight += 25
         cnt = 0
+    if ev.type == pygame.QUIT:
+        gameIsRunning = False
+    if ev.type == pygame.KEYUP:
+        if ev.key == pygame.K_ESCAPE:
+            gameStatus = 'main'
+            setDefaultSoundSystem(enableSound,"Sounds\Intro_Soft_Touch.mp3", 300)
+            screenVectorSize["x"] = mainMenuSize[0]
+            screenVectorSize["y"] = mainMenuSize[1]
+            setScreenVectorSize(screenVectorSize, screen)
+            selectedCharacters, selectedAmountBots, latestSelectedChar = resetSelections(selectedCharacters, selectedAmountBots, latestSelectedChar)
+            selectedCharacters = [] #List of selected characters from the "new game" screen
+            firstDieIsThrown = False
+            yourChar = None
+            #latestSelectedChar = None
+            player = Player #Reset all lives/conditions etc by recreating the Player class
     elif gameStatus == "options":
         label = font.render("Option menu", 1, (255,255,0))
         screen.blit(label, (300, 50))
@@ -538,8 +536,13 @@ while gameIsRunning:
 
     elif gameStatus == "fight":
         #print('We\'re in the fight gameStatus')
+        if fighterCurrentPlayerCounter == 2:
+            if ev.type == pygame.KEYDOWN:
+                if ev.key == pygame.K_SPACE:
+                    setDefaultSoundSystem(enableSound,"Sounds\Intro_1_Soft_Pump.mp3", 300, 0.3)
+                    fighterCurrentPlayerCounter = 0
+                    gameStatus = 'Game'
         dieRect = None
-        
         screen.fill((0,0,0))
         if tempCurrentPlayerCounter == 4:
             tempCurrentPlayerCounter = 3
@@ -570,7 +573,6 @@ while gameIsRunning:
             else: #Fight code
                 print('Player #', (tempCurrentPlayerCounter -1),' is going to fight player',tempCurrentPlayerCounter)
 
-
         ImageOpponent = pygame.image.load("Images\\" + selectedCharacters[tempCurrentPlayerCounter].ImageFighter)
         screen.blit(ImageFighter, (0,450)) #Blit attacker in bottom down
         screen.blit(ImageOpponent, (800,0)) #Blit defender in top right
@@ -597,16 +599,7 @@ while gameIsRunning:
             currentPlayerCounter == 0
 
         #Player 0 and Player 1 exists, if it is 2 (which means both players have had their turns already) then reset it back to 0 for the next fight
-        if fighterCurrentPlayerCounter == 2:
-            if ev.type == pygame.KEYUP:
-                if ev.key == pygame.K_SPACE:
-                    setDefaultSoundSystem(enableSound,"Sounds\Intro_1_Soft_Pump.mp3", 300, 0.3)
-                    fighterCurrentPlayerCounter = 0
-                    gameStatus = 'Game'
-
-        #screen.blit(text, text)
-
-        #pass
+        
     pygame.display.flip()
 pygame.quit()
 sys.exit()
