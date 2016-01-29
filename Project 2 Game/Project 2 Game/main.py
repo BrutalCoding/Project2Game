@@ -48,7 +48,7 @@ pygame.font.init()
 font = pygame.font.Font(None, 25)
 
 def fontSize(size, typeFont):
-    if typeFont == "Brush":
+    if typeFont == "Brush": 
         font_path = "./Fonts/Brushstrike.ttf"
         return pygame.font.Font(font_path, size)
     elif typeFont == "Super":
