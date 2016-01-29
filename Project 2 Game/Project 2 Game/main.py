@@ -13,6 +13,9 @@ from pygame import gfxdraw
 from SuperFighters import *
 from selectScreen import *
 from WindowsScreen import *
+from Dice import rollDice
+from Draw import *
+from Ai import Bot
 
 Option = options.Option
 pygame.mixer.init()
@@ -20,6 +23,7 @@ pygame.init()
 
 #Init variables
 gameStatus = 'main'
+AI = Bot
 rules = Rules
 font = pygame.font.Font(None, 40)
 selectedCharacters = [] #List of selected characters from the "new game" screen
@@ -28,7 +32,7 @@ currentPlayerCounter = 0 #Default player
 tempCurrentPlayerCounter = 0 #Only used in the gamestatus 'fight'
 defaultPawnLocations = [] #The top left corner but all with a little bit of offset so the pawns are not on top of each other
 defaultTileLocations = [] #All tiles that are possible to move on to (with a pawn)
-maxAmountOfBots = 4  #MAX 4 OR GIUSEPPE WILL HAVE YOUR TESTICLES                                                                                                                                                              #Minimal 1 and maximum depends on how many characters are in the game, see 'players' variable. E.g. 4 = 3 bots, 1 player.
+maxAmountOfBots = 4  #MAX 4 OR GIUSEPPE WILL HAVE YOUR TESTICLES          4 is actually 3. Bots means players, really.                                                                                                                                                     #Minimal 1 and maximum depends on how many characters are in the game, see 'players' variable. E.g. 4 = 3 bots, 1 player.
 pawnLocationsTiles = {}
 scoreBoardHeight = 0 #Define the scoreboard height, that's where the lives and conditions of each player gets displayed
 players = Player
@@ -45,6 +49,7 @@ tileSelected = False
 enableSound = True
 fighterDieInt = 1
 fighterCurrentPlayerCounter = 0 #When a player lands on a corner, this variable will be assigned to the current fighter.
+botInstances = {}
 #Font init
 pygame.font.init()
 font = pygame.font.Font(None, 25)
@@ -54,7 +59,10 @@ font_path = "./Fonts/Superstar.ttf"
 font_all = pygame.font.Font(font_path, 40)
 
 
+for botid in range(maxAmountOfBots -1): #Create bot instances.
+    botInstances['Bot'+str(botid)] = AI
 
+print(botInstances)
 #The board can be resized every moment by declaring the function here
 boardVectorSize = {"x": 600, "y": 600}
 def setBoardVectorSize(boardVectorSize):
@@ -73,7 +81,8 @@ def  PawnLocations(selectedCharacters, pawns,currentPlayerCounter, randomDiceNum
     #Board game main loop. Every movement is here.
     if ev.type == pygame.MOUSEBUTTONDOWN:
         if dieRect.collidepoint(pygame.mouse.get_pos()):
-            randomDiceNumber = random.randint(1,6)
+            #randomDiceNumber = random.randint(1,6)
+            randomDiceNumer = rollDice(1,6)
             currentTile = selectedCharacters[currentPlayerCounter].Tile
             for x in boardtiles.items():
                 if x[1] == currentTile:
@@ -87,7 +96,7 @@ def  PawnLocations(selectedCharacters, pawns,currentPlayerCounter, randomDiceNum
                     print("Player #" + str(currentPlayerCounter) +  " moved to next tile: " + str(boardtiles[newTileNumber]))
                     if selectedCharacters[currentPlayerCounter].Tile == boardtiles[5] or selectedCharacters[currentPlayerCounter].Tile == boardtiles[15] or selectedCharacters[currentPlayerCounter].Tile == boardtiles[25] or selectedCharacters[currentPlayerCounter].Tile == boardtiles[35]:
                         superfighter = random.choice(list(SuperFighters))
-                        randominteger = random.randint(1,6)
+                        randominteger = random.randint(1,6) #Select random superfighter, soon to be deprecated.
                         damage = superfighter.value[randominteger - 1]
                         print("Fighter is coming! |", superfighter, ' does ', damage)
                         selectedCharacters[currentPlayerCounter].Health -= damage
@@ -114,17 +123,36 @@ def  PawnLocations(selectedCharacters, pawns,currentPlayerCounter, randomDiceNum
             screen.blit(pawns[currentPlayerCounter + 1], currentTile)
             pygame.time.delay(150)
             #If the counter is at the last character, start at the first player again.
-            if currentPlayerCounter == len(selectedCharacters) - 1: 
-                currentPlayerCounter = 0
-            else:
-                currentPlayerCounter += 1
-
-            if tempCurrentPlayerCounter == len(selectedCharacters) - 1: 
-                tempCurrentPlayerCounter = 0
-            else:
-                tempCurrentPlayerCounter += 1
+            
             
             firstDieIsThrown = True
+            if currentPlayerCounter != 1:
+                pass
+            ###########################AI CONTROL###########################
+            print(currentPlayerCounter)
+            if currentPlayerCounter == 0: #Don't call bot to play round, next up is the human player. Finish round as usual.
+                if currentPlayerCounter == len(selectedCharacters) - 1: 
+                    currentPlayerCounter = 0
+                else:
+                    currentPlayerCounter += 1
+
+                if tempCurrentPlayerCounter == len(selectedCharacters) - 1: 
+                    tempCurrentPlayerCounter = 0
+                else:
+                    tempCurrentPlayerCounter += 1
+            else: #Call bot to play round.
+                randomDiceNumber = botInstances['Bot'+str(currentPlayerCounter-1)].playTurn(gameStatus)
+
+                if currentPlayerCounter == len(selectedCharacters) - 1: 
+                    currentPlayerCounter = 0
+                else:
+                    currentPlayerCounter += 1
+
+                if tempCurrentPlayerCounter == len(selectedCharacters) - 1: 
+                    tempCurrentPlayerCounter = 0
+                else:
+                    tempCurrentPlayerCounter += 1
+
             return currentPlayerCounter, randomDiceNumber, firstDieIsThrown, gameStatus,tempCurrentPlayerCounter,selectedCharacters[currentPlayerCounter].Health
     else:
         #Update player position
@@ -215,11 +243,11 @@ boardtiles = tiles()
 players =  [Player("Mohammed Ali",100, 15, PlayerCards.MohammedAli,boardtiles[0],"card__mohammed_ali.png", "mohammed.png", "mohammed.png"),
             Player("Manny Pecquiao",100, 15, PlayerCards.MannyPecquiao,boardtiles[0],"card__manny_pecquiao.png","face__manny_pecquiao.jpg", "paquiao.png"),
             Player("Mike Tysen",100, 15, PlayerCards.MikeTysen,boardtiles[0],"card__mike_tysen.png","face__mike_tysen.jpg", "mike.png"),
-            Player("Rocky Belboa",100,15,PlayerCards.RockyBelboa,boardtiles[0],"card__rocky_belboa.png","face__rocky_belboa.jpg", "rocky.png"),
-            Player("Bunya Sakboa",100,15,PlayerCards.RockyBelboa,boardtiles[0],"card__mohammed_ali.png", "face__bunya_sakboa.jpg"),
-            Player("Iron Rekt",100,15,PlayerCards.RockyBelboa,boardtiles[0],"card__mohammed_ali.png","face__iron_reckt.jpg"),
-            Player("Wout The Ripper",100,15,PlayerCards.RockyBelboa,boardtiles[0],"card__mohammed_ali.png"),
-            Player("Bad Boy",100,15,PlayerCards.RockyBelboa,boardtiles[0],"card__mohammed_ali.png")]
+            Player("Rocky Belboa",100,15,PlayerCards.RockyBelboa,boardtiles[0],"card__rocky_belboa.png","face__rocky_belboa.jpg", "rocky.png")]
+            #Player("Bunya Sakboa",100,15,PlayerCards.RockyBelboa,boardtiles[0],"card__mohammed_ali.png", "face__bunya_sakboa.jpg"),
+            #Player("Iron Rekt",100,15,PlayerCards.RockyBelboa,boardtiles[0],"card__mohammed_ali.png","face__iron_reckt.jpg"),
+            #Player("Wout The Ripper",100,15,PlayerCards.RockyBelboa,boardtiles[0],"card__mohammed_ali.png"),
+            #Player("Bad Boy",100,15,PlayerCards.RockyBelboa,boardtiles[0],"card__mohammed_ali.png")]
 
 #Load all images from the Player class
 playerImageCardDict = {}
@@ -285,6 +313,21 @@ gameIsRunning = True #If set to False, the game will stop and the program will e
 # ↓ Main game loop ↓ #
 #--------------------#
 while gameIsRunning:
+
+    #Update()
+
+
+
+
+
+
+
+
+
+
+    #Everything below this has to be gone and divided over multiple classes. Good fucking luck.
+
+
     #Define the event loop here instead of creating one in each gameStatus (e.g. in the main menu, in the game, in the player select menu etc)
     events = pygame.event.get()
     for ev in events:
@@ -428,6 +471,7 @@ while gameIsRunning:
                 yourChar = None
                 #latestSelectedChar = None
                 player = Player #Reset all lives/conditions etc by recreating the Player class
+
         if ev.type == pygame.MOUSEBUTTONDOWN:
             clickPosition = pygame.mouse.get_pos()#Check if player tile is selected
             if (clickPosition[0] >= 0 and clickPosition[0] <= 75) and (clickPosition[1] >= 0 and clickPosition[1] <= 75):
@@ -590,6 +634,7 @@ while gameIsRunning:
                     pygame.time.delay(150)
                     fighterCurrentPlayerCounter += 1
 
+
         if(tempCurrentPlayerCounter == 3):
             tempCurrentPlayerCounter = 0
 
@@ -607,6 +652,7 @@ while gameIsRunning:
         #screen.blit(text, text)
 
         #pass
-    pygame.display.flip()
+    #pygame.display.flip()
+    Update()
 pygame.quit()
 sys.exit()
