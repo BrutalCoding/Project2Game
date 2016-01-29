@@ -187,3 +187,11 @@ FakesAssemblies/
 GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
+/Project 2 Game/Project 2 Game/__pycache__/board.cpython-34.pyc
+/Project 2 Game/Project 2 Game/__pycache__/elements.cpython-34.pyc
+/Project 2 Game/Project 2 Game/__pycache__/Player.cpython-34.pyc
+/Project 2 Game/Project 2 Game/__pycache__/options.cpython-34.pyc
+/Project 2 Game/Project 2 Game/__pycache__/PlayerCards.cpython-34.pyc
+/Project 2 Game/Project 2 Game/__pycache__/rules.cpython-34.pyc
+/Project 2 Game/Project 2 Game/__pycache__/SuperFighters.cpython-34.pyc
+/Project 2 Game/Project 2 Game/__pycache__/selectScreen.cpython-34.pyc
