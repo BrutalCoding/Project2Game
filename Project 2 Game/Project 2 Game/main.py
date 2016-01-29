@@ -48,12 +48,16 @@ fighterCurrentPlayerCounter = 0 #When a player lands on a corner, this variable 
 #Font init
 pygame.font.init()
 font = pygame.font.Font(None, 25)
-font_path = "./Fonts/Brushstrike.ttf"
-fontSPM = pygame.font.Font(font_path, 35)
-font_path = "./Fonts/Superstar.ttf"
-font_all = pygame.font.Font(font_path, 40)
 
-
+def fontSize(size, typeFont):
+    if typeFont == "Brush": 
+        font_path = "./Fonts/Brushstrike.ttf"
+        return pygame.font.Font(font_path, size)
+    elif typeFont == "Super":
+        font_path = "./Fonts/Superstar.ttf"
+        return pygame.font.Font(font_path, size)
+    else:
+        return pygame.font.Font(None, size)
 
 #The board can be resized every moment by declaring the function here
 boardVectorSize = {"x": 600, "y": 600}
@@ -201,11 +205,11 @@ latestSelectedChar = None #Latest character selection that was made
 # A global dict value that will contain all the Pygame
 # Surface objects returned by pygame.image.load().
 xM = 85
-menu =    [Option("NEW GAME", (screen.get_rect().centerx - xM, 180), font_all, screen, 0),
-           Option("LOAD GAME", (screen.get_rect().centerx - xM, 240), font_all, screen, 1),
-           Option("OPTIONS", (screen.get_rect().centerx - xM, 300), font_all, screen, 2),
-           Option("RULES", (screen.get_rect().centerx - xM, 360), font_all, screen, 3),
-           Option("QUIT", (screen.get_rect().centerx - xM, 420), font_all, screen, 4)]
+menu =    [Option("NEW GAME", (screen.get_rect().centerx - xM, 180), fontSize(40, "Super"), screen, 0),
+           Option("LOAD GAME", (screen.get_rect().centerx - xM, 240), fontSize(40, "Super"), screen, 1),
+           Option("OPTIONS", (screen.get_rect().centerx - xM, 300), fontSize(40, "Super"), screen, 2),
+           Option("RULES", (screen.get_rect().centerx - xM, 360), fontSize(40, "Super"), screen, 3),
+           Option("QUIT", (screen.get_rect().centerx - xM, 420), fontSize(40, "Super"), screen, 4)]
 
 #Define the images
 pawns =     {1:pawnload('Images/Blue.png'), 2:pawnload('Images/Red.png'), 3:pawnload('Images/Green.png'), 4:pawnload('Images/Yellow.png'), 5:pawnload('Images/Blue.png'), 6:pawnload('Images/Red.png'), 7:pawnload('Images/Green.png'), 8:pawnload('Images/head__iron_rekt.png')}
@@ -215,11 +219,7 @@ boardtiles = tiles()
 players =  [Player("Mohammed Ali",100, 15, PlayerCards.MohammedAli,boardtiles[0],"card__mohammed_ali.png", "mohammed.png", "mohammed.png"),
             Player("Manny Pecquiao",100, 15, PlayerCards.MannyPecquiao,boardtiles[0],"card__manny_pecquiao.png","face__manny_pecquiao.jpg", "paquiao.png"),
             Player("Mike Tysen",100, 15, PlayerCards.MikeTysen,boardtiles[0],"card__mike_tysen.png","face__mike_tysen.jpg", "mike.png"),
-            Player("Rocky Belboa",100,15,PlayerCards.RockyBelboa,boardtiles[0],"card__rocky_belboa.png","face__rocky_belboa.jpg", "rocky.png"),
-            Player("Bunya Sakboa",100,15,PlayerCards.RockyBelboa,boardtiles[0],"card__mohammed_ali.png", "face__bunya_sakboa.jpg"),
-            Player("Iron Rekt",100,15,PlayerCards.RockyBelboa,boardtiles[0],"card__mohammed_ali.png","face__iron_reckt.jpg"),
-            Player("Wout The Ripper",100,15,PlayerCards.RockyBelboa,boardtiles[0],"card__mohammed_ali.png"),
-            Player("Bad Boy",100,15,PlayerCards.RockyBelboa,boardtiles[0],"card__mohammed_ali.png")]
+            Player("Rocky Belboa",100,15,PlayerCards.RockyBelboa,boardtiles[0],"card__rocky_belboa.png","face__rocky_belboa.jpg", "rocky.png")]
 
 #Load all images from the Player class
 playerImageCardDict = {}
@@ -235,7 +235,7 @@ playerLabels = []
 playerLabelVector = {"x": 100,"y": 200}#x,y coordinates on the screen for the label to be displayed
 generateID = 0 #Generate an ID for each player
 for x in players:
-    playerLabels.append(Option(x.Name, (playerLabelVector["x"], playerLabelVector["y"]), font, screen, generateID))
+    playerLabels.append(Option(x.Name, (playerLabelVector["x"], playerLabelVector["y"]), fontSize(25, None), screen, generateID))
     generateID += 1
     playerNameRectWidth = len(x.Name) * 15 
     if playerLabelVector["x"] > 600:
@@ -266,9 +266,9 @@ for x in range(1,maxAmountOfBots):
 #Increment the latest generated id and give it to the clickable button
 startGameID = generateID + 1
 mainMenuGameID = startGameID + 1
-selectScreenButtons = [Option("Start game", (575, 550), font_all, screen, startGameID),
-                       Option("Main", (25, 550), font_all, screen, mainMenuGameID)] # go back to main menu
-buttonw = [Option("Disable sound!", (300, 100), font, screen, 99), Option("Enable sound!", (300, 200), font, screen, 98)]
+selectScreenButtons = [Option("Start game", (575, 550), fontSize(40, "Super"), screen, startGameID),
+                       Option("Main", (25, 550), fontSize(40, "Super"), screen, mainMenuGameID)] # go back to main menu
+buttonsOptionScreen = [Option("Disable sound!", (300, 150), fontSize(30, "Super"), screen, 99), Option("Enable sound!", (300, 200), fontSize(30, "Super"), screen, 98), Option("Main", (25, 550), fontSize(40, "Super"), screen, mainMenuGameID)]
 entities = [playerLabels, labelAmountPlayers, selectScreenButtons]
 
 def drawOptions(l):
@@ -326,9 +326,9 @@ while gameIsRunning:
                         pass
                     elif(option.id == 2):#Options
                         gameStatus = "options"
-                        screenVectorSize["x"] = mainMenuSize[0]
-                        screenVectorSize["y"] = mainMenuSize[1]
-                        setScreenVectorSize(screenVectorSize, screen)
+                        #screenVectorSize["x"] = mainMenuSize[0]
+                        #screenVectorSize["y"] = mainMenuSize[1]
+                        #setScreenVectorSize(screenVectorSize, screen)
                     elif(option.id == 3):#Rules
                         gameStatus = "rules"
                         screenVectorSize["x"] = mainMenuSize[0]
@@ -349,9 +349,9 @@ while gameIsRunning:
                 setDefaultSoundSystem(enableSound, "Sounds\Intro_Soft_Touch.mp3", 300)
 
         screen.blit(pygame.transform.scale(selectBackground,(screenVectorSize["x"],screenVectorSize["y"])), (0, 0))
-        label = fontSPM.render("Choose bots", 1, (255,0,0))
+        label = fontSize(35, "Brush").render("Choose bots", 1, (255,0,0))
         screen.blit(label, (screen.get_rect().centerx / 6, 20))
-        label = fontSPM.render("Choose your fighter", 1, (255,0,0))
+        label = fontSize(35, "Brush").render("Choose your fighter", 1, (255,0,0))
         screen.blit(label, (screen.get_rect().centerx / 2, 150))
         
         if latestSelectedChar != None:
@@ -361,10 +361,10 @@ while gameIsRunning:
         for entity in entities:
             drawOptions(entity)
             if botChosen == True:
-                selectchar = font.render("Make sure a bot is selected", 1,(255,0,0))
+                selectchar = fontSize(25, None).render("Make sure a bot is selected", 1,(255,0,0))
                 screen.blit(selectchar, (screen.get_rect().centerx / 2, 500))
             elif charChosen == True:
-                selectchar = font.render("Make sure a character is selected", 1,(255,0,0))
+                selectchar = fontSize(25, None).render("Make sure a character is selected", 1,(255,0,0))
                 screen.blit(selectchar, (screen.get_rect().centerx / 2, 500))
             if ev.type == pygame.MOUSEBUTTONDOWN:
                 for option in entity:
@@ -436,7 +436,6 @@ while gameIsRunning:
         #Return the new player number so that the global variable can be updated instead of local.
         currentPlayerCounter, randomDiceNumber, firstDieIsThrown, gameStatus,tempCurrentPlayerCounter,selectedCharacters[currentPlayerCounter].Health = PawnLocations(selectedCharacters, pawns, currentPlayerCounter, randomDiceNumber,firstDieIsThrown, gameStatus,tempCurrentPlayerCounter)
         #draw labels on scoreboard with lifepoints/conditions p/player
-        scoreBoardFont = pygame.font.Font(None, 20)
         scoreBoardColor = (255,255,255)
 
         #default is the player itself
@@ -451,7 +450,7 @@ while gameIsRunning:
                 labelColor = (217, 30, 24) #'Thunderbird' red
             else:
                 labelColor = (0,0,0) #Black
-            scoreBoardLabels.append(scoreBoardFont.render(name + " - Lifepoints: " + str(x.Health) + " | Condition: " + str(x.Condition), 1, labelColor))
+            scoreBoardLabels.append(fontSize(20, None).render(name + " - Lifepoints: " + str(x.Health) + " | Condition: " + str(x.Condition), 1, labelColor))
             pygame.draw.rect(screen, scoreBoardColor, (0,600,screenVectorSize["x"],scoreBoardHeight), 0)
 
         #Render the players on the score board
@@ -487,18 +486,31 @@ while gameIsRunning:
             #latestSelectedChar = None
             player = Player #Reset all lives/conditions etc by recreating the Player class
     elif gameStatus == "options":
-        label = font.render("Option menu", 1, (255,255,0))
-        screen.blit(label, (300, 50))
+        screen.blit(pygame.transform.scale(selectBackground,(screenVectorSize["x"],screenVectorSize["y"])), (0, 0))
+        label = fontSize(50, "Brush").render("Option menu", 1, (255, 0, 0))
+        screen.blit(label, (260, 50))
         geluid = pygame.mixer.get_num_channels()
-        selectScreen.drawOptions(buttonw)
+        if enableSound == True:
+                buttonsOptionScreen[1].selected = True
+        elif enableSound == False:
+            buttonsOptionScreen[0].selected = True
+        selectScreen.drawOptions(buttonsOptionScreen)
         if ev.type == pygame.MOUSEBUTTONDOWN:
-            for option in buttonw:
+            for option in buttonsOptionScreen:
                 if option.rect.collidepoint(pygame.mouse.get_pos()):
+                    for button in buttonsOptionScreen:
+                        button.selected = False
                     if option.id == 99:
                         enableSound = False
                         pygame.mixer.music.stop()
+                        option.selected = True
                     elif option.id == 98:
                         enableSound = True
+                        option.selected = True
+                    elif option.id == mainMenuGameID:
+                            selectedCharacters, selectedAmountBots, latestSelectedChar = resetSelections(selectedCharacters, selectedAmountBots, latestSelectedChar)
+                            gameStatus = 'main'
+                            setDefaultSoundSystem(enableSound,"Sounds\Intro_Soft_Touch.mp3", 1000)
         if ev.type == pygame.KEYUP:
             if ev.key == pygame.K_ESCAPE:
                 gameStatus = 'main'
@@ -526,7 +538,7 @@ while gameIsRunning:
                 setScreenVectorSize(screenVectorSize, screen)
         labelHeight = screen.get_rect().midtop[1]
         for rule in rules.LoadAllRules():
-            text = font.render(rule, 1, (217, 30, 24))
+            text = fontSize(25, None).render(rule, 1, (217, 30, 24))
             textpos = text.get_rect()
             labelHeight += 25
             screen.blit(text, (screen.get_rect().centerx / 4, labelHeight))
