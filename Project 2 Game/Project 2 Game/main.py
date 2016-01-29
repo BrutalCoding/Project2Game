@@ -12,6 +12,7 @@ from rules import *
 from pygame import gfxdraw
 from SuperFighters import *
 from selectScreen import *
+from WindowsScreen import *
 
 Option = options.Option
 pygame.mixer.init()
@@ -42,7 +43,8 @@ botChosen = False
 charChosen = False
 tileSelected = False
 enableSound = True
-
+fighterDieInt = 1
+fighterCurrentPlayerCounter = 0 #When a player lands on a corner, this variable will be assigned to the current fighter.
 #Font init
 pygame.font.init()
 font = pygame.font.Font(None, 25)
@@ -71,7 +73,7 @@ def  PawnLocations(selectedCharacters, pawns,currentPlayerCounter, randomDiceNum
     #Board game main loop. Every movement is here.
     if ev.type == pygame.MOUSEBUTTONDOWN:
         if dieRect.collidepoint(pygame.mouse.get_pos()):
-            randomDiceNumber = 1 #random.randint(1,6)
+            randomDiceNumber = random.randint(1,6)
             currentTile = selectedCharacters[currentPlayerCounter].Tile
             for x in boardtiles.items():
                 if x[1] == currentTile:
@@ -84,15 +86,12 @@ def  PawnLocations(selectedCharacters, pawns,currentPlayerCounter, randomDiceNum
                     selectedCharacters[currentPlayerCounter].Tile = boardtiles[newTileNumber]
                     print("Player #" + str(currentPlayerCounter) +  " moved to next tile: " + str(boardtiles[newTileNumber]))
                     if selectedCharacters[currentPlayerCounter].Tile == boardtiles[5] or selectedCharacters[currentPlayerCounter].Tile == boardtiles[15] or selectedCharacters[currentPlayerCounter].Tile == boardtiles[25] or selectedCharacters[currentPlayerCounter].Tile == boardtiles[35]:
-                        #superfighters = SuperFighters()
                         superfighter = random.choice(list(SuperFighters))
                         randominteger = random.randint(1,6)
                         damage = superfighter.value[randominteger - 1]
-                        print(superfighter, ' does ', damage)
+                        print("Fighter is coming! |", superfighter, ' does ', damage)
                         selectedCharacters[currentPlayerCounter].Health -= damage
-                        print("Fighter is coming!")
                     curplaypos = selectedCharacters[currentPlayerCounter].Tile #Current player's position on board
-                    #if curplaypos == boardtiles[0,1,9,10,11,19,20,21,29,30,31,39]:
                     if curplaypos in (boardtiles[0], boardtiles[1], boardtiles[9], boardtiles[10], boardtiles[11], boardtiles[19], boardtiles[20], boardtiles[21], boardtiles[29], boardtiles[30], boardtiles[31], boardtiles[39]):
                         if currentPlayerCounter == 0 and (curplaypos == boardtiles[0] or curplaypos == boardtiles[39] or curplaypos == boardtiles[1]):
                             print ("NOT GOING TO FIGHT 1")
@@ -100,6 +99,7 @@ def  PawnLocations(selectedCharacters, pawns,currentPlayerCounter, randomDiceNum
                             print ("NOT GOING TO FIGHT 2")
                         else: #Fight code
                             print('Fight started (else)')
+                            setDefaultSoundSystem(enableSound, "Sounds\Fight.mp3")
                             gameStatus = 'fight'
                             #Sequence
                             #Attacker lands on another player's square
@@ -111,20 +111,7 @@ def  PawnLocations(selectedCharacters, pawns,currentPlayerCounter, randomDiceNum
                             #Defender's stamina gets deducted by the amount corresponding to the damage he chose.
                             #Game calculates highest damage - lowest damage and deals this to the player with the lowest damage
                             #Preferably make ai choose damage higher than taken damage within stamina limits
-                            #pass
-                        #if currentPlayerCounter != boardtiles[currentPlayerCounter]:
-
-
-
-
-                    
-
-                     
-
-                    
             screen.blit(pawns[currentPlayerCounter + 1], currentTile)
-
-            
             pygame.time.delay(150)
             #If the counter is at the last character, start at the first player again.
             if currentPlayerCounter == len(selectedCharacters) - 1: 
@@ -138,29 +125,7 @@ def  PawnLocations(selectedCharacters, pawns,currentPlayerCounter, randomDiceNum
                 tempCurrentPlayerCounter += 1
             
             firstDieIsThrown = True
-            return currentPlayerCounter, randomDiceNumber, firstDieIsThrown, gameStatus,tempCurrentPlayerCounter
-    elif( pygame.key.get_pressed()[pygame.K_SPACE] != 0 ):
-        print("SPACE PRESSED")
-        currentTile = selectedCharacters[currentPlayerCounter].Tile
-        for x in boardtiles.items():
-            if x[1] == currentTile:
-                #To prevent that newTileNumber gets number 40 (Since it goes from 0 to 39)
-                if x[0] + 1 != 40:
-                    newTileNumber = x[0] + 1
-                else:
-                    newTileNumber = 0
-                print("Player #" + str(currentPlayerCounter) +  " - Current tile: " + str(x[1]) + " - Next tile: " + str(boardtiles[newTileNumber]))
-                selectedCharacters[currentPlayerCounter].Tile = boardtiles[newTileNumber]
-                print("Player #" + str(currentPlayerCounter) +  " moved to next tile: " + str(boardtiles[newTileNumber]))
-        screen.blit(pawns[currentPlayerCounter + 1], currentTile)
-        pygame.time.delay(150)
-
-        #If the counter is at the last character, start at the first player again.
-        if currentPlayerCounter == len(selectedCharacters) - 1: 
-            currentPlayerCounter = 0
-        else:
-            currentPlayerCounter += 1
-        return currentPlayerCounter, randomDiceNumber,firstDieIsThrown,gameStatus,tempCurrentPlayerCounter
+            return currentPlayerCounter, randomDiceNumber, firstDieIsThrown, gameStatus,tempCurrentPlayerCounter,selectedCharacters[currentPlayerCounter].Health
     else:
         #Update player position
         cntCorner = 1
@@ -188,8 +153,20 @@ def  PawnLocations(selectedCharacters, pawns,currentPlayerCounter, randomDiceNum
             screen.blit(pawns[cntPlayer], moveToTile)
             cntPlayer += 1
         screen.blit(dice[randomDiceNumber], (725,50))
+        playersAlive = 0
+        for fighter in selectedCharacters:
+            if fighter.Health > 0:
+                playersAlive += 1
+            else:
+                fighter.Health = 0 #Reset it to 0 instead of displaying a negative value.
+        if playersAlive == 1:
+            message = str(selectedCharacters[currentPlayerCounter].Name) + " just won the game!"
+            ImageBGLink = "Images/EmptyBackground.png"
+            brushLink = "Fonts/Brushstrike.ttf"
+            screenMessage = WindowsScreen(screen,message,ImageBGLink,brushLink)
+            screen.blit(screenMessage.surf, (0, 0))
 
-    return currentPlayerCounter, randomDiceNumber,firstDieIsThrown,gameStatus,tempCurrentPlayerCounter
+    return currentPlayerCounter, randomDiceNumber,firstDieIsThrown,gameStatus,tempCurrentPlayerCounter,selectedCharacters[currentPlayerCounter].Health
 
 #Define and initialize the sounds of the game
 pygame.mixer.init()
@@ -201,7 +178,7 @@ def setDefaultSoundSystem(enableSound, soundFileLocation, fadeOutms=500, volume=
         pygame.mixer.music.set_volume(volume)
         pygame.mixer.music.load(soundFileLocation)
         pygame.mixer.music.play(-1)
-setDefaultSoundSystem(enableSound,"Sounds\Intro_Soft_Touch.mp3", 1000)
+setDefaultSoundSystem(enableSound,"Sounds\Intro_Soft_Touch.mp3", 300)
 
 #Reset the selected and amount of characters to zero again in able to reselect later.
 def resetSelections(selectedCharacters, selectedAmountBots, latestSelectedChar):
@@ -235,14 +212,14 @@ pawns =     {1:pawnload('Images/Blue.png'), 2:pawnload('Images/Red.png'), 3:pawn
 dice =      {1:diceload('Images/Die-1.png'), 2:diceload('Images/Die-2.png'), 3:diceload('Images/Die-3.png'), 4:diceload('Images/Die-4.png'), 5:diceload('Images/Die-5.png'), 6:diceload('Images/Die-6.png')}
 playerImages = {1:playerload('Images/mike.png'), 2:playerload('Images/paquiao.png'), 3:playerload('Images/mohammed.png'), 4:playerload('Images/rocky.png')}
 boardtiles = tiles()
-players =  [Player("Mohammed Ali",100, 15, PlayerCards.MohammedAli,boardtiles[0],"card__badr_heri.jpg", "face__badr_heri.jpg", "mohammed.png"),
-            Player("Manny Pecquiao",100, 15, PlayerCards.MannyPecquiao,boardtiles[0],"card__manny_pecquiao.jpg","face__manny_pecquiao.jpg", "paquiao.png"),
-            Player("Mike Tysen",100, 15, PlayerCards.MikeTysen,boardtiles[0],"card__mike_tysen.jpg","face__mike_tysen.jpg", "mike.png"),
-            Player("Rocky Belboa",100,15,PlayerCards.RockyBelboa,boardtiles[0],"card__rocky_belboa.jpg","face__rocky_belboa.jpg", "rocky.png"),
-            Player("Bunya Sakboa",100,15,PlayerCards.RockyBelboa,boardtiles[0],"card__badr_heri.jpg", "face__bunya_sakboa.jpg"),
-            Player("Iron Rekt",100,15,PlayerCards.RockyBelboa,boardtiles[0],"card__badr_heri.jpg","face__iron_reckt.jpg"),
-            Player("Wout The Ripper",100,15,PlayerCards.RockyBelboa,boardtiles[0],"card__badr_heri.jpg"),
-            Player("Bad Boy",100,15,PlayerCards.RockyBelboa,boardtiles[0],"card__badr_heri.jpg")]
+players =  [Player("Mohammed Ali",100, 15, PlayerCards.MohammedAli,boardtiles[0],"card__mohammed_ali.png", "mohammed.png", "mohammed.png"),
+            Player("Manny Pecquiao",100, 15, PlayerCards.MannyPecquiao,boardtiles[0],"card__manny_pecquiao.png","face__manny_pecquiao.jpg", "paquiao.png"),
+            Player("Mike Tysen",100, 15, PlayerCards.MikeTysen,boardtiles[0],"card__mike_tysen.png","face__mike_tysen.jpg", "mike.png"),
+            Player("Rocky Belboa",100,15,PlayerCards.RockyBelboa,boardtiles[0],"card__rocky_belboa.png","face__rocky_belboa.jpg", "rocky.png"),
+            Player("Bunya Sakboa",100,15,PlayerCards.RockyBelboa,boardtiles[0],"card__mohammed_ali.png", "face__bunya_sakboa.jpg"),
+            Player("Iron Rekt",100,15,PlayerCards.RockyBelboa,boardtiles[0],"card__mohammed_ali.png","face__iron_reckt.jpg"),
+            Player("Wout The Ripper",100,15,PlayerCards.RockyBelboa,boardtiles[0],"card__mohammed_ali.png"),
+            Player("Bad Boy",100,15,PlayerCards.RockyBelboa,boardtiles[0],"card__mohammed_ali.png")]
 
 #Load all images from the Player class
 playerImageCardDict = {}
@@ -343,7 +320,7 @@ while gameIsRunning:
                         screenVectorSize["x"] = mainMenuSize[0]
                         screenVectorSize["y"] = mainMenuSize[1]
                         setScreenVectorSize(screenVectorSize, screen)
-                        setDefaultSoundSystem(enableSound,"Sounds\Intro_1_Hyped.mp3", 1000)
+                        setDefaultSoundSystem(enableSound,"Sounds\Intro_1_Hyped.mp3", 300)
                         
                     elif(option.id == 1):#Load game
                         pass
@@ -369,7 +346,7 @@ while gameIsRunning:
                 screenVectorSize["x"] = mainMenuSize[0]
                 screenVectorSize["y"] = mainMenuSize[1]
                 setScreenVectorSize(screenVectorSize, screen)
-                setDefaultSoundSystem(enableSound, "Sounds\Intro_Soft_Touch.mp3", 1000)
+                setDefaultSoundSystem(enableSound, "Sounds\Intro_Soft_Touch.mp3", 300)
 
 
         
@@ -382,11 +359,6 @@ while gameIsRunning:
         if latestSelectedChar != None:
             screen.blit(playerImageFaceDict[latestSelectedChar.Name],(100,300)) #Image of the character
             screen.blit(playerImageCardDict[latestSelectedChar.Name],(350,300)) #Image of the score card
-
-        playerX = 70
-        for fighter in players:
-                screen.blit(playerImageFaceDict[fighter.Name],(playerX,200))
-                playerX += 200
             
         for entity in entities:
             drawOptions(entity)
@@ -427,11 +399,11 @@ while gameIsRunning:
                             screenVectorSize["y"] = 600
                             setScreenVectorSize(screenVectorSize, screen)
                             gameStatus = 'Game'
-                            setDefaultSoundSystem(enableSound,"Sounds\Intro_1_Soft_Pump.mp3", 1000, 0.3)
+                            setDefaultSoundSystem(enableSound,"Sounds\Intro_1_Soft_Pump.mp3", 300, 0.3)
                         elif option.id == mainMenuGameID:
                             selectedCharacters, selectedAmountBots, latestSelectedChar = resetSelections(selectedCharacters, selectedAmountBots, latestSelectedChar)
                             gameStatus = 'main'
-                            setDefaultSoundSystem(enableSound,"Sounds\Intro_Soft_Touch.mp3", 1000)
+                            setDefaultSoundSystem(enableSound,"Sounds\Intro_Soft_Touch.mp3", 300)
                         else:
                             if selectedAmountBots == None:#check if bot is selected
                                 botChosen = True
@@ -446,7 +418,7 @@ while gameIsRunning:
         if ev.type == pygame.KEYUP:
             if ev.key == pygame.K_ESCAPE:
                 gameStatus = 'main'
-                setDefaultSoundSystem(enableSound,"Sounds\Intro_Soft_Touch.mp3", 1000)
+                setDefaultSoundSystem(enableSound,"Sounds\Intro_Soft_Touch.mp3", 300)
                 screenVectorSize["x"] = mainMenuSize[0]
                 screenVectorSize["y"] = mainMenuSize[1]
                 setScreenVectorSize(screenVectorSize, screen)
@@ -479,7 +451,7 @@ while gameIsRunning:
         if tileSelected:#If player tile is selected, display character card referenced to character chosen by player
             screen.blit(playerImageCardDict[cardName],(660,289))
         #Return the new player number so that the global variable can be updated instead of local.
-        currentPlayerCounter, randomDiceNumber, firstDieIsThrown, gameStatus,tempCurrentPlayerCounter = PawnLocations(selectedCharacters, pawns, currentPlayerCounter, randomDiceNumber,firstDieIsThrown, gameStatus,tempCurrentPlayerCounter)
+        currentPlayerCounter, randomDiceNumber, firstDieIsThrown, gameStatus,tempCurrentPlayerCounter,selectedCharacters[currentPlayerCounter].Health = PawnLocations(selectedCharacters, pawns, currentPlayerCounter, randomDiceNumber,firstDieIsThrown, gameStatus,tempCurrentPlayerCounter)
         #draw labels on scoreboard with lifepoints/conditions p/player
         scoreBoardFont = pygame.font.Font(None, 20)
         scoreBoardColor = (255,255,255)
@@ -533,7 +505,7 @@ while gameIsRunning:
             if ev.key == pygame.K_ESCAPE:
                 gameStatus = 'main'
                 #mainmenusound#
-                setDefaultSoundSystem(enableSound,"Sounds\Intro_Soft_Touch.mp3", 1000)
+                setDefaultSoundSystem(enableSound,"Sounds\Intro_Soft_Touch.mp3", 300)
                 screenVectorSize["x"] = mainMenuSize[0]
                 screenVectorSize["y"] = mainMenuSize[1]
                 setScreenVectorSize(screenVectorSize, screen)
@@ -563,8 +535,11 @@ while gameIsRunning:
         text = font.render("Press 'ESC' to get back to the main menu", 1, (255,255,0))
         textpos = text.get_rect()
         screen.blit(text, (screen.get_rect().centerx / 4, screen.get_size()[1] - 50))
+
     elif gameStatus == "fight":
         #print('We\'re in the fight gameStatus')
+        dieRect = None
+        
         screen.fill((0,0,0))
         if tempCurrentPlayerCounter == 4:
             tempCurrentPlayerCounter = 3
@@ -575,7 +550,7 @@ while gameIsRunning:
         landedTile = selectedCharacters[tempCurrentPlayerCounter].Tile
 
         curplaypos = selectedCharacters[tempCurrentPlayerCounter].Tile #currentPlayerCounter got updated to the next player, but we want the previous player.
-
+        screen.blit(pygame.transform.smoothscale(pygame.image.load("Images\\" + selectedCharacters[tempCurrentPlayerCounter].ImageCard),(250,295)), (screen.get_width() - 250, screen.get_height() - 295))
         #Find index number in boardtiles
         for x in boardtiles.items():
             if x[1] == curplaypos:
@@ -597,16 +572,37 @@ while gameIsRunning:
 
 
         ImageOpponent = pygame.image.load("Images\\" + selectedCharacters[tempCurrentPlayerCounter].ImageFighter)
-        screen.blit(ImageFighter, (250,300)) #Blit attacker in bottom down
-        screen.blit(ImageOpponent, (400,300)) #Blit defender in top right
+        screen.blit(ImageFighter, (0,450)) #Blit attacker in bottom down
+        screen.blit(ImageOpponent, (800,0)) #Blit defender in top right
+
+        screen.blit(pygame.transform.smoothscale(pygame.image.load("Images\\" + selectedCharacters[currentPlayerCounter].ImageCard),(250,295)), (0,0))
         
+        #If the first turn has not begun yet, display a placeholder for the dice. Else show what dice was thrown.
+        if fighterCurrentPlayerCounter == 0:
+            diePlaceholder = pygame.image.load("Images\\head__iron_rekt.png")
+            screen.blit(diePlaceholder, (((screen.get_width() /2)-95), (screen.get_height()/2)-95))
+        else:
+            screen.blit(dice[fighterDieInt], (((screen.get_width() /2)-95), (screen.get_height()/2)-95))
+        fightDie = pygame.Rect(((screen.get_width() /2)-95), (screen.get_height()/2)-95, 190, 190)
+        if fightDie.collidepoint(pygame.mouse.get_pos()) and fighterCurrentPlayerCounter < 2: #If there are still turns left and
+            if ev.type == pygame.MOUSEBUTTONDOWN:
+                    fighterDieInt = random.randint(1,6)
+                    pygame.time.delay(150)
+                    fighterCurrentPlayerCounter += 1
+
         if(tempCurrentPlayerCounter == 3):
             tempCurrentPlayerCounter = 0
-        if ev.type == pygame.MOUSEBUTTONDOWN:
-            gameStatus = 'Game'
 
         if currentPlayerCounter == len(selectedCharacters) - 1:
             currentPlayerCounter == 0
+
+        #Player 0 and Player 1 exists, if it is 2 (which means both players have had their turns already) then reset it back to 0 for the next fight
+        if fighterCurrentPlayerCounter == 2:
+            if ev.type == pygame.KEYUP:
+                if ev.key == pygame.K_SPACE:
+                    setDefaultSoundSystem(enableSound,"Sounds\Intro_1_Soft_Pump.mp3", 300, 0.3)
+                    fighterCurrentPlayerCounter = 0
+                    gameStatus = 'Game'
 
         #screen.blit(text, text)
 
