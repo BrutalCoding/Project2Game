@@ -10,7 +10,7 @@ from Player import *
 from PlayerCards import *
 from rules import *
 from pygame import gfxdraw
-from SuperFighters import *
+from SuperFighters import *  
 from selectScreen import *
 from WindowsScreen import *
 
