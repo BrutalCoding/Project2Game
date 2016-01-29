@@ -218,37 +218,13 @@ for player in players:
 #Define entities so that it can also be called again to reset all values such as the selections
 
 #Draw all player names on the screen
-playerLabels = []
-playerLabelVector = {"x": 100,"y": 200}#x,y coordinates on the screen for the label to be displayed
-generateID = 0 #Generate an ID for each player
-for x in players:
-    playerLabels.append(Option(x.Name, (playerLabelVector["x"], playerLabelVector["y"]), fontSize(25, None), screen, generateID))
-    generateID += 1
-    playerNameRectWidth = len(x.Name) * 15 
-    if playerLabelVector["x"] > 600:
-        playerLabelVector["x"] = 50
-        playerLabelVector["y"] += 50
-    else:
-        playerLabelVector["x"] += playerNameRectWidth
-amountOfCharacters = generateID #This is the amount of players adding + 1 because it started from ID 0
+playerLabels = selectScreen.makePlayerLabels(players, Option, fontSize(25, None), screen)
+generateID = playerLabels[1]
+amountOfCharacters = generateID
 
-
-labelAmountPlayers = []
-playerNumber = 1 #Starting with min 1 and max 4 players
-amountPlayersLabelVector = {"x": 150,"y": 50}
-generateID += 1 #Increment the latest generated id by one so it stays unique
-labelBotName = "Bot"
-for x in range(1,maxAmountOfBots):
-    if not playerNumber == 1:
-        labelBotName = "Bots"
-    labelAmountPlayers.append(Option(str(playerNumber) + ' ' + labelBotName, (amountPlayersLabelVector['x'], amountPlayersLabelVector['y']), font, screen, generateID))
-    generateID += 1
-    playerNumber += 1
-    if amountPlayersLabelVector["x"] > 600:
-        amountPlayersLabelVector["x"] = 200
-        amountPlayersLabelVector["y"] += 50
-    else:
-        amountPlayersLabelVector['x'] += 150
+#Draw all bots on the screen
+labelAmountPlayers = selectScreen.makeBotLabels(generateID, maxAmountOfBots, fontSize(25, None), screen, Option)
+generateID = labelAmountPlayers[1]
 
 #Increment the latest generated id and give it to the clickable button
 startGameID = generateID + 1
@@ -256,16 +232,8 @@ mainMenuGameID = startGameID + 1
 selectScreenButtons = [Option("Start game", (575, 550), fontSize(40, "Super"), screen, startGameID),
                        Option("Main", (25, 550), fontSize(40, "Super"), screen, mainMenuGameID)] # go back to main menu
 buttonsOptionScreen = [Option("Disable sound!", (300, 150), fontSize(30, "Super"), screen, 99), Option("Enable sound!", (300, 200), fontSize(30, "Super"), screen, 98), Option("Main", (25, 550), fontSize(40, "Super"), screen, mainMenuGameID)]
-entities = [playerLabels, labelAmountPlayers, selectScreenButtons]
+entities = [playerLabels[0], labelAmountPlayers[0], selectScreenButtons]
 
-def drawOptions(l):
-    for option in l:#Draw all options on the screen
-        if option.rect.collidepoint(pygame.mouse.get_pos()):
-            option.hovered = True
-        else:
-            option.hovered = False
-        option.draw()
-    return
 gameIsRunning = True #If set to False, the game will stop and the program will exit.
 
 #--------------------#
@@ -348,7 +316,7 @@ while gameIsRunning:
         selectScreen.makePlayerCard(screen, players, playerImageFighterDict)
 
         for entity in entities:
-            drawOptions(entity)
+            selectScreen.drawOptions(entity)
             if botChosen == True:
                 selectchar = fontSize(25, None).render("Make sure a bot is selected", 1,(255,0,0))
                 screen.blit(selectchar, (screen.get_rect().centerx / 2, 500))

@@ -25,7 +25,7 @@ class selectScreen:
     def makeBotLabels(generateID, maxAmountOfBots, font, screen, Option):
         labelAmountPlayers = []
         playerNumber = 1 #Starting with min 1 and max 4 players
-        amountPlayersLabelVector = {"x": 200,"y": 50}
+        amountPlayersLabelVector = {"x": 150,"y": 50}
         generateID += 1 #Increment the latest generated id by one so it stays unique
         labelBotName = "Bot"
         for x in range(1,maxAmountOfBots):
@@ -42,23 +42,18 @@ class selectScreen:
         return (labelAmountPlayers, generateID)
 
     #Make the player labels
-    #def makePlayerLabels(players, Option, font, screen):
-    #    playerLabels = []
-    #    playerLabelVector = {"x": 100,"y": 200}#x,y coordinates on the screen for the label to be displayed
-    #    generateID = 0 #Generate an ID for each player
-    #    for x in players:
-    #        playerLabels.append(Option(x.Name, (playerLabelVector["x"], playerLabelVector["y"]), font, screen, generateID))
-    #        generateID += 1
-    #        playerNameRectWidth = len(x.Name) * 20 
-    #        if playerLabelVector["x"] > 600:
-    #            playerLabelVector["x"] = 50
-    #            playerLabelVector["y"] += 50
-    #        else:
-    #            playerLabelVector["x"] += playerNameRectWidth
-    #    return (playerLabels, generateID)
-
-    
-    def makePlayerCard(screen, players, playerImageFighterDict):
-        for player in players:
-            screen.blit(playerImageFighterDict[player.Name],(100,200))
-       
+    def makePlayerLabels(players, Option, font, screen):
+        playerLabels = []
+        playerLabelVector = {"x": 100,"y": 200}#x,y coordinates on the screen for the label to be displayed
+        generateID = 0 #Generate an ID for each player
+        for x in players:
+            playerLabels.append(Option(x.Name, (playerLabelVector["x"], playerLabelVector["y"]), font, screen, generateID))
+            generateID += 1
+            playerNameRectWidth = len(x.Name) * 15 
+            if playerLabelVector["x"] > 600:
+                playerLabelVector["x"] = 50
+                playerLabelVector["y"] += 50
+            else:
+                playerLabelVector["x"] += playerNameRectWidth
+        return (playerLabels, generateID)
+        
