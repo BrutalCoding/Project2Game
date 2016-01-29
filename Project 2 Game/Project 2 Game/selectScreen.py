@@ -3,12 +3,14 @@ import options
 
 class selectScreen:
     #Reset the selected and amount of characters to zero again in able to reselect later.
-    def resetSelections(selectedCharacters, selectedAmountBots):
-        if selectedCharacters != None:
+    def resetSelections(selectedCharacters, selectedAmountBots, latestSelectedChar):
+        if selectedCharacters is not None:
             selectedCharacters.clear()
-        if selectedAmountBots != None:
+        if selectedAmountBots is not None:
             selectedAmountBots = None
-        return (selectedCharacters, selectedAmountBots)
+        if latestSelectedChar is not None:
+            latestSelectedChar = None
+        return (selectedCharacters, selectedAmountBots, latestSelectedChar)
     
     #Draw all the labels on the screen
     def drawOptions(l):
