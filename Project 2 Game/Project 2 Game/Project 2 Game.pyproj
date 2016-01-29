@@ -56,6 +56,7 @@
   <ItemGroup>
     <Folder Include="Images\" />
     <Folder Include="Sounds\" />
+    <Folder Include="__pycache__\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Images\1.jpg" />
@@ -102,6 +103,9 @@
     <Content Include="Sounds\Intro_Soft_Touch.mp3" />
     <Content Include="Sounds\tik.m4a" />
     <Content Include="Sounds\tik.wav" />
+    <Content Include="__pycache__\main.cpython-34.pyc" />
+    <Content Include="__pycache__\selectScreen.cpython-34.pyc" />
+    <Content Include="__pycache__\WindowsScreen.cpython-34.pyc" />
   </ItemGroup>
   <ItemGroup>
     <InterpreterReference Include="{2af0f10d-7135-4994-9156-5d01c9c11b7e}\3.4" />

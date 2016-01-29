@@ -11,7 +11,7 @@ class selectScreen:
         if latestSelectedChar is not None:
             latestSelectedChar = None
         return (selectedCharacters, selectedAmountBots, latestSelectedChar)
-    
+
     #Draw all the labels on the screen
     def drawOptions(l):
         for option in l:#Draw all options on the screen
@@ -25,7 +25,7 @@ class selectScreen:
     def makeBotLabels(generateID, maxAmountOfBots, font, screen, Option):
         labelAmountPlayers = []
         playerNumber = 1 #Starting with min 1 and max 4 players
-        amountPlayersLabelVector = {"x": 200,"y": 50}
+        amountPlayersLabelVector = {"x": 150,"y": 50}
         generateID += 1 #Increment the latest generated id by one so it stays unique
         labelBotName = "Bot"
         for x in range(1,maxAmountOfBots):
@@ -49,7 +49,7 @@ class selectScreen:
         for x in players:
             playerLabels.append(Option(x.Name, (playerLabelVector["x"], playerLabelVector["y"]), font, screen, generateID))
             generateID += 1
-            playerNameRectWidth = len(x.Name) * 20 
+            playerNameRectWidth = len(x.Name) * 15 
             if playerLabelVector["x"] > 600:
                 playerLabelVector["x"] = 50
                 playerLabelVector["y"] += 50
