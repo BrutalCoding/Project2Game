@@ -359,7 +359,8 @@ while gameIsRunning:
         if latestSelectedChar != None:
             screen.blit(playerImageFaceDict[latestSelectedChar.Name],(100,300)) #Image of the character
             screen.blit(playerImageCardDict[latestSelectedChar.Name],(350,300)) #Image of the score card
-            
+        
+
         for entity in entities:
             drawOptions(entity)
             if botChosen == True:
