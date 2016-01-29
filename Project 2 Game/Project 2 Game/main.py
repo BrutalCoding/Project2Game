@@ -2,6 +2,7 @@
 import pygame
 import options
 import random
+from fightScreen import *
 from Player import *
 from PlayerCards import *
 from board import tiles
@@ -13,7 +14,7 @@ from pygame import gfxdraw
 from SuperFighters import *
 from selectScreen import *
 from WindowsScreen import *
-from fightScreen import *
+
 Option = options.Option
 pygame.mixer.init()
 pygame.init()
@@ -537,7 +538,9 @@ while gameIsRunning:
 
     elif gameStatus == "fight":
         fs = fightScreen(fighterCurrentPlayerCounter,screen,currentPlayerCounter,
-                         tempCurrentPlayerCounter,selectedCharacters,boardtiles,gameIsRunning,dice,events)
+                         tempCurrentPlayerCounter,selectedCharacters,boardtiles,gameIsRunning,dice,events,
+                         fighterDieInt,setDefaultSoundSystem,enableSound,gameStatus)
+        fs.startFight()
         fighterCurrentPlayerCounter = fs.fighterCurrentPlayerCounter
         screen = fs.screen
         currentPlayerCounter = fs.currentPlayerCounter
@@ -546,7 +549,9 @@ while gameIsRunning:
         boardtiles = fs.boardtiles
         gameIsRunning = fs.gameIsRunning
         dice = fs.dice
-        fs.startFight()
+        fighterDieInt = fs.fighterDieInt
+        enableSound = fs.enableSound
+        gameStatus = fs.gameStatus
     pygame.display.flip()
 pygame.quit()
 sys.exit()
