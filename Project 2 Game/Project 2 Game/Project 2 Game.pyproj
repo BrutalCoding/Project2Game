@@ -35,6 +35,9 @@
     <Compile Include="elements.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="fightScreen.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="main.py" />
     <Compile Include="menu.py">
       <SubType>Code</SubType>
