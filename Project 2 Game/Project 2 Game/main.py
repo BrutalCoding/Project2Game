@@ -210,10 +210,11 @@ players =  [Player("Mohammed Ali",100, 15, PlayerCards.MohammedAli,boardtiles[0]
 #Load all images from the Player class
 playerImageCardDict = {}
 playerImageFaceDict = {}
+playerImageFighterDict = {}
 for player in players:
     playerImageCardDict.update({player.Name: pygame.transform.smoothscale(pygame.image.load("Images\\" + player.ImageCard), (250,300))})
     playerImageFaceDict.update({player.Name: pygame.transform.smoothscale(pygame.image.load("Images\\" + player.ImageFace), (250,300))})
-
+    playerImageFighterDict.update({player.Name: pygame.transform.smoothscale(pygame.image.load("Images\\" + player.ImageFighter), (250,300))})
 #Define entities so that it can also be called again to reset all values such as the selections
 
 #Draw all player names on the screen
@@ -344,6 +345,7 @@ while gameIsRunning:
             screen.blit(playerImageFaceDict[latestSelectedChar.Name],(100,300)) #Image of the character
             screen.blit(playerImageCardDict[latestSelectedChar.Name],(350,300)) #Image of the score card
         
+        selectScreen.makePlayerCard(screen, players, playerImageFighterDict)
 
         for entity in entities:
             drawOptions(entity)

@@ -11,7 +11,7 @@ class selectScreen:
         if latestSelectedChar is not None:
             latestSelectedChar = None
         return (selectedCharacters, selectedAmountBots, latestSelectedChar)
-    
+
     #Draw all the labels on the screen
     def drawOptions(l):
         for option in l:#Draw all options on the screen
@@ -42,19 +42,23 @@ class selectScreen:
         return (labelAmountPlayers, generateID)
 
     #Make the player labels
-    def makePlayerLabels(players, Option, font, screen):
-        playerLabels = []
-        playerLabelVector = {"x": 100,"y": 200}#x,y coordinates on the screen for the label to be displayed
-        generateID = 0 #Generate an ID for each player
-        for x in players:
-            playerLabels.append(Option(x.Name, (playerLabelVector["x"], playerLabelVector["y"]), font, screen, generateID))
-            generateID += 1
-            playerNameRectWidth = len(x.Name) * 20 
-            if playerLabelVector["x"] > 600:
-                playerLabelVector["x"] = 50
-                playerLabelVector["y"] += 50
-            else:
-                playerLabelVector["x"] += playerNameRectWidth
-        return (playerLabels, generateID)
-        
-   
+    #def makePlayerLabels(players, Option, font, screen):
+    #    playerLabels = []
+    #    playerLabelVector = {"x": 100,"y": 200}#x,y coordinates on the screen for the label to be displayed
+    #    generateID = 0 #Generate an ID for each player
+    #    for x in players:
+    #        playerLabels.append(Option(x.Name, (playerLabelVector["x"], playerLabelVector["y"]), font, screen, generateID))
+    #        generateID += 1
+    #        playerNameRectWidth = len(x.Name) * 20 
+    #        if playerLabelVector["x"] > 600:
+    #            playerLabelVector["x"] = 50
+    #            playerLabelVector["y"] += 50
+    #        else:
+    #            playerLabelVector["x"] += playerNameRectWidth
+    #    return (playerLabels, generateID)
+
+    
+    def makePlayerCard(screen, players, playerImageFighterDict):
+        for player in players:
+            screen.blit(playerImageFighterDict[player.Name],(100,200))
+       
