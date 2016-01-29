@@ -202,18 +202,21 @@ pawns =     {1:pawnload('Images/Blue.png'), 2:pawnload('Images/Red.png'), 3:pawn
 dice =      {1:diceload('Images/Die-1.png'), 2:diceload('Images/Die-2.png'), 3:diceload('Images/Die-3.png'), 4:diceload('Images/Die-4.png'), 5:diceload('Images/Die-5.png'), 6:diceload('Images/Die-6.png')}
 playerImages = {1:playerload('Images/mike.png'), 2:playerload('Images/paquiao.png'), 3:playerload('Images/mohammed.png'), 4:playerload('Images/rocky.png')}
 boardtiles = tiles()
-players =  [Player("Mohammed Ali",100, 15, PlayerCards.MohammedAli,boardtiles[0],"card__mohammed_ali.png", "mohammed.png", "mohammed.png"),
-            Player("Manny Pecquiao",100, 15, PlayerCards.MannyPecquiao,boardtiles[0],"card__manny_pecquiao.png","face__manny_pecquiao.jpg", "paquiao.png"),
-            Player("Mike Tysen",100, 15, PlayerCards.MikeTysen,boardtiles[0],"card__mike_tysen.png","face__mike_tysen.jpg", "mike.png"),
-            Player("Rocky Belboa",100,15,PlayerCards.RockyBelboa,boardtiles[0],"card__rocky_belboa.png","face__rocky_belboa.jpg", "rocky.png")]
+players =  [Player("Mohammed Ali",100, 15, PlayerCards.MohammedAli,boardtiles[0],"card__mohammed_ali.png", "mohammed.png", "muhammed_ali.png", "MuhammedGlow.png"),
+            Player("Manny Pecquiao",100, 15, PlayerCards.MannyPecquiao,boardtiles[0],"card__manny_pecquiao.png","face__manny_pecquiao.jpg", "paquiao.png", "PecquiaoGlow.png"),
+            Player("Mike Tysen",100, 15, PlayerCards.MikeTysen,boardtiles[0],"card__mike_tysen.png","face__mike_tysen.jpg", "mike.png", "MikeGlow.png"),
+            Player("Rocky Belboa",100,15,PlayerCards.RockyBelboa,boardtiles[0],"card__rocky_belboa.png","face__rocky_belboa.jpg", "rocky.png", "RockyGlow.png")]
 
 #Load all images from the Player class
 playerImageCardDict = {}
 playerImageFaceDict = {}
+playerImageFighterDict = {}
+PlayerImageFighterSelectedDict = {}
 for player in players:
     playerImageCardDict.update({player.Name: pygame.transform.smoothscale(pygame.image.load("Images\\" + player.ImageCard), (250,300))})
     playerImageFaceDict.update({player.Name: pygame.transform.smoothscale(pygame.image.load("Images\\" + player.ImageFace), (250,300))})
-
+    playerImageFighterDict.update({player.Name: pygame.transform.smoothscale(pygame.image.load("Images\\" + player.ImageFighter), (150,200))})
+    PlayerImageFighterSelectedDict.update({player.Name: pygame.transform.smoothscale(pygame.image.load("Images\\" + player.ImageFighterSelected), (150,200))})
 #Define entities so that it can also be called again to reset all values such as the selections
 
 #Draw all player names on the screen
@@ -308,11 +311,14 @@ while gameIsRunning:
         label = fontSize(35, "Brush").render("Choose your fighter", 1, (255,0,0))
         screen.blit(label, (screen.get_rect().centerx / 2, 150))
         
-        if latestSelectedChar != None:
-            screen.blit(playerImageFaceDict[latestSelectedChar.Name],(100,300)) #Image of the character
-            screen.blit(playerImageCardDict[latestSelectedChar.Name],(350,300)) #Image of the score card
-            
+        #if latestSelectedChar != None:
+        #    screen.blit(playerImageFaceDict[latestSelectedChar.Name],(100,300)) #Image of the character
+        #    screen.blit(playerImageCardDict[latestSelectedChar.Name],(350,300)) #Image of the score card
+    
+           
+
         for entity in entities:
+            selectScreen.displayPlayers(screen, players, playerImageFighterDict, PlayerImageFighterSelectedDict, entities[0])    
             selectScreen.drawOptions(entity)
             if botChosen == True:
                 selectchar = fontSize(25, None).render("Make sure a bot is selected", 1,(255,0,0))
@@ -341,7 +347,6 @@ while gameIsRunning:
                             if not players[option.id] in selectedCharacters and selectedAmountBots != None and len(selectedCharacters) < (selectedAmountBots.id - len(players) + 1): 
                                 if len(selectedCharacters) == 0: #Assign first selection to yourChar
                                     yourChar = players[option.id] #Set yourChar to the selected player
-                                
                                 latestSelectedChar = players[option.id]
                                 charChosen = False
                                 selectedCharacters.append(latestSelectedChar) #Add the selected character to the list
