@@ -57,11 +57,23 @@ class selectScreen:
         return (playerLabels, generateID)
         
     #Draw character image on screen based on if the character is selected.
-    def displayPlayers(screen, playerImageFighterDict, PlayerImageFighterSelectedDict, characterSelected): 
+    def displayPlayers(screen, playerImageFighterDict, PlayerImageFighterSelectedDict, characterSelected, selectedCharacters): 
         position = [20, 200]
         for character in characterSelected:
             if character.selected:
                 screen.blit(PlayerImageFighterSelectedDict[character.text], (position[0], position[1]))
+                if character.text == selectedCharacters[0].Name:
+                    font = pygame.font.Font(None,25)
+                    label1 = font.render("Player 1", 1, (255,0,0))
+                    screen.blit(label1, (position[0] + 40, position[1] - 20))
+                    print(1)
+                else:
+                    font = pygame.font.Font(None,25)
+                    label2 = font.render("Cpu", 1, (255,0,0))
+                    screen.blit(label2, (position[0] + 40, position[1]- 20))
+                    print()
             else:
                 screen.blit(playerImageFighterDict[character.text], (position[0], position[1]))
+                    
+
             position[0] += 200

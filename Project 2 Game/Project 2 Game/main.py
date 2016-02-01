@@ -318,7 +318,7 @@ while gameIsRunning:
            
 
         for entity in entities:
-            selectScreen.displayPlayers(screen, playerImageFighterDict, PlayerImageFighterSelectedDict, entities[0])    
+            selectScreen.displayPlayers(screen, playerImageFighterDict, PlayerImageFighterSelectedDict, entities[0], selectedCharacters)    
             selectScreen.drawOptions(entity)
             if botChosen == True:
                 selectchar = fontSize(25, None).render("Make sure a bot is selected", 1,(255,0,0))
