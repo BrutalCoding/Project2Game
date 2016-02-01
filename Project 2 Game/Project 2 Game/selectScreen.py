@@ -49,7 +49,6 @@ class selectScreen:
         for x in players:
             playerLabels.append(Option(x.Name, (playerLabelVector["x"], playerLabelVector["y"]), font, screen, generateID))
             generateID += 1
-            #playerNameRectWidth = len(x.Name) * 15 
             if playerLabelVector["x"] > 600:
                 playerLabelVector["x"] = 50
                 playerLabelVector["y"] += 50
@@ -57,16 +56,12 @@ class selectScreen:
                 playerLabelVector["x"] += 200
         return (playerLabels, generateID)
         
-
-    def displayPlayers(screen, players, playerImageFighterDict, PlayerImageFighterSelectedDict, characterSelected): 
+    #Draw character image on screen based on if the character is selected.
+    def displayPlayers(screen, playerImageFighterDict, PlayerImageFighterSelectedDict, characterSelected): 
         position = [20, 200]
-        for player in players:
-            if characterSelected.selected:
-                screen.blit(PlayerImageFighterSelectedDict[player.Name], (position[0], position[1]))
+        for character in characterSelected:
+            if character.selected:
+                screen.blit(PlayerImageFighterSelectedDict[character.text], (position[0], position[1]))
             else:
-                screen.blit(playerImageFighterDict[player.Name], (position[0], position[1]))
+                screen.blit(playerImageFighterDict[character.text], (position[0], position[1]))
             position[0] += 200
-
-    #def test(player, playerImageFighterDict, screen):
-    #    position = player.pos[1] - 200
-    #    screen.blit(playerImageFighterDict[player.text], (player.pos[0], position))
