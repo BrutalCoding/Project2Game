@@ -566,6 +566,21 @@ while gameIsRunning:
 
         curplaypos = selectedCharacters[tempCurrentPlayerCounter].Tile #currentPlayerCounter got updated to the next player, but we want the previous player.
         screen.blit(pygame.transform.smoothscale(pygame.image.load("Images\\" + selectedCharacters[tempCurrentPlayerCounter].ImageCard),(250,295)), (screen.get_width() - 250, screen.get_height() - 295))
+        
+        #HP and Condition labels for the player and the owner of the corner
+        textPlayerHP = font.render("HP: " + str(selectedCharacters[currentPlayerCounter].Health), 1, (255,255,0))
+        textPlayerCondition = font.render("Condition: " + str(selectedCharacters[currentPlayerCounter].Condition), 1, (255,255,0))
+        textOpponentHP = font.render("HP: " + str(selectedCharacters[tempCurrentPlayerCounter].Health), 1, (255,255,0))
+        textOpponentCondition = font.render("Condition: " + str(selectedCharacters[tempCurrentPlayerCounter].Condition), 1, (255,255,0))
+
+        #Blit the HP/Condition labels
+        screen.blit(textPlayerHP, (200,600))
+        screen.blit(textPlayerCondition, (200,630))
+        screen.blit(textOpponentHP, (630, 35))
+        screen.blit(textOpponentCondition, (630,65))
+
+        print(str(pygame.mouse.get_pos()))
+
         #Find index number in boardtiles
         for x in boardtiles.items():
             if x[1] == curplaypos:
@@ -590,12 +605,14 @@ while gameIsRunning:
 
         screen.blit(pygame.transform.smoothscale(pygame.image.load("Images\\" + selectedCharacters[currentPlayerCounter].ImageCard),(250,295)), (0,0))
         
+        
         #If the first turn has not begun yet, display a placeholder for the dice. Else show what dice was thrown.
         if fighterCurrentPlayerCounter == 0:
             diePlaceholder = pygame.image.load("Images\\head__iron_rekt.png")
             screen.blit(diePlaceholder, (((screen.get_width() /2)-95), (screen.get_height()/2)-95))
         else:
             screen.blit(dice[fighterDieInt], (((screen.get_width() /2)-95), (screen.get_height()/2)-95))
+
         fightDie = pygame.Rect(((screen.get_width() /2)-95), (screen.get_height()/2)-95, 190, 190)
         if fightDie.collidepoint(pygame.mouse.get_pos()) and fighterCurrentPlayerCounter < 2: #If there are still turns left and
             if ev.type == pygame.MOUSEBUTTONDOWN:
