@@ -310,15 +310,9 @@ while gameIsRunning:
         screen.blit(label, (screen.get_rect().centerx / 6, 20))
         label = fontSize(35, "Brush").render("Choose your fighter", 1, (255,0,0))
         screen.blit(label, (screen.get_rect().centerx / 2, 150))
-        
-        #if latestSelectedChar != None:
-        #    screen.blit(playerImageFaceDict[latestSelectedChar.Name],(100,300)) #Image of the character
-        #    screen.blit(playerImageCardDict[latestSelectedChar.Name],(350,300)) #Image of the score card
-    
            
-
         for entity in entities:
-            selectScreen.displayPlayers(screen, playerImageFighterDict, PlayerImageFighterSelectedDict, entities[0], selectedCharacters)    
+            selectScreen.displayPlayers(screen, playerImageFighterDict, PlayerImageFighterSelectedDict, entities[0], selectedCharacters, fontSize(25, None))
             selectScreen.drawOptions(entity)
             if botChosen == True:
                 selectchar = fontSize(25, None).render("Make sure a bot is selected", 1,(255,0,0))
