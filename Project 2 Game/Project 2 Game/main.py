@@ -306,8 +306,9 @@ while gameIsRunning:
                 setDefaultSoundSystem(enableSound, "Sounds\Intro_Soft_Touch.mp3", 300)
 
         screen.blit(pygame.transform.scale(selectBackground,(screenVectorSize["x"],screenVectorSize["y"])), (0, 0))
+
         label = fontSize(35, "Brush").render("Choose bots", 1, (255,0,0))
-        screen.blit(label, (screen.get_rect().centerx / 6, 20))
+        screen.blit(label, (screen.get_rect().centerx / 2 + 75, 20))
         label = fontSize(35, "Brush").render("Choose your fighter", 1, (255,0,0))
         screen.blit(label, (screen.get_rect().centerx / 2, 150))
            
