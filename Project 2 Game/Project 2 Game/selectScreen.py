@@ -44,16 +44,24 @@ class selectScreen:
     #Make the player labels
     def makePlayerLabels(players, Option, font, screen):
         playerLabels = []
-        playerLabelVector = {"x": 100,"y": 200}#x,y coordinates on the screen for the label to be displayed
+        playerLabelVector = {"x": 30, "y": 400}#x,y coordinates on the screen for the label to be displayed
         generateID = 0 #Generate an ID for each player
         for x in players:
             playerLabels.append(Option(x.Name, (playerLabelVector["x"], playerLabelVector["y"]), font, screen, generateID))
             generateID += 1
-            playerNameRectWidth = len(x.Name) * 15 
+            
             if playerLabelVector["x"] > 600:
                 playerLabelVector["x"] = 50
-                playerLabelVector["y"] += 50
             else:
-                playerLabelVector["x"] += playerNameRectWidth
+                playerLabelVector["x"] += 200
         return (playerLabels, generateID)
+
+    def makePlayerCard(screen, players, playerImageFighterDict):
+        position = [20, 200]
+        for player in players:
+            screen.blit(playerImageFighterDict[player.Name],(position[0], position[1]))
+            position[0] += 200
+            
+           
+
         

@@ -214,7 +214,7 @@ playerImageFighterDict = {}
 for player in players:
     playerImageCardDict.update({player.Name: pygame.transform.smoothscale(pygame.image.load("Images\\" + player.ImageCard), (250,300))})
     playerImageFaceDict.update({player.Name: pygame.transform.smoothscale(pygame.image.load("Images\\" + player.ImageFace), (250,300))})
-    playerImageFighterDict.update({player.Name: pygame.transform.smoothscale(pygame.image.load("Images\\" + player.ImageFighter), (250,300))})
+    playerImageFighterDict.update({player.Name: pygame.transform.smoothscale(pygame.image.load("Images\\" + player.ImageFighter), (150,200))})
 #Define entities so that it can also be called again to reset all values such as the selections
 
 #Draw all player names on the screen
@@ -329,7 +329,7 @@ while gameIsRunning:
                         if option.id > amountOfCharacters and option.id != startGameID and option.id != mainMenuGameID: #Set amount of bots
                             if selectedAmountBots != None and selectedAmountBots.id != option.id: #If the player didn't made a choice yet
                                 if selectedAmountBots:
-                                    selectedAmountBots.selected = False
+                                    #selectedAmountBots.selected = False
                                     selectedAmountBots = None
                             selectedAmountBots = option
                             yourChar = None
