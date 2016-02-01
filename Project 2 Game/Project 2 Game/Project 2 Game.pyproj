@@ -29,7 +29,16 @@
     <PtvsTargetsFile>$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets</PtvsTargetsFile>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AI.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="board.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Dice.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Draw.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="elements.py">
