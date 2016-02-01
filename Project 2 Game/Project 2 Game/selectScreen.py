@@ -1,6 +1,7 @@
 import pygame
 import options
 
+
 class selectScreen:
     #Reset the selected and amount of characters to zero again in able to reselect later.
     def resetSelections(selectedCharacters, selectedAmountBots, latestSelectedChar):
@@ -56,12 +57,19 @@ class selectScreen:
                 playerLabelVector["x"] += 200
         return (playerLabels, generateID)
         
-    #Draw character image on screen based on if the character is selected.
-    def displayPlayers(screen, playerImageFighterDict, PlayerImageFighterSelectedDict, characterSelected): 
-        position = [20, 200]
-        for character in characterSelected:
+    #Draw character image on screen based on if the character is selected and assign player or CPU to character.
+    def displayPlayers(screen, playerImageFighterDict, PlayerImageFighterSelectedDict, characterList, selectedCharacters, font):
+        labelsPlayerSelected = [] 
+        for character in characterList:
             if character.selected:
-                screen.blit(PlayerImageFighterSelectedDict[character.text], (position[0], position[1]))
+                if character.text == selectedCharacters[0].Name:
+                    label = font.render("Player 1", 1, (255,0,0))
+                    labelsPlayerSelected.append((label, (character.pos[0] + 40, (character.pos[1] - 215))))
+                else:
+                    label = font.render("CPU", 1, (255,0,0))
+                    labelsPlayerSelected.append((label, (character.pos[0] + 40, (character.pos[1] - 215))))
+                screen.blit(PlayerImageFighterSelectedDict[character.text], (character.pos[0], (character.pos[1] - 200)))
             else:
-                screen.blit(playerImageFighterDict[character.text], (position[0], position[1]))
-            position[0] += 200
+                screen.blit(playerImageFighterDict[character.text], (character.pos[0], (character.pos[1] - 200)))
+        for label in labelsPlayerSelected:
+            screen.blit(label[0], label[1])
