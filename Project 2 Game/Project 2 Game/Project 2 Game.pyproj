@@ -39,12 +39,18 @@
     <Compile Include="menu.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Option_Screen.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="options.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Player.py" />
     <Compile Include="PlayerCards.py" />
-    <Compile Include="rules.py">
+    <Compile Include="Rules_Screen.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Rules.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="selectScreen.py" />

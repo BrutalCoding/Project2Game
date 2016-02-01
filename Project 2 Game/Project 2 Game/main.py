@@ -8,7 +8,8 @@ from board import tiles
 from elements import diceload, pawnload, playerload
 from Player import *
 from PlayerCards import *
-from rules import *
+from Rules import *
+from Rules_Screen import *
 from pygame import gfxdraw
 from SuperFighters import *  
 from selectScreen import *
@@ -527,25 +528,29 @@ while gameIsRunning:
                 player = Player #Reset all lives/conditions etc by recreating the Player class
 # display rules
     elif gameStatus == "rules":
-        screen.blit(pygame.transform.scale(selectBackground,(screenVectorSize["x"],screenVectorSize["y"])), (0, 0))
-        if ev.type == pygame.QUIT:
-            gameIsRunning = False
-        if ev.type == pygame.KEYUP:
-            if ev.key == pygame.K_ESCAPE:
-                gameStatus = 'main'
-                screenVectorSize["x"] = mainMenuSize[0]
-                screenVectorSize["y"] = mainMenuSize[1]
-                setScreenVectorSize(screenVectorSize, screen)
-        labelHeight = screen.get_rect().midtop[1]
-        for rule in rules.LoadAllRules():
-            text = fontSize(25, None).render(rule, 1, (217, 30, 24))
-            textpos = text.get_rect()
-            labelHeight += 25
-            screen.blit(text, (screen.get_rect().centerx / 4, labelHeight))
-        text = font.render("Press 'ESC' to get back to the main menu", 1, (255,255,0))
-        textpos = text.get_rect()
-        screen.blit(text, (screen.get_rect().centerx / 4, screen.get_size()[1] - 50))
+        rulesScreen = Rules_Screen(screen,screenVectorSize,selectBackground,ev)
+        rulesScreen.Show()
 
+        #region
+        #screen.blit(pygame.transform.scale(selectBackground,(screenVectorSize["x"],screenVectorSize["y"])), (0, 0))
+        #if ev.type == pygame.QUIT:
+        #    gameIsRunning = False
+        #if ev.type == pygame.KEYUP:
+        #    if ev.key == pygame.K_ESCAPE:
+        #        gameStatus = 'main'
+        #        screenVectorSize["x"] = mainMenuSize[0]
+        #        screenVectorSize["y"] = mainMenuSize[1]
+        #        setScreenVectorSize(screenVectorSize, screen)
+        #labelHeight = screen.get_rect().midtop[1]
+        #for rule in rules.LoadAllRules():
+        #    text = fontSize(25, None).render(rule, 1, (217, 30, 24))
+        #    textpos = text.get_rect()
+        #    labelHeight += 25
+        #    screen.blit(text, (screen.get_rect().centerx / 4, labelHeight))
+        #text = font.render("Press 'ESC' to get back to the main menu", 1, (255,255,0))
+        #textpos = text.get_rect()
+        #screen.blit(text, (screen.get_rect().centerx / 4, screen.get_size()[1] - 50))
+        #endregion
     elif gameStatus == "fight":
         #print('We\'re in the fight gameStatus')
         if fighterCurrentPlayerCounter == 2:
