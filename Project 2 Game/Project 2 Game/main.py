@@ -4,6 +4,7 @@ import options
 import random
 import pickle
 import os
+import webbrowser
 from Player import *
 from PlayerCards import *
 from board import tiles
@@ -50,6 +51,7 @@ botChosen = False
 charChosen = False
 tileSelected = False
 enableSound = True
+ruleOpened = False
 fighterDieInt = []
 fighterCurrentPlayerCounter = 0 #When a player lands on a corner, this variable will be assigned to the current fighter.
 fightAttackIsChosen = False #In the fightscreen, where the player has the option to select an attack
@@ -310,23 +312,13 @@ while gameIsRunning:
     #Erase screen, fill everything with black
     screen.fill((0,0,0))
 # main menu
-    #print(gameStatus)
     if(gameStatus == 'main'):
         screen.blit(pygame.transform.scale(mainBackground,(screenVectorSize["x"],screenVectorSize["y"])), (0, 0))
-        #screenVectorSize["x"] = 200
-        #screenVectorSize["y"] = 260
         #Reset option class so no selections get remembered from the previous time that the user selected amount of players and/or character
         for entity in entities:
                 for option in entity:
                     option.selected = False
-
-        for option in menu:
-            if option.rect.collidepoint(pygame.mouse.get_pos()):
-                option.hovered = True
-            else:
-                option.hovered = False
-            option.draw()
-
+        selectScreen.drawOptions(menu)#Draw menu items on screen
         if ev.type == pygame.MOUSEBUTTONUP:
             for option in menu:
                 if option.rect.collidepoint(pygame.mouse.get_pos()):
@@ -337,7 +329,6 @@ while gameIsRunning:
                         screenVectorSize["y"] = mainMenuSize[1]
                         setScreenVectorSize(screenVectorSize, screen)
                         setDefaultSoundSystem(enableSound,"Sounds\Intro_1_Hyped.mp3", 300)
-                        
                     elif(option.id == 1):#Load game
                         gameStatus = "load"
                         screenVectorSize["x"] = 1000
@@ -350,19 +341,10 @@ while gameIsRunning:
                         setScreenVectorSize(screenVectorSize, screen)
                     elif(option.id == 3):#Rules
                         gameStatus = "rules"
-                        screenVectorSize["x"] = mainMenuSize[0]
-                        screenVectorSize["y"] = mainMenuSize[1]
-                        setScreenVectorSize(screenVectorSize, screen)
                     elif(option.id == 4):#Quit
                         gameIsRunning = False
-                    option.draw()
 # New game/ select player
     elif(gameStatus == 'new'):
-        if ev.type == pygame.KEYUP:
-            if ev.key == pygame.K_ESCAPE:
-                gameStatus = 'main'
-                #mainMenuSound
-                setDefaultSoundSystem(enableSound, "Sounds\Intro_Soft_Touch.mp3", 300)
         #select screen background and labels.
         screen.blit(pygame.transform.scale(selectBackground,(screenVectorSize["x"],screenVectorSize["y"])), (0, 0))
         label = fontSize(35, "Brush").render("Choose bots", 1, (255,0,0))
@@ -393,7 +375,7 @@ while gameIsRunning:
                             latestSelectedChar = None
                             selectedCharacters = []
                             botChosen = False
-                            for character in entities[0]:
+                            for character in entities[0]:#Reset selected characters
                                 character.selected = False
                             option.selected = True
                         elif option.id <= amountOfCharacters and int(option.id) != startGameID and option.id != mainMenuGameID:#Set which character player 1 is.
@@ -420,7 +402,13 @@ while gameIsRunning:
                             if selectedAmountBots == None:#check if bot is selected
                                 botChosen = True
                             elif latestSelectedChar == None:# check if character is selected
-                                charChosen = True  
+                                charChosen = True
+
+        if ev.type == pygame.KEYUP:
+            if ev.key == pygame.K_ESCAPE:
+                gameStatus = 'main'
+                #mainMenuSound
+                setDefaultSoundSystem(enableSound, "Sounds\Intro_Soft_Touch.mp3", 300)  
 # Display board game
     elif(gameStatus == 'Game'):#This means we're about to start a new game, start initialising the screen and its elements.
         dieRect = pygame.Rect((725,50,150,150))
@@ -432,13 +420,16 @@ while gameIsRunning:
         #draw labels on scoreboard with lifepoints/conditions p/player
         scoreBoardFont = pygame.font.Font(None, 20)
 
-
-
-        #Stop game button
+        #Stop game, pause game and rules button
         bellImg = pygame.image.load("Images\BoxingBell.png")
-        screen.blit(pygame.transform.scale(bellImg, (50, 50)), (910, 10))
-        gameBoardButtons = [Option("Stop Game", (890,60), fontSize(25, None),screen, 120)]
-        selectScreen.drawOptions(gameBoardButtons)
+        screen.blit(pygame.transform.scale(bellImg, (25, 25)), (950, 10))
+        pauseImg = pygame.image.load("Images\Pause.png")
+        screen.blit(pygame.transform.scale(pauseImg, (25, 25)), (915, 10))
+        ruleImg = pygame.image.load("Images\Rules.png")
+        screen.blit(pygame.transform.scale(ruleImg, (25, 25)), (880, 10))
+        bellRec = pygame.Rect((950, 10, 25, 25))
+        pauseImg = pygame.Rect((915, 10, 25, 25))
+        ruleImg = pygame.Rect((880, 10, 25, 25))
 
         #default is the player itself
         scoreBoardLabels = []
@@ -449,7 +440,6 @@ while gameIsRunning:
             vectorX += 250
             if x == yourChar:
                 name = str(x.Name) + "Player 1: " 
-
             else:
                 name = "CPU: " + str(x.Name)  
             if x == selectedCharacters[currentPlayerCounter]:
@@ -489,26 +479,27 @@ while gameIsRunning:
                     cardName = selectedCharacters[3].Name
             else:
                 tileSelected = False
-
-            for option in gameBoardButtons:
-                    if option.rect.collidepoint(pygame.mouse.get_pos()):
-                        if option.id == 120:
-                            gameStatus = 'main'
-                            setDefaultSoundSystem(enableSound,"Sounds\Intro_Soft_Touch.mp3", 300)
-                            screenVectorSize["x"] = mainMenuSize[0]
-                            screenVectorSize["y"] = mainMenuSize[1]
-                            setScreenVectorSize(screenVectorSize, screen)
-                            selectedCharacters, selectedAmountBots, latestSelectedChar = selectScreen.resetSelections(selectedCharacters, selectedAmountBots, latestSelectedChar)
-                            selectedCharacters = [] #List of selected characters from the "new game" screen
-                            firstDieIsThrown = False
-                            yourChar = None
-                            player = Player #Reset all lives/conditions etc by recreating the Player class
-                            currentPlayerCounter = 0
-        if ev.type == pygame.KEYDOWN:
-            if ev.key == pygame.K_s:
-                if(os.path.isfile('save.txt')):
-                    os.remove('save.txt')
-                pickle.dump((selectedCharacters, currentPlayerCounter), open('save.txt', "wb"))
+            
+            #Pause and stop game button logic
+            if bellRec.collidepoint(pygame.mouse.get_pos()) or pauseImg.collidepoint(pygame.mouse.get_pos()):
+                if pauseImg.collidepoint(pygame.mouse.get_pos()):
+                    if(os.path.isfile('save.txt')):
+                        os.remove('save.txt')
+                    pickle.dump((selectedCharacters, currentPlayerCounter), open('save.txt', "wb"))
+                gameStatus = 'main'
+                setDefaultSoundSystem(enableSound,"Sounds\Intro_Soft_Touch.mp3", 300)
+                screenVectorSize["x"] = mainMenuSize[0]
+                screenVectorSize["y"] = mainMenuSize[1]
+                setScreenVectorSize(screenVectorSize, screen)
+                selectedCharacters, selectedAmountBots, latestSelectedChar = selectScreen.resetSelections(selectedCharacters, selectedAmountBots, latestSelectedChar)
+                selectedCharacters = [] #List of selected characters from the "new game" screen
+                firstDieIsThrown = False
+                yourChar = None
+                player = Player #Reset all lives/conditions etc by recreating the Player class
+                currentPlayerCounter = 0
+            elif ruleImg.collidepoint(pygame.mouse.get_pos()):
+                    webbrowser.open_new('Documenten\Rules.pdf')
+# Option menu
     elif gameStatus == "options":
         screen.blit(pygame.transform.scale(selectBackground,(screenVectorSize["x"],screenVectorSize["y"])), (0, 0))
         label = fontSize(50, "Brush").render("Option menu", 1, (255, 0, 0))
@@ -539,27 +530,14 @@ while gameIsRunning:
                 gameStatus = 'main'
                 #mainMenuSound
                 setDefaultSoundSystem(enableSound,"Sounds\Intro_Soft_Touch.mp3", 300)
-    #Display rules
+#Display rules
     elif gameStatus == "rules":
-        screen.blit(pygame.transform.scale(selectBackground,(screenVectorSize["x"],screenVectorSize["y"])), (0, 0))
-        if ev.type == pygame.QUIT:
-            gameIsRunning = False
-        if ev.type == pygame.KEYUP:
-            if ev.key == pygame.K_ESCAPE:
-                gameStatus = 'main'
-                screenVectorSize["x"] = mainMenuSize[0]
-                screenVectorSize["y"] = mainMenuSize[1]
-                setScreenVectorSize(screenVectorSize, screen)
-        labelHeight = screen.get_rect().midtop[1]
-        for rule in rules.LoadAllRules():
-            text = font.render(rule, 1, (217, 30, 24))
-            textpos = text.get_rect()
-            labelHeight += 25
-            screen.blit(text, (screen.get_rect().centerx / 4, labelHeight))
-        text = font.render("Press 'ESC' to get back to the main menu", 1, (255,255,0))
-        textpos = text.get_rect()
-        screen.blit(text, (screen.get_rect().centerx / 4, screen.get_size()[1] - 50))
-
+        ruleOpened = True
+        if ruleOpened:
+            webbrowser.open_new('Documenten\Rules.pdf')
+            ruleOpened = False
+            gameStatus = 'main'
+# Fight 
     elif gameStatus == "fight":
         dieRect = None
         fightIsOver = False

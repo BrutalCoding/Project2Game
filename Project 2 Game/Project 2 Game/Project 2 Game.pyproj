@@ -102,6 +102,7 @@
     <Content Include="Images\MuhammedGlow.png" />
     <Content Include="Images\muhammed_ali.png" />
     <Content Include="Images\paquiao.png" />
+    <Content Include="Images\Pause.png" />
     <Content Include="Images\pecquiao.png" />
     <Content Include="Images\PecquiaoGlow.png" />
     <Content Include="Images\placeholder_253_300.png" />
@@ -109,6 +110,7 @@
     <Content Include="Images\red.png" />
     <Content Include="Images\rocky.png" />
     <Content Include="Images\RockyGlow.png" />
+    <Content Include="Images\rules.png" />
     <Content Include="Images\ScoreBoard.png" />
     <Content Include="Images\test.PNG" />
     <Content Include="Images\yellow.png" />
