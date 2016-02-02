@@ -89,6 +89,12 @@ def  PawnLocations(selectedCharacters, pawns,currentPlayerCounter, randomDiceNum
                     print("Player #" + str(currentPlayerCounter) +  " - Current tile: " + str(x[1]) + " - Next tile: " + str(boardtiles[newTileNumber]))
                     selectedCharacters[currentPlayerCounter].Tile = boardtiles[newTileNumber]
                     print("Player #" + str(currentPlayerCounter) +  " moved to next tile: " + str(boardtiles[newTileNumber]))
+                    
+                    for players in selectedCharacters[tempCurrentPlayerCounter]:
+                        if player.Tile== selectedCharacters[currentPlayerCounter].Tile:
+                            print("fight")
+                        
+
                     if selectedCharacters[currentPlayerCounter].Tile == boardtiles[5] or selectedCharacters[currentPlayerCounter].Tile == boardtiles[15] or selectedCharacters[currentPlayerCounter].Tile == boardtiles[25] or selectedCharacters[currentPlayerCounter].Tile == boardtiles[35]:
                         superfighter = random.choice(list(SuperFighters))
                         randominteger = random.randint(1,6)
@@ -382,7 +388,6 @@ while gameIsRunning:
                     tileSelected = True
                     cardName = selectedCharacters[3].Name
             else:
-                print(pygame.mixer.get_num_channels())
                 tileSelected = False
         screen.blit(board,(0,0))
         if tileSelected:#If player tile is selected, display character card referenced to character chosen by player
@@ -499,7 +504,7 @@ while gameIsRunning:
         text = font.render("Press 'ESC' to get back to the main menu", 1, (255,255,0))
         textpos = text.get_rect()
         screen.blit(text, (screen.get_rect().centerx / 4, screen.get_size()[1] - 50))
-
+#display rules
     elif gameStatus == "fight":
         #print('We\'re in the fight gameStatus')
         if fighterCurrentPlayerCounter == 2:
@@ -538,6 +543,8 @@ while gameIsRunning:
                 pass
             else: #Fight code
                 print('Player #', (tempCurrentPlayerCounter -1),' is going to fight player',tempCurrentPlayerCounter)
+
+
 
         ImageOpponent = pygame.image.load("Images\\" + selectedCharacters[tempCurrentPlayerCounter].ImageFighter)
         screen.blit(ImageFighter, (0,450)) #Blit attacker in bottom down
