@@ -199,7 +199,7 @@ def  PawnLocations(selectedCharacters, pawns,currentPlayerCounter, randomDiceNum
             else:
                 fighter.Health = 0 #Reset it to 0 instead of displaying a negative value.
                 del selectedCharacters[cnt]
-                currentPlayerCounter -= 1
+                #Hier moet iets gedaan worden met currentplayercounter oid, want die verwacht nog steeds alle 4 spelers
                 cnt -= 1
             if cnt < len(selectedCharacters):
                 cnt += 1
