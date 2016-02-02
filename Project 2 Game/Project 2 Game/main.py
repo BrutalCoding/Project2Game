@@ -410,7 +410,7 @@ while gameIsRunning:
             else:
                 labelColor = (0,0,0) #Black
             scoreBoardLabels.append(fontSize(20, None).render(name + " - Lifepoints: " + str(x.Health) + " | Condition: " + str(x.Condition), 1, labelColor))
-            pygame.draw.rect(screen, scoreBoardColor, (0,600,screenVectorSize["x"],scoreBoardHeight), 0)
+            pygame.draw.rect(screen, scoreBoardColor, (0,600,screenVectorSize["x"],25), 0)
 
         #Render the players on the score board
         labelPixelHeight = 605 #First label location on the score board
