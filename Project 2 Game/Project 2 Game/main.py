@@ -510,33 +510,36 @@ while gameIsRunning:
                     os.remove('save.txt')
                 pickle.dump((selectedCharacters, currentPlayerCounter), open('save.txt', "wb"))
     elif gameStatus == "options":
-        label = font.render("Option menu", 1, (255,255,0))
-        screen.blit(label, (300, 50))
-        geluid = pygame.mixer.get_num_channels()
-        selectScreen.drawOptions(buttonw)
+        screen.blit(pygame.transform.scale(selectBackground,(screenVectorSize["x"],screenVectorSize["y"])), (0, 0))
+        label = fontSize(50, "Brush").render("Option menu", 1, (255, 0, 0))
+        screen.blit(label, (260, 50))
+        if enableSound == True:
+            buttonsOptionScreen[1].selected = True
+        elif enableSound == False:
+            buttonsOptionScreen[0].selected = True
+        selectScreen.drawOptions(buttonsOptionScreen)
         if ev.type == pygame.MOUSEBUTTONDOWN:
-            for option in buttonw:
+            for option in buttonsOptionScreen:
                 if option.rect.collidepoint(pygame.mouse.get_pos()):
+                    for button in buttonsOptionScreen:
+                        button.selected = False
                     if option.id == 99:
                         enableSound = False
                         pygame.mixer.music.stop()
+                        option.selected = True
                     elif option.id == 98:
                         enableSound = True
-        if ev.type == pygame.KEYUP:
+                        option.selected = True
+                    elif option.id == mainMenuGameID:
+                            gameStatus = 'main'
+                            #mainMenuSound
+                            setDefaultSoundSystem(enableSound,"Sounds\Intro_Soft_Touch.mp3", 1000)
+        elif ev.type == pygame.KEYUP:
             if ev.key == pygame.K_ESCAPE:
                 gameStatus = 'main'
-                #mainmenusound#
+                #mainMenuSound
                 setDefaultSoundSystem(enableSound,"Sounds\Intro_Soft_Touch.mp3", 300)
-                screenVectorSize["x"] = mainMenuSize[0]
-                screenVectorSize["y"] = mainMenuSize[1]
-                setScreenVectorSize(screenVectorSize, screen)
-                selectedCharacters, selectedAmountBots = selectScreen.resetSelections(selectedCharacters, selectedAmountBots)
-                selectedCharacters = [] #List of selected characters from the "new game" screen
-                firstDieIsThrown = False
-                yourChar = None
-                latestSelectedChar = None
-                player = Player #Reset all lives/conditions etc by recreating the Player class
-# display rules
+    #Display rules
     elif gameStatus == "rules":
         screen.blit(pygame.transform.scale(selectBackground,(screenVectorSize["x"],screenVectorSize["y"])), (0, 0))
         if ev.type == pygame.QUIT:
