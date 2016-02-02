@@ -91,7 +91,7 @@ def  PawnLocations(selectedCharacters, pawns,currentPlayerCounter, randomDiceNum
     #Board game main loop. Every movement is here.
     if ev.type == pygame.MOUSEBUTTONDOWN:
         if dieRect.collidepoint(pygame.mouse.get_pos()):
-            #randomDiceNumber = random.randint(1,6)
+            selectedCharacters[currentPlayerCounter].Health -= 50
             randomDiceNumber = random.randint(1,6)
             currentTile = selectedCharacters[currentPlayerCounter].Tile
             for x in boardtiles.items():
@@ -122,10 +122,14 @@ def  PawnLocations(selectedCharacters, pawns,currentPlayerCounter, randomDiceNum
                     if curplaypos in (boardtiles[0], boardtiles[1], boardtiles[9], boardtiles[10], boardtiles[11], boardtiles[19], boardtiles[20], boardtiles[21], boardtiles[29], boardtiles[30], boardtiles[31], boardtiles[39]):
                         if currentPlayerCounter == 0 and (curplaypos == boardtiles[0] or curplaypos == boardtiles[39] or curplaypos == boardtiles[1]):
                             #Add HP to the owner
-                            pass
+                            playerHP = selectedCharacters[currentPlayerCounter].Health  
+                            if playerHP + 10 <= 100:
+                                selectedCharacters[currentPlayerCounter].Health += 10
                         elif currentPlayerCounter != 0 and curplaypos in (boardtiles[currentPlayerCounter * 10], boardtiles[(currentPlayerCounter * 10) - 1], boardtiles[(currentPlayerCounter * 10) + 1]):
                             #Add HP to the owner
-                            pass
+                            playerHP = selectedCharacters[currentPlayerCounter].Health  
+                            if playerHP + 10 <= 100:
+                                selectedCharacters[currentPlayerCounter].Health += 10
                         else: #Fight code
                             print('Fight started (else)')
                             setDefaultSoundSystem(enableSound, "Sounds\Fight.mp3")
@@ -146,8 +150,6 @@ def  PawnLocations(selectedCharacters, pawns,currentPlayerCounter, randomDiceNum
             
             
             firstDieIsThrown = True
-            if currentPlayerCounter != 1:
-                pass
             ###########################AI CONTROL###########################
             print(currentPlayerCounter)
         #if currentPlayerCounter == 0: #Don't call bot to play round, next up is the human player. Finish round as usual.
@@ -190,11 +192,17 @@ def  PawnLocations(selectedCharacters, pawns,currentPlayerCounter, randomDiceNum
             cntPlayer += 1
         screen.blit(dice[randomDiceNumber], (725,50))
         playersAlive = 0
+        cnt = 0
         for fighter in selectedCharacters:
             if fighter.Health > 0:
                 playersAlive += 1
             else:
                 fighter.Health = 0 #Reset it to 0 instead of displaying a negative value.
+                del selectedCharacters[cnt]
+                currentPlayerCounter -= 1
+                cnt -= 1
+            if cnt < len(selectedCharacters):
+                cnt += 1
         if playersAlive == 1:
             message = str(selectedCharacters[currentPlayerCounter].Name) + " just won the game!"
             ImageBGLink = "Images/EmptyBackground.png"
@@ -225,10 +233,6 @@ def resetSelections(selectedCharacters, selectedAmountBots, latestSelectedChar):
     if latestSelectedChar is not None:
         latestSelectedChar = None
     return (selectedCharacters, selectedAmountBots, latestSelectedChar)
-
-
-
-
 
 randomInt = 1
 yourChar = None #First selection made is the player
@@ -501,6 +505,7 @@ while gameIsRunning:
                             selectedCharacters, selectedAmountBots, latestSelectedChar = selectScreen.resetSelections(selectedCharacters, selectedAmountBots, latestSelectedChar)
                             selectedCharacters = [] #List of selected characters from the "new game" screen
                             firstDieIsThrown = False
+                            currentPlayerCounter = 0
                             yourChar = None
                             player = Player #Reset all lives/conditions etc by recreating the Player class
                             currentPlayerCounter = 0
