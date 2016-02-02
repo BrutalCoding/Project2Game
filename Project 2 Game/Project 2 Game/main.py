@@ -77,7 +77,9 @@ def  PawnLocations(selectedCharacters, pawns,currentPlayerCounter, randomDiceNum
     #Board game main loop. Every movement is here.
     if ev.type == pygame.MOUSEBUTTONDOWN:
         if dieRect.collidepoint(pygame.mouse.get_pos()):
-            randomDiceNumber = random.randint(1,6)
+            randomDiceNumber = 1
+            selectedCharacters[0].Tile = boardtiles[5]
+            selectedCharacters[1].Tile = boardtiles[6]
             currentTile = selectedCharacters[currentPlayerCounter].Tile
             for x in boardtiles.items():
                 if x[1] == currentTile:
@@ -87,14 +89,13 @@ def  PawnLocations(selectedCharacters, pawns,currentPlayerCounter, randomDiceNum
                     else:
                         newTileNumber = 0
                     print("Player #" + str(currentPlayerCounter) +  " - Current tile: " + str(x[1]) + " - Next tile: " + str(boardtiles[newTileNumber]))
+                    #check if there are pawns(more then 1) on the same tile
+                    for poin in selectedCharacters:
+                        if poin.Name != selectedCharacters[currentPlayerCounter].Name:
+                            if boardtiles[newTileNumber] == poin.Tile:#If there are 2 pawns on the same tile. 
+                                gameStatus = 'fight'
                     selectedCharacters[currentPlayerCounter].Tile = boardtiles[newTileNumber]
                     print("Player #" + str(currentPlayerCounter) +  " moved to next tile: " + str(boardtiles[newTileNumber]))
-                    
-                    for players in selectedCharacters[tempCurrentPlayerCounter]:
-                        if player.Tile== selectedCharacters[currentPlayerCounter].Tile:
-                            print("fight")
-                        
-
                     if selectedCharacters[currentPlayerCounter].Tile == boardtiles[5] or selectedCharacters[currentPlayerCounter].Tile == boardtiles[15] or selectedCharacters[currentPlayerCounter].Tile == boardtiles[25] or selectedCharacters[currentPlayerCounter].Tile == boardtiles[35]:
                         superfighter = random.choice(list(SuperFighters))
                         randominteger = random.randint(1,6)
@@ -103,8 +104,10 @@ def  PawnLocations(selectedCharacters, pawns,currentPlayerCounter, randomDiceNum
                         selectedCharacters[currentPlayerCounter].Health -= damage
                     curplaypos = selectedCharacters[currentPlayerCounter].Tile #Current player's position on board
                     if curplaypos in (boardtiles[0], boardtiles[1], boardtiles[9], boardtiles[10], boardtiles[11], boardtiles[19], boardtiles[20], boardtiles[21], boardtiles[29], boardtiles[30], boardtiles[31], boardtiles[39]):
+                        #When player 1 lands on his own tile
                         if currentPlayerCounter == 0 and (curplaypos == boardtiles[0] or curplaypos == boardtiles[39] or curplaypos == boardtiles[1]):
                             print ("NOT GOING TO FIGHT 1")
+                        #When other players/CPU land on their own tile
                         elif currentPlayerCounter != 0 and curplaypos in (boardtiles[currentPlayerCounter * 10], boardtiles[(currentPlayerCounter * 10) - 1], boardtiles[(currentPlayerCounter * 10) + 1]):
                             print ("NOT GOING TO FIGHT 2")
                         else: #Fight code
@@ -410,7 +413,7 @@ while gameIsRunning:
             else:
                 labelColor = (0,0,0) #Black
             scoreBoardLabels.append(fontSize(20, None).render(name + " - Lifepoints: " + str(x.Health) + " | Condition: " + str(x.Condition), 1, labelColor))
-            pygame.draw.rect(screen, scoreBoardColor, (0,600,screenVectorSize["x"],25), 0)
+            pygame.draw.rect(screen, scoreBoardColor, (0,600,screenVectorSize["x"],scoreBoardHeight), 0)
 
         #Render the players on the score board
         labelPixelHeight = 605 #First label location on the score board
@@ -504,7 +507,7 @@ while gameIsRunning:
         text = font.render("Press 'ESC' to get back to the main menu", 1, (255,255,0))
         textpos = text.get_rect()
         screen.blit(text, (screen.get_rect().centerx / 4, screen.get_size()[1] - 50))
-#display rules
+
     elif gameStatus == "fight":
         #print('We\'re in the fight gameStatus')
         if fighterCurrentPlayerCounter == 2:
@@ -533,19 +536,6 @@ while gameIsRunning:
                 else:
                     tempCurrentPlayerCounter = 0 #Going to fight player 0 (first player, that means its going to fight you.
         
-
-        if curplaypos in (boardtiles[0], boardtiles[1], boardtiles[9], boardtiles[10], boardtiles[11], boardtiles[19], boardtiles[20], boardtiles[21], boardtiles[29], boardtiles[30], boardtiles[31], boardtiles[39]):
-            if (tempCurrentPlayerCounter) == 0 and curplaypos == boardtiles[0] or curplaypos == boardtiles[39] or curplaypos == boardtiles[1]:
-                print('Player #', (tempCurrentPlayerCounter - 1),' cant go fight himself - Hello',tempCurrentPlayerCounter)
-                pass #Don't fight
-            elif (tempCurrentPlayerCounter) != 0 and curplaypos in (boardtiles[(tempCurrentPlayerCounter) * 10], boardtiles[((tempCurrentPlayerCounter) * 10) - 1], boardtiles[((tempCurrentPlayerCounter) * 10) + 1]):
-                print('Player #', tempCurrentPlayerCounter,' cant go fight himself - Goodbye',tempCurrentPlayerCounter)
-                pass
-            else: #Fight code
-                print('Player #', (tempCurrentPlayerCounter -1),' is going to fight player',tempCurrentPlayerCounter)
-
-
-
         ImageOpponent = pygame.image.load("Images\\" + selectedCharacters[tempCurrentPlayerCounter].ImageFighter)
         screen.blit(ImageFighter, (0,450)) #Blit attacker in bottom down
         screen.blit(ImageOpponent, (800,0)) #Blit defender in top right
