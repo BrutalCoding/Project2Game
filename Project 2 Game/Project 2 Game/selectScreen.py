@@ -58,7 +58,7 @@ class selectScreen:
         
     #Draw character image on screen based on if the character is selected and assign player or CPU to character.
     def displayPlayers(screen, playerImageFighterDict, PlayerImageFighterSelectedDict, characterList, selectedCharacters, font):
-        labelsPlayerSelected = [] 
+        labelsPlayerSelected = []
         for character in characterList:
             if character.selected:
                 if character.text == selectedCharacters[0].Name:
