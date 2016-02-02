@@ -39,6 +39,7 @@ background = pygame.image.load("Images\cardboard_texture.jpg")
 mainBackground = pygame.image.load("Images\FighterMenu.png")
 background = pygame.image.load("Images\Background.png")
 selectBackground = pygame.image.load("Images\EmptyBackground.png")
+scoreBoardBackground = pygame.image.load("Images\ScoreBoard.png")
 botChosen = False
 charChosen = False
 tileSelected = False
@@ -357,7 +358,7 @@ while gameIsRunning:
                                 option.selected = True
                         elif option.id == startGameID and selectedAmountBots != None and len(selectedCharacters) == (selectedAmountBots.id - len(players) + 1):
                             screenVectorSize["x"] = 1000
-                            screenVectorSize["y"] = 600
+                            screenVectorSize["y"] = 700
                             setScreenVectorSize(screenVectorSize, screen)
                             gameStatus = 'Game'
                             setDefaultSoundSystem(enableSound,"Sounds\Intro_1_Soft_Pump.mp3", 300, 0.3)
@@ -392,6 +393,7 @@ while gameIsRunning:
                     cardName = selectedCharacters[3].Name
             else:
                 tileSelected = False
+        
         screen.blit(board,(0,0))
         if tileSelected:#If player tile is selected, display character card referenced to character chosen by player
             screen.blit(playerImageCardDict[cardName],(660,289))
@@ -403,35 +405,31 @@ while gameIsRunning:
         #default is the player itself
         scoreBoardLabels = []
         name = None
+        vectorX = 0
         for x in selectedCharacters:
+            screen.blit(pygame.transform.scale(scoreBoardBackground,(250,100)), (vectorX,600))
+            vectorX += 250
             if x == yourChar:
-                name = str(x.Name) + " (That's you)"
+                name = str(x.Name) + "Player 1: " 
+
             else:
-                name = str(x.Name)
+                name = "CPU: " + str(x.Name)  
             if x == selectedCharacters[currentPlayerCounter]:
                 labelColor = (217, 30, 24) #'Thunderbird' red
             else:
                 labelColor = (0,0,0) #Black
-            scoreBoardLabels.append(fontSize(20, None).render(name + " - Lifepoints: " + str(x.Health) + " | Condition: " + str(x.Condition), 1, labelColor))
-            pygame.draw.rect(screen, scoreBoardColor, (0,600,screenVectorSize["x"],scoreBoardHeight), 0)
-
+            scoreBoardLabels.append((fontSize(20, None).render(name, 1, labelColor),fontSize(20, None).render("Lifepoints: " + str(x.Health), 1, labelColor),fontSize(20, None).render("Condition: " + str(x.Condition), 1, labelColor)))
+            
         #Render the players on the score board
-        labelPixelHeight = 605 #First label location on the score board
-        scoreBoardHeight = 0
+        labelPixelLenght = 10 #First label location on the score board
+        #scoreBoardHeight = 0
         for label in scoreBoardLabels:
-            screen.blit(label, (0, labelPixelHeight)) 
-            if labelPixelHeight < screenVectorSize["y"]:
-                labelPixelHeight += 25 #5 pixels distance between each label and 20 pixels for the font size which is 20 now.
-                scoreBoardHeight += 25
-            else:
-                #Now it does not fit the score board screen anymore, the height of it got exceeded.
-                #boardHeight += 25 #Let's extend the board height first
-                if not screenVectorSize["y"] >= labelPixelHeight: #If the window/screen height is NOT good enough
-                    screenVectorSize["y"] += 25
-                    setScreenVectorSize(screenVectorSize, screen)
-                scoreBoardHeight += 25
+            labelPixelHeight = 615
+            for x in label:
+                screen.blit(x, (labelPixelLenght, labelPixelHeight))
                 labelPixelHeight += 25
-        cnt = 0
+            labelPixelLenght += 250
+   
     if ev.type == pygame.QUIT:
         gameIsRunning = False
     if ev.type == pygame.KEYUP:
