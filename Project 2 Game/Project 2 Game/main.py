@@ -292,42 +292,33 @@ while gameIsRunning:
                         pass
                     elif(option.id == 2):#Options
                         gameStatus = "options"
-                        #screenVectorSize["x"] = mainMenuSize[0]
-                        #screenVectorSize["y"] = mainMenuSize[1]
-                        #setScreenVectorSize(screenVectorSize, screen)
                     elif(option.id == 3):#Rules
                         gameStatus = "rules"
-                        screenVectorSize["x"] = mainMenuSize[0]
-                        screenVectorSize["y"] = mainMenuSize[1]
-                        setScreenVectorSize(screenVectorSize, screen)
                     elif(option.id == 4):#Quit
                         gameIsRunning = False
                     option.draw()
-# New game/ select player
+    #New game/ select player
     elif(gameStatus == 'new'):
         if ev.type == pygame.KEYUP:
             if ev.key == pygame.K_ESCAPE:
                 gameStatus = 'main'
-                selectedCharacters, selectedAmountBots, latestSelectedChar = selectScreen.resetSelections(selectedCharacters, selectedAmountBots, latestSelectedChar)
-                screenVectorSize["x"] = mainMenuSize[0]
-                screenVectorSize["y"] = mainMenuSize[1]
-                setScreenVectorSize(screenVectorSize, screen)
+                #mainMenuSound
                 setDefaultSoundSystem(enableSound, "Sounds\Intro_Soft_Touch.mp3", 300)
-
+        #select screen background and labels.
         screen.blit(pygame.transform.scale(selectBackground,(screenVectorSize["x"],screenVectorSize["y"])), (0, 0))
-
         label = fontSize(35, "Brush").render("Choose bots", 1, (255,0,0))
         screen.blit(label, (screen.get_rect().centerx / 2 + 75, 20))
         label = fontSize(35, "Brush").render("Choose your fighter", 1, (255,0,0))
         screen.blit(label, (screen.get_rect().centerx / 2, 150))
            
         for entity in entities:
+            #Draw and display character images and player labels.
             selectScreen.displayPlayers(screen, playerImageFighterDict, PlayerImageFighterSelectedDict, entities[0], selectedCharacters, fontSize(25, None))
             selectScreen.drawOptions(entity)
-            if botChosen == True:
+            if botChosen == True:#If there is no bot selected
                 selectchar = fontSize(25, None).render("Make sure a bot is selected", 1,(255,0,0))
                 screen.blit(selectchar, (screen.get_rect().centerx / 2, 500))
-            elif charChosen == True:
+            elif charChosen == True:#If there is no characters selected
                 selectchar = fontSize(25, None).render("Make sure a character is selected", 1,(255,0,0))
                 screen.blit(selectchar, (screen.get_rect().centerx / 2, 500))
             if ev.type == pygame.MOUSEBUTTONDOWN:
@@ -355,23 +346,23 @@ while gameIsRunning:
                                 charChosen = False
                                 selectedCharacters.append(latestSelectedChar) #Add the selected character to the list
                                 option.selected = True
-                        elif option.id == startGameID and selectedAmountBots != None and len(selectedCharacters) == (selectedAmountBots.id - len(players) + 1):
+                        elif option.id == startGameID and selectedAmountBots != None and len(selectedCharacters) == (selectedAmountBots.id - len(players) + 1):#If Start game button is clicked, game will be started.
                             screenVectorSize["x"] = 1000
                             screenVectorSize["y"] = 600
                             setScreenVectorSize(screenVectorSize, screen)
                             gameStatus = 'Game'
+                            #GameBoardSound
                             setDefaultSoundSystem(enableSound,"Sounds\Intro_1_Soft_Pump.mp3", 300, 0.3)
                         elif option.id == mainMenuGameID:
-                            selectedCharacters, selectedAmountBots, latestSelectedChar = selectScreen.resetSelections(selectedCharacters, selectedAmountBots, latestSelectedChar)
                             gameStatus = 'main'
+                            #mainMenuSound
                             setDefaultSoundSystem(enableSound,"Sounds\Intro_Soft_Touch.mp3", 300)
                         else:
                             if selectedAmountBots == None:#check if bot is selected
                                 botChosen = True
                             elif latestSelectedChar == None:# check if character is selected
-                                charChosen = True
-            
-# Display board game
+                                charChosen = True    
+    # Display board game
     elif(gameStatus == 'Game'):#This means we're about to start a new game, start initialising the screen and its elements.
         dieRect = pygame.Rect((725,50,150,150))
         if ev.type == pygame.MOUSEBUTTONDOWN:
@@ -451,9 +442,8 @@ while gameIsRunning:
         screen.blit(pygame.transform.scale(selectBackground,(screenVectorSize["x"],screenVectorSize["y"])), (0, 0))
         label = fontSize(50, "Brush").render("Option menu", 1, (255, 0, 0))
         screen.blit(label, (260, 50))
-        geluid = pygame.mixer.get_num_channels()
         if enableSound == True:
-                buttonsOptionScreen[1].selected = True
+            buttonsOptionScreen[1].selected = True
         elif enableSound == False:
             buttonsOptionScreen[0].selected = True
         selectScreen.drawOptions(buttonsOptionScreen)
@@ -470,24 +460,15 @@ while gameIsRunning:
                         enableSound = True
                         option.selected = True
                     elif option.id == mainMenuGameID:
-                            selectedCharacters, selectedAmountBots, latestSelectedChar = selectScreen.resetSelections(selectedCharacters, selectedAmountBots, latestSelectedChar)
                             gameStatus = 'main'
+                            #mainMenuSound
                             setDefaultSoundSystem(enableSound,"Sounds\Intro_Soft_Touch.mp3", 1000)
-        if ev.type == pygame.KEYUP:
+        elif ev.type == pygame.KEYUP:
             if ev.key == pygame.K_ESCAPE:
                 gameStatus = 'main'
-                #mainmenusound#
+                #mainMenuSound
                 setDefaultSoundSystem(enableSound,"Sounds\Intro_Soft_Touch.mp3", 300)
-                screenVectorSize["x"] = mainMenuSize[0]
-                screenVectorSize["y"] = mainMenuSize[1]
-                setScreenVectorSize(screenVectorSize, screen)
-                selectedCharacters, selectedAmountBots = selectScreen.resetSelections(selectedCharacters, selectedAmountBots)
-                selectedCharacters = [] #List of selected characters from the "new game" screen
-                firstDieIsThrown = False
-                yourChar = None
-                latestSelectedChar = None
-                player = Player #Reset all lives/conditions etc by recreating the Player class
-# display rules
+    #Display rules
     elif gameStatus == "rules":
         screen.blit(pygame.transform.scale(selectBackground,(screenVectorSize["x"],screenVectorSize["y"])), (0, 0))
         if ev.type == pygame.QUIT:
@@ -495,9 +476,6 @@ while gameIsRunning:
         if ev.type == pygame.KEYUP:
             if ev.key == pygame.K_ESCAPE:
                 gameStatus = 'main'
-                screenVectorSize["x"] = mainMenuSize[0]
-                screenVectorSize["y"] = mainMenuSize[1]
-                setScreenVectorSize(screenVectorSize, screen)
         labelHeight = screen.get_rect().midtop[1]
         for rule in rules.LoadAllRules():
             text = fontSize(25, None).render(rule, 1, (217, 30, 24))
@@ -507,9 +485,7 @@ while gameIsRunning:
         text = font.render("Press 'ESC' to get back to the main menu", 1, (255,255,0))
         textpos = text.get_rect()
         screen.blit(text, (screen.get_rect().centerx / 4, screen.get_size()[1] - 50))
-
     elif gameStatus == "fight":
-        #print('We\'re in the fight gameStatus')
         if fighterCurrentPlayerCounter == 2:
             if ev.type == pygame.KEYDOWN:
                 if ev.key == pygame.K_SPACE:
