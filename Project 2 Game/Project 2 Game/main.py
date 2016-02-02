@@ -35,7 +35,7 @@ scoreBoardHeight = 0 #Define the scoreboard height, that's where the lives and c
 players = Player
 randomDiceNumber = 1
 firstDieIsThrown = False
-mainMenuSize = [1000, 700] # 1000 , 700 for rules
+mainMenuSize = [800, 600] # 1000 , 700 for rules
 background = pygame.image.load("Images\cardboard_texture.jpg")
 mainBackground = pygame.image.load("Images\FighterMenu.png")
 background = pygame.image.load("Images\Background.png")
@@ -332,8 +332,8 @@ while gameIsRunning:
                         #setScreenVectorSize(screenVectorSize, screen)
                     elif(option.id == 3):#Rules
                         gameStatus = "rules"
-                        screenVectorSize["x"] = mainMenuSize[0]
-                        screenVectorSize["y"] = mainMenuSize[1]
+                        screenVectorSize["x"] = 1200
+                        screenVectorSize["y"] = 800
                         setScreenVectorSize(screenVectorSize, screen)
                     elif(option.id == 4):#Quit
                         gameIsRunning = False
