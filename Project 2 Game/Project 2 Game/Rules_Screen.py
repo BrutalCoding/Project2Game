@@ -32,12 +32,14 @@ class Rules_Screen():
                 self.ScreenVectorSize(self.ScreenVectorSize, self.Screen)
         labelHeight = self.Screen.get_rect().midtop[1]
         for rule in self.Rules.LoadAllRules():
-            text = self.FontSize(25, None).render(rule, 1, (217, 30, 24))
+            text = self.FontSize(25, None).render(rule, 1, (255,255,0))
             textpos = text.get_rect()
             labelHeight += 25
-            self.Screen.blit(text, (self.Screen.get_rect().centerx / 4, labelHeight))
+            self.Screen.blit(text, ( 0, labelHeight))
         text = self.Font.render("Press 'ESC' to get back to the main menu", 1, (255,255,0))
         textpos = text.get_rect()
         self.Screen.blit(text, (self.Screen.get_rect().centerx / 4, self.Screen.get_size()[1] - 50))
+
+        
 
 

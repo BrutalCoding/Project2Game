@@ -35,7 +35,7 @@ scoreBoardHeight = 0 #Define the scoreboard height, that's where the lives and c
 players = Player
 randomDiceNumber = 1
 firstDieIsThrown = False
-mainMenuSize = [800, 600]
+mainMenuSize = [1000, 700] # 1000 , 700 for rules
 background = pygame.image.load("Images\cardboard_texture.jpg")
 mainBackground = pygame.image.load("Images\FighterMenu.png")
 background = pygame.image.load("Images\Background.png")
@@ -486,7 +486,7 @@ while gameIsRunning:
             yourChar = None
             #latestSelectedChar = None
             player = Player #Reset all lives/conditions etc by recreating the Player class
-    elif gameStatus == "options":
+    elif gameStatus == "options":###hierzo
         screen.blit(pygame.transform.scale(selectBackground,(screenVectorSize["x"],screenVectorSize["y"])), (0, 0))
         label = fontSize(50, "Brush").render("Option menu", 1, (255, 0, 0))
         screen.blit(label, (260, 50))
