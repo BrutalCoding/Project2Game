@@ -1,7 +1,9 @@
 ﻿import sys
+import os
 import pygame
 import options
 import random
+import pickle
 from Player import *
 from PlayerCards import *
 from board import tiles
@@ -32,8 +34,7 @@ currentPlayerCounter = 0 #Default player
 tempCurrentPlayerCounter = 0 #Only used in the gamestatus 'fight'
 defaultPawnLocations = [] #The top left corner but all with a little bit of offset so the pawns are not on top of each other
 defaultTileLocations = [] #All tiles that are possible to move on to (with a pawn)
-maxAmountOfBots = 4  #MAX 4 OR GIUSEPPE WILL HAVE YOUR TESTICLES          4 is actually 3. Bots means players, really.                                                                                                                                                     #Minimal 1 and maximum depends on how many characters are in the game, see 'players' variable. E.g. 4 = 3 bots, 1 player.
-pawnLocationsTiles = {}
+maxAmountOfBots = 4  #MAX 4 OR GIUSEPPE WILL HAVE YOUR TESTICLES          4 is actually 3. Bots means players, really.   
 scoreBoardHeight = 0 #Define the scoreboard height, that's where the lives and conditions of each player gets displayed
 players = Player
 randomDiceNumber = 1
@@ -82,9 +83,11 @@ def  PawnLocations(selectedCharacters, pawns,currentPlayerCounter, randomDiceNum
     if ev.type == pygame.MOUSEBUTTONDOWN:
         if dieRect.collidepoint(pygame.mouse.get_pos()):
             #randomDiceNumber = random.randint(1,6)
-            randomDiceNumer = rollDice(1,6)
+            randomDiceNumber = rollDice(1,6)
             currentTile = selectedCharacters[currentPlayerCounter].Tile
             for x in boardtiles.items():
+
+
                 if x[1] == currentTile:
                     #To prevent that newTileNumber gets number 40 (Since it goes from 0 to 39)
                     if x[0] + randomDiceNumber < 40:
@@ -110,16 +113,7 @@ def  PawnLocations(selectedCharacters, pawns,currentPlayerCounter, randomDiceNum
                             print('Fight started (else)')
                             setDefaultSoundSystem(enableSound, "Sounds\Fight.mp3")
                             gameStatus = 'fight'
-                            #Sequence
-                            #Attacker lands on another player's square
-                            #Attacker throws die and gets a number
-                            #Attacker chooses the amount of damage he'd like to do
-                            #Attacker's stamina gets deducted by the amount corresponding to the damage he chose.
-                            #Defender throws die and gets number
-                            #Defender chooses the amount of damage he'd like to do
-                            #Defender's stamina gets deducted by the amount corresponding to the damage he chose.
-                            #Game calculates highest damage - lowest damage and deals this to the player with the lowest damage
-                            #Preferably make ai choose damage higher than taken damage within stamina limits
+
             screen.blit(pawns[currentPlayerCounter + 1], currentTile)
             pygame.time.delay(150)
             #If the counter is at the last character, start at the first player again.
@@ -364,9 +358,11 @@ while gameIsRunning:
                         screenVectorSize["y"] = mainMenuSize[1]
                         setScreenVectorSize(screenVectorSize, screen)
                         setDefaultSoundSystem(enableSound,"Sounds\Intro_1_Hyped.mp3", 300)
-                        
                     elif(option.id == 1):#Load game
-                        pass
+                        gameStatus = "load"
+                        screenVectorSize["x"] = mainMenuSize[0]
+                        screenVectorSize["y"] = mainMenuSize[1]
+                        setScreenVectorSize(screenVectorSize, screen)
                     elif(option.id == 2):#Options
                         gameStatus = "options"
                         screenVectorSize["x"] = mainMenuSize[0]
@@ -458,19 +454,6 @@ while gameIsRunning:
         dieRect = pygame.Rect((725,50,150,150))
         if ev.type == pygame.QUIT:
             gameIsRunning = False
-        if ev.type == pygame.KEYUP:
-            if ev.key == pygame.K_ESCAPE:
-                gameStatus = 'main'
-                setDefaultSoundSystem(enableSound,"Sounds\Intro_Soft_Touch.mp3", 300)
-                screenVectorSize["x"] = mainMenuSize[0]
-                screenVectorSize["y"] = mainMenuSize[1]
-                setScreenVectorSize(screenVectorSize, screen)
-                selectedCharacters, selectedAmountBots, latestSelectedChar = resetSelections(selectedCharacters, selectedAmountBots, latestSelectedChar)
-                selectedCharacters = [] #List of selected characters from the "new game" screen
-                firstDieIsThrown = False
-                yourChar = None
-                #latestSelectedChar = None
-                player = Player #Reset all lives/conditions etc by recreating the Player class
 
         if ev.type == pygame.MOUSEBUTTONDOWN:
             clickPosition = pygame.mouse.get_pos()#Check if player tile is selected
@@ -491,6 +474,11 @@ while gameIsRunning:
             else:
                 print(pygame.mixer.get_num_channels())
                 tileSelected = False
+        if ev.type == pygame.KEYDOWN:
+            if ev.key == pygame.K_s:
+                if (os.path.isfile('save.txt')): 
+                    os.remove('save.txt')
+                pickle.dump( selectedCharacters, open( "save.txt", "wb" ) )
         screen.blit(board,(0,0))
         if tileSelected:#If player tile is selected, display character card referenced to character chosen by player
             screen.blit(playerImageCardDict[cardName],(660,289))
@@ -665,6 +653,15 @@ while gameIsRunning:
                     setDefaultSoundSystem(enableSound,"Sounds\Intro_1_Soft_Pump.mp3", 300, 0.3)
                     fighterCurrentPlayerCounter = 0
                     gameStatus = 'Game'
+
+    elif gameStatus == 'load':
+        selectedCharacters = pickle.load( open( "save.txt", "rb" ) )
+        firstDieIsThrown = True
+        print('Loading')
+        screenVectorSize["x"] = 1000
+        screenVectorSize["y"] = 600
+        setScreenVectorSize(screenVectorSize, screen)
+        gameStatus = 'Game'
 
         #screen.blit(text, text)
 
