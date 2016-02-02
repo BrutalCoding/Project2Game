@@ -36,9 +36,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="main.py" />
-    <Compile Include="menu.py">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="options.py">
       <SubType>Code</SubType>
     </Compile>

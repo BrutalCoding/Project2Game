@@ -390,6 +390,12 @@ while gameIsRunning:
         currentPlayerCounter, randomDiceNumber, firstDieIsThrown, gameStatus,tempCurrentPlayerCounter,selectedCharacters[currentPlayerCounter].Health = PawnLocations(selectedCharacters, pawns, currentPlayerCounter, randomDiceNumber,firstDieIsThrown, gameStatus,tempCurrentPlayerCounter)
         #draw labels on scoreboard with lifepoints/conditions p/player
         scoreBoardColor = (255,255,255)
+        
+        #Stop game button
+        bellImg = pygame.image.load("Images\BoxingBell.png")
+        screen.blit(pygame.transform.scale(bellImg, (50, 50)), (910, 10))
+        gameBoardButtons = [Option("Stop Game", (890,60), fontSize(25, None),screen, 120)]
+        selectScreen.drawOptions(gameBoardButtons)
 
         #default is the player itself
         scoreBoardLabels = []
@@ -423,21 +429,35 @@ while gameIsRunning:
                 scoreBoardHeight += 25
                 labelPixelHeight += 25
         cnt = 0
-    if ev.type == pygame.QUIT:
-        gameIsRunning = False
-    if ev.type == pygame.KEYUP:
-        if ev.key == pygame.K_ESCAPE:
-            gameStatus = 'main'
-            setDefaultSoundSystem(enableSound,"Sounds\Intro_Soft_Touch.mp3", 300)
-            screenVectorSize["x"] = mainMenuSize[0]
-            screenVectorSize["y"] = mainMenuSize[1]
-            setScreenVectorSize(screenVectorSize, screen)
-            selectedCharacters, selectedAmountBots, latestSelectedChar = selectScreen.resetSelections(selectedCharacters, selectedAmountBots, latestSelectedChar)
-            selectedCharacters = [] #List of selected characters from the "new game" screen
-            firstDieIsThrown = False
-            yourChar = None
-            #latestSelectedChar = None
-            player = Player #Reset all lives/conditions etc by recreating the Player class
+        if ev.type == pygame.QUIT:
+            gameIsRunning = False
+        if ev.type == pygame.MOUSEBUTTONDOWN:
+                for option in gameBoardButtons:
+                    if option.rect.collidepoint(pygame.mouse.get_pos()):
+                        if option.id == 120:
+                            gameStatus = 'main'
+                            setDefaultSoundSystem(enableSound,"Sounds\Intro_Soft_Touch.mp3", 300)
+                            screenVectorSize["x"] = mainMenuSize[0]
+                            screenVectorSize["y"] = mainMenuSize[1]
+                            setScreenVectorSize(screenVectorSize, screen)
+                            selectedCharacters, selectedAmountBots, latestSelectedChar = selectScreen.resetSelections(selectedCharacters, selectedAmountBots, latestSelectedChar)
+                            selectedCharacters = [] #List of selected characters from the "new game" screen
+                            firstDieIsThrown = False
+                            yourChar = None
+                            player = Player #Reset all lives/conditions etc by recreating the Player class
+        #if ev.type == pygame.KEYUP:
+        #    if ev.key == pygame.K_ESCAPE:
+        #        gameStatus = 'main'
+        #        setDefaultSoundSystem(enableSound,"Sounds\Intro_Soft_Touch.mp3", 300)
+        #        screenVectorSize["x"] = mainMenuSize[0]
+        #        screenVectorSize["y"] = mainMenuSize[1]
+        #        setScreenVectorSize(screenVectorSize, screen)
+        #        selectedCharacters, selectedAmountBots, latestSelectedChar = selectScreen.resetSelections(selectedCharacters, selectedAmountBots, latestSelectedChar)
+        #        selectedCharacters = [] #List of selected characters from the "new game" screen
+        #        firstDieIsThrown = False
+        #        yourChar = None
+        #        #latestSelectedChar = None
+        #        player = Player #Reset all lives/conditions etc by recreating the Player class
     elif gameStatus == "options":
         screen.blit(pygame.transform.scale(selectBackground,(screenVectorSize["x"],screenVectorSize["y"])), (0, 0))
         label = fontSize(50, "Brush").render("Option menu", 1, (255, 0, 0))
