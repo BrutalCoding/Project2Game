@@ -445,19 +445,6 @@ while gameIsRunning:
                             firstDieIsThrown = False
                             yourChar = None
                             player = Player #Reset all lives/conditions etc by recreating the Player class
-        #if ev.type == pygame.KEYUP:
-        #    if ev.key == pygame.K_ESCAPE:
-        #        gameStatus = 'main'
-        #        setDefaultSoundSystem(enableSound,"Sounds\Intro_Soft_Touch.mp3", 300)
-        #        screenVectorSize["x"] = mainMenuSize[0]
-        #        screenVectorSize["y"] = mainMenuSize[1]
-        #        setScreenVectorSize(screenVectorSize, screen)
-        #        selectedCharacters, selectedAmountBots, latestSelectedChar = selectScreen.resetSelections(selectedCharacters, selectedAmountBots, latestSelectedChar)
-        #        selectedCharacters = [] #List of selected characters from the "new game" screen
-        #        firstDieIsThrown = False
-        #        yourChar = None
-        #        #latestSelectedChar = None
-        #        player = Player #Reset all lives/conditions etc by recreating the Player class
     elif gameStatus == "options":
         screen.blit(pygame.transform.scale(selectBackground,(screenVectorSize["x"],screenVectorSize["y"])), (0, 0))
         label = fontSize(50, "Brush").render("Option menu", 1, (255, 0, 0))
