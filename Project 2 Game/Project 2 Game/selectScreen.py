@@ -35,10 +35,7 @@ class selectScreen:
             labelAmountPlayers.append(Option(str(playerNumber) + ' ' + labelBotName, (amountPlayersLabelVector['x'], amountPlayersLabelVector['y']), font, screen, generateID))
             generateID += 1
             playerNumber += 1
-            if amountPlayersLabelVector["x"] > 600:
-                amountPlayersLabelVector["x"] = 200
-            else:
-                amountPlayersLabelVector['x'] += 150
+            amountPlayersLabelVector['x'] += 150
         return (labelAmountPlayers, generateID)
 
     #Make the player labels
@@ -49,11 +46,7 @@ class selectScreen:
         for x in players:
             playerLabels.append(Option(x.Name, (playerLabelVector["x"], playerLabelVector["y"]), font, screen, generateID))
             generateID += 1
-            if playerLabelVector["x"] > 600:
-                playerLabelVector["x"] = 50
-                playerLabelVector["y"] += 50
-            else:
-                playerLabelVector["x"] += 200
+            playerLabelVector["x"] += 200
         return (playerLabels, generateID)
         
     #Draw character image on screen based on if the character is selected and assign player or CPU to character.
