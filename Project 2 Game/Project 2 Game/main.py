@@ -4,6 +4,7 @@ import options
 import random
 import pickle
 import os
+import webbrowser
 from Player import *
 from PlayerCards import *
 from board import tiles
@@ -50,9 +51,11 @@ botChosen = False
 charChosen = False
 tileSelected = False
 enableSound = True
+ruleOpened = False
 fighterDieInt = []
 fighterCurrentPlayerCounter = 0 #When a player lands on a corner, this variable will be assigned to the current fighter.
 fightAttackIsChosen = False #In the fightscreen, where the player has the option to select an attack
+playersAlive = 0
 #fightIsOver = False #Boolean to check if the both players have fought each other
 
 #Font init
@@ -69,6 +72,9 @@ def fontSize(size, typeFont):
         return pygame.font.Font(font_path, size)
     elif typeFont == "Super":
         font_path = "./Fonts/Superstar.ttf"
+        return pygame.font.Font(font_path, size)
+    elif typeFont == "lcd":
+        font_path = "./Fonts/LCD-N.TTF"
         return pygame.font.Font(font_path, size)
     else:
         return pygame.font.Font(None, size)
@@ -87,12 +93,25 @@ screen = pygame.display.set_mode((screenVectorSize["x"], screenVectorSize["y"]))
 screen = setScreenVectorSize(screenVectorSize, screen)
 
 #Loop through selected characters and place related pawns
-def  PawnLocations(selectedCharacters, pawns,currentPlayerCounter, randomDiceNumber, firstDieIsThrown, gameStatus, tempCurrentPlayerCounter):
+def  PawnLocations(selectedCharacters,currentPlayerCounter, randomDiceNumber, firstDieIsThrown, gameStatus, tempCurrentPlayerCounter, playersAlive):
     #Board game main loop. Every movement is here.
     if ev.type == pygame.MOUSEBUTTONDOWN:
         if dieRect.collidepoint(pygame.mouse.get_pos()):
             if selectedCharacters[currentPlayerCounter].Health > 0:
+                selectedCharacters[1].Health -= 50
                 randomDiceNumber = random.randint(1,6)
+
+                #check steps and ad condition
+                newSteps = selectedCharacters[currentPlayerCounter].Steps + randomDiceNumber
+                if newSteps >= 40:
+                    selectedCharacters[currentPlayerCounter].Condition = 15
+                    selectedCharacters[currentPlayerCounter].Steps = 0
+                    if newSteps > 40:
+                        difference = newSteps - 40
+                        selectedCharacters[currentPlayerCounter].Steps += difference
+                else:
+                    selectedCharacters[currentPlayerCounter].Steps += randomDiceNumber
+
                 currentTile = selectedCharacters[currentPlayerCounter].Tile
                 for x in boardtiles.items():
                     if x[1] == currentTile:
@@ -101,14 +120,10 @@ def  PawnLocations(selectedCharacters, pawns,currentPlayerCounter, randomDiceNum
                             newTileNumber = x[0] + randomDiceNumber
                         else:
                             newTileNumber = 0
-                        for poin in selectedCharacters:
-                            if poin.Name != selectedCharacters[currentPlayerCounter].Name:
-                                if boardtiles[newTileNumber] == poin.Tile:#If there are 2 pawns on the same tile. 
-                                    gameStatus = 'fight'
                         print("Player #" + str(currentPlayerCounter) +  " - Current tile: " + str(x[1]) + " - Next tile: " + str(boardtiles[newTileNumber]))
-                        for poin in selectedCharacters:
-                            if poin.Name != selectedCharacters[currentPlayerCounter].Name:
-                                if boardtiles[newTileNumber] == poin.Tile:#If there are 2 pawns on the same tile. 
+                        for pawn in selectedCharacters:
+                            if pawn.Name != selectedCharacters[currentPlayerCounter].Name:
+                                if boardtiles[newTileNumber] == pawn.Tile and pawn.Health > 0 and boardtiles[newTileNumber] != boardtiles[5] and boardtiles[newTileNumber] != boardtiles[15] and boardtiles[newTileNumber] != boardtiles[25] and boardtiles[newTileNumber] != boardtiles[35]:#If there are 2 pawns on the same tile and the tile is not a fight tile. 
                                     gameStatus = 'fight'
                         selectedCharacters[currentPlayerCounter].Tile = boardtiles[newTileNumber]
                         print("Player #" + str(currentPlayerCounter) +  " moved to next tile: " + str(boardtiles[newTileNumber]))
@@ -125,11 +140,15 @@ def  PawnLocations(selectedCharacters, pawns,currentPlayerCounter, randomDiceNum
                                 playerHP = selectedCharacters[currentPlayerCounter].Health  
                                 if playerHP + 10 <= 100:
                                     selectedCharacters[currentPlayerCounter].Health += 10
+                                elif playerHP + 10 > 100:
+                                    selectedCharacters[currentPlayerCounter].Health = 100
                             elif currentPlayerCounter != 0 and curplaypos in (boardtiles[currentPlayerCounter * 10], boardtiles[(currentPlayerCounter * 10) - 1], boardtiles[(currentPlayerCounter * 10) + 1]):
                                 #Add HP to the owner
                                 playerHP = selectedCharacters[currentPlayerCounter].Health  
                                 if playerHP + 10 <= 100:
                                     selectedCharacters[currentPlayerCounter].Health += 10
+                                elif playerHP + 10 > 100:
+                                    selectedCharacters[currentPlayerCounter].Health = 100
                             else: #Fight code
                                 for x in boardtiles.items():
                                     if x[1] == curplaypos:
@@ -157,7 +176,7 @@ def  PawnLocations(selectedCharacters, pawns,currentPlayerCounter, randomDiceNum
                                 #Defender's stamina gets deducted by the amount corresponding to the damage he chose.
                                 #Game calculates highest damage - lowest damage and deals this to the player with the lowest damage
                                 #Preferably make ai choose damage higher than taken damage within stamina limits
-                screen.blit(pawns[currentPlayerCounter + 1], currentTile)
+                screen.blit(pawnload('Images/' + selectedCharacters[currentPlayerCounter].ImageFace), currentTile)
                 pygame.time.delay(150)
                 #If the counter is at the last character, start at the first player again.
             
@@ -177,7 +196,8 @@ def  PawnLocations(selectedCharacters, pawns,currentPlayerCounter, randomDiceNum
                     tempCurrentPlayerCounter = 0
                 else:
                     tempCurrentPlayerCounter += 1
-        return currentPlayerCounter, randomDiceNumber, firstDieIsThrown, gameStatus,tempCurrentPlayerCounter,selectedCharacters[currentPlayerCounter].Health
+
+        return currentPlayerCounter, randomDiceNumber, firstDieIsThrown, gameStatus,tempCurrentPlayerCounter,selectedCharacters[currentPlayerCounter].Health, playersAlive
     else:
         #Update player position
         cntCorner = 1
@@ -203,7 +223,8 @@ def  PawnLocations(selectedCharacters, pawns,currentPlayerCounter, randomDiceNum
             else:
                 moveToTile = p.Tile
             p.Tile = moveToTile
-            screen.blit(pawns[cntPlayer], moveToTile)
+            if p.Health > 0:
+                screen.blit(pawnload('Images/' + p.ImageFace), moveToTile)
             cntPlayer += 1
         screen.blit(dice[randomDiceNumber], (725,50))
         playersAlive = 0
@@ -228,7 +249,7 @@ def  PawnLocations(selectedCharacters, pawns,currentPlayerCounter, randomDiceNum
             brushLink = "Fonts/Brushstrike.ttf"
             screenMessage = WindowsScreen(screen,message,ImageBGLink,brushLink)
             screen.blit(screenMessage.surf, (0, 0))
-    return currentPlayerCounter, randomDiceNumber,firstDieIsThrown,gameStatus,tempCurrentPlayerCounter,selectedCharacters[currentPlayerCounter].Health
+    return currentPlayerCounter, randomDiceNumber,firstDieIsThrown,gameStatus,tempCurrentPlayerCounter,selectedCharacters[currentPlayerCounter].Health, playersAlive
 
 #Define and initialize the sounds of the game
 pygame.mixer.init()
@@ -266,14 +287,13 @@ menu =    [Option("NEW GAME", (screen.get_rect().centerx - xM, 180), font_all, s
            Option("QUIT", (screen.get_rect().centerx - xM, 420), font_all, screen, 4)]
 
 #Define the images
-pawns =     {1:pawnload('Images/Blue.png'), 2:pawnload('Images/Red.png'), 3:pawnload('Images/Green.png'), 4:pawnload('Images/Yellow.png'), 5:pawnload('Images/Blue.png'), 6:pawnload('Images/Red.png'), 7:pawnload('Images/Green.png'), 8:pawnload('Images/head__iron_rekt.png')}
 dice =      {1:diceload('Images/Die-1.png'), 2:diceload('Images/Die-2.png'), 3:diceload('Images/Die-3.png'), 4:diceload('Images/Die-4.png'), 5:diceload('Images/Die-5.png'), 6:diceload('Images/Die-6.png')}
 playerImages = {1:playerload('Images/mike.png'), 2:playerload('Images/paquiao.png'), 3:playerload('Images/mohammed.png'), 4:playerload('Images/rocky.png')}
 boardtiles = tiles()
-players =  [Player("Mohammed Ali",100, 15, PlayerCards.MohammedAli,boardtiles[0],"card__mohammed_ali.png", "mohammed.png", "muhammed_ali.png", "MuhammedGlow.png"),
-            Player("Manny Pecquiao",100, 15, PlayerCards.MannyPecquiao,boardtiles[0],"card__manny_pecquiao.png","face__manny_pecquiao.jpg", "paquiao.png", "PecquiaoGlow.png"),
-            Player("Mike Tysen",100, 15, PlayerCards.MikeTysen,boardtiles[0],"card__mike_tysen.png","face__mike_tysen.jpg", "mike.png", "MikeGlow.png"),
-            Player("Rocky Belboa",100,15,PlayerCards.RockyBelboa,boardtiles[0],"card__rocky_belboa.png","face__rocky_belboa.jpg", "rocky.png", "RockyGlow.png")]
+players =  [Player("Mohammed Ali",100, 15, PlayerCards.MohammedAli,boardtiles[0], 0,"card__mohammed_ali.png", "muhammed_face.png", "muhammed_ali.png", "MuhammedGlow.png"),
+            Player("Manny Pecquiao",100, 15, PlayerCards.MannyPecquiao,boardtiles[0], 0,"card__manny_pecquiao.png","manny_face.png", "paquiao.png", "PecquiaoGlow.png"),
+            Player("Mike Tysen",100, 15, PlayerCards.MikeTysen,boardtiles[0], 0,"card__mike_tysen.png","mike_face.png", "mike.png", "MikeGlow.png"),
+            Player("Rocky Belboa",100,15,PlayerCards.RockyBelboa,boardtiles[0], 0,"card__rocky_belboa.png","rocky_face.png", "rocky.png", "RockyGlow.png")]
 
 
 
@@ -284,7 +304,7 @@ playerImageFighterDict = {}
 PlayerImageFighterSelectedDict = {}
 for player in players:
     playerImageCardDict.update({player.Name: pygame.transform.smoothscale(pygame.image.load("Images\\" + player.ImageCard), (250,300))})
-    playerImageFaceDict.update({player.Name: pygame.transform.smoothscale(pygame.image.load("Images\\" + player.ImageFace), (250,300))})
+    playerImageFaceDict.update({player.Name: pygame.transform.smoothscale(pygame.image.load("Images\\" + player.ImageFace), (50,50))})
     playerImageFighterDict.update({player.Name: pygame.transform.smoothscale(pygame.image.load("Images\\" + player.ImageFighter), (150,200))})
     PlayerImageFighterSelectedDict.update({player.Name: pygame.transform.smoothscale(pygame.image.load("Images\\" + player.ImageFighterSelected), (150,200))})
 #Define entities so that it can also be called again to reset all values such as the selections
@@ -342,12 +362,7 @@ while gameIsRunning:
                 for option in entity:
                     option.selected = False
 
-        for option in menu:
-            if option.rect.collidepoint(pygame.mouse.get_pos()):
-                option.hovered = True
-            else:
-                option.hovered = False
-            option.draw()
+        selectScreen.drawOptions(menu)#Draw menu items on screen
 
         if ev.type == pygame.MOUSEBUTTONUP:
             for option in menu:
@@ -449,20 +464,27 @@ while gameIsRunning:
                                 charChosen = True  
     #Display board game
     elif(gameStatus == 'Game'):#This means we're about to start a new game, start initialising the screen and its elements.
+        screen.blit(pygame.transform.scale(selectBackground,(1000,700)), (0, 0))
         dieRect = pygame.Rect((725,50,150,150))
         screen.blit(board,(0,0))
         if tileSelected:#If player tile is selected, display character card referenced to character chosen by player
             screen.blit(playerImageCardDict[cardName],(660,289))
         #Return the new player number so that the global variable can be updated instead of local.
-        currentPlayerCounter, randomDiceNumber, firstDieIsThrown, gameStatus,tempCurrentPlayerCounter,selectedCharacters[currentPlayerCounter].Health = PawnLocations(selectedCharacters, pawns, currentPlayerCounter, randomDiceNumber,firstDieIsThrown, gameStatus,tempCurrentPlayerCounter)
+        currentPlayerCounter, randomDiceNumber, firstDieIsThrown, gameStatus,tempCurrentPlayerCounter,selectedCharacters[currentPlayerCounter].Health, playersAlive = PawnLocations(selectedCharacters, currentPlayerCounter, randomDiceNumber,firstDieIsThrown, gameStatus,tempCurrentPlayerCounter, playersAlive)
         #draw labels on scoreboard with lifepoints/conditions p/player
         scoreBoardFont = pygame.font.Font(None, 20)
 
-        #Stop game button
+        #Stop game, pause game and rules button
         bellImg = pygame.image.load("Images\BoxingBell.png")
-        screen.blit(pygame.transform.scale(bellImg, (50, 50)), (910, 10))
-        gameBoardButtons = [Option("Stop Game", (890,60), fontSize(25, None),screen, 120)]
-        selectScreen.drawOptions(gameBoardButtons)
+        screen.blit(pygame.transform.scale(bellImg, (25, 25)), (950, 10))
+        pauseImg = pygame.image.load("Images\Pause.png")
+        screen.blit(pygame.transform.scale(pauseImg, (25, 25)), (915, 10))
+        ruleImg = pygame.image.load("Images\Rules.png")
+        screen.blit(pygame.transform.scale(ruleImg, (25, 25)), (880, 10))
+        bellRec = pygame.Rect((950, 10, 25, 25))
+        pauseImg = pygame.Rect((915, 10, 25, 25))
+        ruleImg = pygame.Rect((880, 10, 25, 25))
+
 
         #default is the player itself
         scoreBoardLabels = []
@@ -475,17 +497,19 @@ while gameIsRunning:
                 name = str(x.Name) + "Player 1: "
             else:
                 name = "CPU: " + str(x.Name)
-            if x == selectedCharacters[currentPlayerCounter]:
+            if x == selectedCharacters[currentPlayerCounter] and playersAlive != 1:
                 labelColor = (217, 30, 24) #'Thunderbird' red
+                screen.blit(fontSize(35, None).render("Current player:", 1,(255,255,255)), (680, 225))
+                screen.blit(playerImageFaceDict[x.Name],(870,210))
             else:
                 labelColor = (0,0,0) #Black
-            scoreBoardLabels.append((fontSize(20, None).render(name, 1, labelColor),fontSize(20, None).render("Lifepoints: " + str(x.Health), 1, labelColor),fontSize(20, None).render("Condition: " + str(x.Condition), 1, labelColor)))
+            scoreBoardLabels.append((fontSize(18, "lcd").render(name, 1, labelColor),fontSize(20, None).render("Lifepoints: " + str(x.Health), 1, labelColor),fontSize(20, None).render("Condition: " + str(x.Condition), 1, labelColor)))
             
         #Render the players on the score board
         labelPixelLenght = 10 #First label location on the score board
         #scoreBoardHeight = 0
         for label in scoreBoardLabels:
-            labelPixelHeight = 615
+            labelPixelHeight = 613
             for x in label:
                 screen.blit(x, (labelPixelLenght, labelPixelHeight))
                 labelPixelHeight += 25
@@ -513,26 +537,25 @@ while gameIsRunning:
             else:
                 tileSelected = False
 
-            for option in gameBoardButtons:
-                    if option.rect.collidepoint(pygame.mouse.get_pos()):
-                        if option.id == 120:
-                            gameStatus = 'main'
-                            setDefaultSoundSystem(enableSound,"Sounds\Intro_Soft_Touch.mp3", 300)
-                            screenVectorSize["x"] = mainMenuSize[0]
-                            screenVectorSize["y"] = mainMenuSize[1]
-                            setScreenVectorSize(screenVectorSize, screen)
-                            selectedCharacters, selectedAmountBots, latestSelectedChar = selectScreen.resetSelections(selectedCharacters, selectedAmountBots, latestSelectedChar)
-                            selectedCharacters = [] #List of selected characters from the "new game" screen
-                            firstDieIsThrown = False
-                            currentPlayerCounter = 0
-                            yourChar = None
-                            player = Player #Reset all lives/conditions etc by recreating the Player class
-                            currentPlayerCounter = 0
-        if ev.type == pygame.KEYDOWN:
-            if ev.key == pygame.K_s:
-                if(os.path.isfile('save.txt')):
-                    os.remove('save.txt')
-                pickle.dump((selectedCharacters, currentPlayerCounter), open('save.txt', "wb"))
+            #Pause and stop game button logic
+            if bellRec.collidepoint(pygame.mouse.get_pos()) or pauseImg.collidepoint(pygame.mouse.get_pos()):
+                if pauseImg.collidepoint(pygame.mouse.get_pos()):
+                    if(os.path.isfile('save.txt')):
+                        os.remove('save.txt')
+                    pickle.dump((selectedCharacters, currentPlayerCounter), open('save.txt', "wb"))
+                gameStatus = 'main'
+                setDefaultSoundSystem(enableSound,"Sounds\Intro_Soft_Touch.mp3", 300)
+                screenVectorSize["x"] = mainMenuSize[0]
+                screenVectorSize["y"] = mainMenuSize[1]
+                setScreenVectorSize(screenVectorSize, screen)
+                selectedCharacters, selectedAmountBots, latestSelectedChar = selectScreen.resetSelections(selectedCharacters, selectedAmountBots, latestSelectedChar)
+                selectedCharacters = [] #List of selected characters from the "new game" screen
+                firstDieIsThrown = False
+                yourChar = None
+                player = Player #Reset all lives/conditions etc by recreating the Player class
+                currentPlayerCounter = 0
+            elif ruleImg.collidepoint(pygame.mouse.get_pos()):
+                    webbrowser.open_new('Documenten\Rules.pdf')
     elif gameStatus == "options":
         screen.blit(pygame.transform.scale(selectBackground,(screenVectorSize["x"],screenVectorSize["y"])), (0, 0))
         label = fontSize(50, "Brush").render("Option menu", 1, (255, 0, 0))
@@ -565,25 +588,12 @@ while gameIsRunning:
                 setDefaultSoundSystem(enableSound,"Sounds\Intro_Soft_Touch.mp3", 300)
     #Display rules
     elif gameStatus == "rules":
-        screen.blit(pygame.transform.scale(selectBackground,(screenVectorSize["x"],screenVectorSize["y"])), (0, 0))
-        if ev.type == pygame.QUIT:
-            gameIsRunning = False
-        if ev.type == pygame.KEYUP:
-            if ev.key == pygame.K_ESCAPE:
-                gameStatus = 'main'
-                screenVectorSize["x"] = mainMenuSize[0]
-                screenVectorSize["y"] = mainMenuSize[1]
-                setScreenVectorSize(screenVectorSize, screen)
-        labelHeight = screen.get_rect().midtop[1]
-        for rule in rules.LoadAllRules():
-            text = font.render(rule, 1, (217, 30, 24))
-            textpos = text.get_rect()
-            labelHeight += 25
-            screen.blit(text, (screen.get_rect().centerx / 4, labelHeight))
-        text = font.render("Press 'ESC' to get back to the main menu", 1, (255,255,0))
-        textpos = text.get_rect()
-        screen.blit(text, (screen.get_rect().centerx / 4, screen.get_size()[1] - 50))
-
+        ruleOpened = True
+        if ruleOpened:
+            webbrowser.open_new('Documenten\Rules.pdf')
+            ruleOpened = False
+            gameStatus = 'main'
+# Fight 
     elif gameStatus == "fight":
         if(selectedCharacters[currentPlayerCounter].IsAlive == True):
             dieRect = None
