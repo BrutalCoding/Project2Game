@@ -93,8 +93,6 @@ def  PawnLocations(selectedCharacters, pawns,currentPlayerCounter, randomDiceNum
     #Board game main loop. Every movement is here.
     if ev.type == pygame.MOUSEBUTTONDOWN:
         if dieRect.collidepoint(pygame.mouse.get_pos()):
-            selectedCharacters[currentPlayerCounter].Health -= 50
-            #randomDiceNumber = random.randint(1,6)
             randomDiceNumber = random.randint(1,6)
             currentTile = selectedCharacters[currentPlayerCounter].Tile
             for x in boardtiles.items():
@@ -104,14 +102,10 @@ def  PawnLocations(selectedCharacters, pawns,currentPlayerCounter, randomDiceNum
                         newTileNumber = x[0] + randomDiceNumber
                     else:
                         newTileNumber = 0
-                    for poin in selectedCharacters:
-                        if poin.Name != selectedCharacters[currentPlayerCounter].Name:
-                            if boardtiles[newTileNumber] == poin.Tile:#If there are 2 pawns on the same tile. 
-                                gameStatus = 'fight'
                     print("Player #" + str(currentPlayerCounter) +  " - Current tile: " + str(x[1]) + " - Next tile: " + str(boardtiles[newTileNumber]))
-                    for poin in selectedCharacters:
-                        if poin.Name != selectedCharacters[currentPlayerCounter].Name:
-                            if boardtiles[newTileNumber] == poin.Tile:#If there are 2 pawns on the same tile. 
+                    for pawn in selectedCharacters:
+                        if pawn.Name != selectedCharacters[currentPlayerCounter].Name:
+                            if boardtiles[newTileNumber] == pawn.Tile and boardtiles[newTileNumber] != boardtiles[5] and boardtiles[newTileNumber] != boardtiles[15] and boardtiles[newTileNumber] != boardtiles[25] and boardtiles[newTileNumber] != boardtiles[35]:#If there are 2 pawns on the same tile and the tile is not a fight tile. 
                                 gameStatus = 'fight'
                     selectedCharacters[currentPlayerCounter].Tile = boardtiles[newTileNumber]
                     print("Player #" + str(currentPlayerCounter) +  " moved to next tile: " + str(boardtiles[newTileNumber]))
