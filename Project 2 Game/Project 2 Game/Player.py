@@ -1,6 +1,6 @@
 ﻿import pygame
 class Player:
-    def __init__(self,name,health,condition,card,tile, imagecard="placeholder_253_300.png", imageface="placeholder_253_300.png", imagefighter = "placeholder_253_300.png"):
+    def __init__(self,name,health,condition,card,tile, imagecard="placeholder_253_300.png", imageface="placeholder_253_300.png", imagefighter = "placeholder_253_300.png", imagefighterselected = "placeholder_253_300.png"):
         self.Name = name
         self.Health = health
         self.Condition = condition
@@ -9,6 +9,7 @@ class Player:
         self.ImageCard = imagecard
         self.ImageFace = imageface
         self.ImageFighter = imagefighter
+        self.ImageFighterSelected = imagefighterselected
     
     def CalculateHealth(damage):
         return self.Health - damage
