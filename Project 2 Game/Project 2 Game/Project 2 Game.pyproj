@@ -63,11 +63,15 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Fonts\" />
     <Folder Include="Images\" />
     <Folder Include="Sounds\" />
     <Folder Include="__pycache__\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Fonts\Brushstrike.ttf" />
+    <Content Include="Fonts\LCD-N.TTF" />
+    <Content Include="Fonts\Superstar.ttf" />
     <Content Include="Images\1.jpg" />
     <Content Include="Images\Background.png" />
     <Content Include="Images\blue.png" />
