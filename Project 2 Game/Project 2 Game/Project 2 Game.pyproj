@@ -29,7 +29,16 @@
     <PtvsTargetsFile>$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets</PtvsTargetsFile>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AI.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="board.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Dice.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Draw.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="elements.py">
@@ -57,14 +66,21 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Documenten\" />
+    <Folder Include="Fonts\" />
     <Folder Include="Images\" />
     <Folder Include="Sounds\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Documenten\Rules.pdf" />
+    <Content Include="Fonts\Brushstrike.ttf" />
+    <Content Include="Fonts\LCD-N.TTF" />
+    <Content Include="Fonts\Superstar.ttf" />
     <Content Include="Images\1.jpg" />
     <Content Include="Images\Background.png" />
     <Content Include="Images\blue.png" />
     <Content Include="Images\board.png" />
+    <Content Include="Images\BoxingBell.png" />
     <Content Include="Images\cardboard_texture.jpg" />
     <Content Include="Images\card__manny_pecquiao.png" />
     <Content Include="Images\card__mike_tysen.png" />
@@ -77,6 +93,7 @@
     <Content Include="Images\Die-4.png" />
     <Content Include="Images\Die-5.png" />
     <Content Include="Images\Die-6.png" />
+    <Content Include="Images\download.jpg" />
     <Content Include="Images\EmptyBackground.png" />
     <Content Include="Images\face_iron.jpg" />
     <Content Include="Images\face__badr_heri.jpg" />
@@ -90,13 +107,26 @@
     <Content Include="Images\FighterMenu.png" />
     <Content Include="Images\green.png" />
     <Content Include="Images\head__iron_rekt.png" />
+    <Content Include="Images\manny_face.png" />
     <Content Include="Images\mike.png" />
+    <Content Include="Images\MikeGlow.png" />
+    <Content Include="Images\mike_face.png" />
+    <Content Include="Images\mohammed.png" />
+    <Content Include="Images\MuhammedGlow.png" />
     <Content Include="Images\muhammed_ali.png" />
+    <Content Include="Images\muhammed_face.png" />
+    <Content Include="Images\paquiao.png" />
+    <Content Include="Images\Pause.png" />
     <Content Include="Images\pecquiao.png" />
+    <Content Include="Images\PecquiaoGlow.png" />
     <Content Include="Images\placeholder_253_300.png" />
     <Content Include="Images\placeholder_500_500.png" />
     <Content Include="Images\red.png" />
     <Content Include="Images\rocky.png" />
+    <Content Include="Images\RockyGlow.png" />
+    <Content Include="Images\rocky_face.png" />
+    <Content Include="Images\Rules.png" />
+    <Content Include="Images\ScoreBoard.png" />
     <Content Include="Images\test.PNG" />
     <Content Include="Images\yellow.png" />
     <Content Include="Sounds\fight.mp3" />
