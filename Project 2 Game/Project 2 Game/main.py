@@ -10,20 +10,15 @@ from board import tiles
 from elements import diceload, pawnload, playerload
 from Player import *
 from PlayerCards import *
-from Rules import *
-from Rules_Screen import *
+from rules import *
 from pygame import gfxdraw
-from SuperFighters import *  
+from SuperFighters import *
 from selectScreen import *
 from WindowsScreen import *
-<<<<<<< HEAD
-#fixing github
-=======
 from Dice import rollDice
 from Draw import *
 from Ai import Bot
 
->>>>>>> 195377752b33acc62f9a6aa40b88425d04c9c872
 Option = options.Option
 pygame.mixer.init()
 pygame.init()
@@ -45,7 +40,7 @@ scoreBoardHeight = 0 #Define the scoreboard height, that's where the lives and c
 players = Player
 randomDiceNumber = 1
 firstDieIsThrown = False
-mainMenuSize = [800, 600] # 1000 , 700 for rules
+mainMenuSize = [800, 600]
 background = pygame.image.load("Images\cardboard_texture.jpg")
 mainBackground = pygame.image.load("Images\FighterMenu.png")
 background = pygame.image.load("Images\Background.png")
@@ -95,6 +90,20 @@ screen = setScreenVectorSize(screenVectorSize, screen)
 def  PawnLocations(selectedCharacters, pawns,currentPlayerCounter, randomDiceNumber, firstDieIsThrown, gameStatus, tempCurrentPlayerCounter):
     #Board game main loop. Every movement is here.
     if ev.type == pygame.MOUSEBUTTONDOWN:
+        #Start - lose health point if corner not in use
+        for tile in board.items():
+            for character in selectedCharacters:
+                if tile[0] == None or character.Tile == tile[0]:
+                    pass
+                if tile[10] == None or character.Tile == tile[10]:
+                    pass
+                if tile[20] == None or character.Tile == tile[20]:
+                    pass
+                if tile[30] == None or character.Tile == tile[30]:
+                    pass
+
+
+        #End - lose health point if corner not in use
         if dieRect.collidepoint(pygame.mouse.get_pos()):
             selectedCharacters[currentPlayerCounter].Health -= 50
             randomDiceNumber = random.randint(1,6)
@@ -359,8 +368,8 @@ while gameIsRunning:
                         setScreenVectorSize(screenVectorSize, screen)
                     elif(option.id == 3):#Rules
                         gameStatus = "rules"
-                        screenVectorSize["x"] = 1200
-                        screenVectorSize["y"] = 800
+                        screenVectorSize["x"] = mainMenuSize[0]
+                        screenVectorSize["y"] = mainMenuSize[1]
                         setScreenVectorSize(screenVectorSize, screen)
                     elif(option.id == 4):#Quit
                         gameIsRunning = False
@@ -475,25 +484,6 @@ while gameIsRunning:
             for x in label:
                 screen.blit(x, (labelPixelLenght, labelPixelHeight))
                 labelPixelHeight += 25
-<<<<<<< HEAD
-        cnt = 0
-    if ev.type == pygame.QUIT:
-        gameIsRunning = False
-    if ev.type == pygame.KEYUP:
-        if ev.key == pygame.K_ESCAPE:
-            gameStatus = 'main'
-            setDefaultSoundSystem(enableSound,"Sounds\Intro_Soft_Touch.mp3", 300)
-            screenVectorSize["x"] = mainMenuSize[0]
-            screenVectorSize["y"] = mainMenuSize[1]
-            setScreenVectorSize(screenVectorSize, screen)
-            selectedCharacters, selectedAmountBots, latestSelectedChar = resetSelections(selectedCharacters, selectedAmountBots, latestSelectedChar)
-            selectedCharacters = [] #List of selected characters from the "new game" screen
-            firstDieIsThrown = False
-            yourChar = None
-            #latestSelectedChar = None
-            player = Player #Reset all lives/conditions etc by recreating the Player class
-    elif gameStatus == "options":###hierzo
-=======
             labelPixelLenght += 250
 
         if ev.type == pygame.QUIT:
@@ -539,7 +529,6 @@ while gameIsRunning:
                     os.remove('save.txt')
                 pickle.dump((selectedCharacters, currentPlayerCounter), open('save.txt', "wb"))
     elif gameStatus == "options":
->>>>>>> 195377752b33acc62f9a6aa40b88425d04c9c872
         screen.blit(pygame.transform.scale(selectBackground,(screenVectorSize["x"],screenVectorSize["y"])), (0, 0))
         label = fontSize(50, "Brush").render("Option menu", 1, (255, 0, 0))
         screen.blit(label, (260, 50))
@@ -571,31 +560,6 @@ while gameIsRunning:
                 setDefaultSoundSystem(enableSound,"Sounds\Intro_Soft_Touch.mp3", 300)
     #Display rules
     elif gameStatus == "rules":
-<<<<<<< HEAD
-        rulesScreen = Rules_Screen(screen,screenVectorSize,selectBackground,ev)
-        rulesScreen.Show()
-
-        #region
-        #screen.blit(pygame.transform.scale(selectBackground,(screenVectorSize["x"],screenVectorSize["y"])), (0, 0))
-        #if ev.type == pygame.QUIT:
-        #    gameIsRunning = False
-        #if ev.type == pygame.KEYUP:
-        #    if ev.key == pygame.K_ESCAPE:
-        #        gameStatus = 'main'
-        #        screenVectorSize["x"] = mainMenuSize[0]
-        #        screenVectorSize["y"] = mainMenuSize[1]
-        #        setScreenVectorSize(screenVectorSize, screen)
-        #labelHeight = screen.get_rect().midtop[1]
-        #for rule in rules.LoadAllRules():
-        #    text = fontSize(25, None).render(rule, 1, (217, 30, 24))
-        #    textpos = text.get_rect()
-        #    labelHeight += 25
-        #    screen.blit(text, (screen.get_rect().centerx / 4, labelHeight))
-        #text = font.render("Press 'ESC' to get back to the main menu", 1, (255,255,0))
-        #textpos = text.get_rect()
-        #screen.blit(text, (screen.get_rect().centerx / 4, screen.get_size()[1] - 50))
-        #endregion
-=======
         screen.blit(pygame.transform.scale(selectBackground,(screenVectorSize["x"],screenVectorSize["y"])), (0, 0))
         if ev.type == pygame.QUIT:
             gameIsRunning = False
@@ -615,7 +579,6 @@ while gameIsRunning:
         textpos = text.get_rect()
         screen.blit(text, (screen.get_rect().centerx / 4, screen.get_size()[1] - 50))
 
->>>>>>> 195377752b33acc62f9a6aa40b88425d04c9c872
     elif gameStatus == "fight":
         dieRect = None
         fightIsOver = False

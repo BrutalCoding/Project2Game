@@ -11,11 +11,11 @@ class Player:
         self.ImageFighter = imagefighter
         self.ImageFighterSelected = imagefighterselected
     
-    def CalculateHealth(damage):
+    def CalculateHealth(self,damage):
         return self.Health - damage
     
-    def CalculateCondition(conditionLose):
-        return self.Condition + conditionLose
+    def CalculateCondition(self,conditionLose):
+        return self.Condition - conditionLose
 
     def loadDefaultValues(self):
         self.Health = 100
