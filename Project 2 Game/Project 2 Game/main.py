@@ -92,8 +92,6 @@ def  PawnLocations(selectedCharacters, pawns,currentPlayerCounter, randomDiceNum
     if ev.type == pygame.MOUSEBUTTONDOWN:
         if dieRect.collidepoint(pygame.mouse.get_pos()):
             if selectedCharacters[currentPlayerCounter].Health > 0:
-                selectedCharacters[1].Health -= 50
-                selectedCharacters[2].Health -= 50
                 randomDiceNumber = random.randint(1,6)
                 currentTile = selectedCharacters[currentPlayerCounter].Tile
                 for x in boardtiles.items():
@@ -139,13 +137,16 @@ def  PawnLocations(selectedCharacters, pawns,currentPlayerCounter, randomDiceNum
                                             currentTileOwner = int(round(x[0] / 10)) #Going to fight player 1, 2 or 3 and not player 0.
                                         else:
                                             currentTileOwner = 0 #Going to fight player 0 (first player, that means its going to fight you.
-                                if selectedCharacters[currentTileOwner].Health > 0:
-                                    print('Fight started (else)')
-                                    setDefaultSoundSystem(enableSound, "Sounds\Fight.mp3")
-                                    gameStatus = 'fight'
+                                if currentTileOwner < len(selectedCharacters):
+                                    if selectedCharacters[currentTileOwner].Health > 0:
+                                        print('Fight started (else)')
+                                        setDefaultSoundSystem(enableSound, "Sounds\Fight.mp3")
+                                        gameStatus = 'fight'
+                                    else:
+                                        print("Cannot fight, player is dead")
+                                        gameStatus = "Game"
                                 else:
-                                    print("Cannot fight, player is dead")
-                                    gameStatus = "Game"
+                                    selectedCharacters[currentPlayerCounter].Health -= 10
                                 #Sequence
                                 #Attacker lands on another player's square
                                 #Attacker throws die and gets a number
@@ -159,7 +160,6 @@ def  PawnLocations(selectedCharacters, pawns,currentPlayerCounter, randomDiceNum
                 screen.blit(pawns[currentPlayerCounter + 1], currentTile)
                 pygame.time.delay(150)
                 #If the counter is at the last character, start at the first player again.
-            
             
                 firstDieIsThrown = True
                 ###########################AI CONTROL###########################
@@ -607,6 +607,9 @@ while gameIsRunning:
                 if x[1] == curplaypos:
                     if not x[0] in (0,39,1): #If its not the top left corner (Blue corner)
                         tempCurrentPlayerCounter = int(round(x[0] / 10)) #Going to fight player 1, 2 or 3 and not player 0.
+                        if not tempCurrentPlayerCounter < len(selectedCharacters):
+                            #The new tempcurrentplayercounter is higher than what exists
+                            tempCurrentPlayerCounter = tempTempCurrentPlayerCounter
                     else:
                         tempCurrentPlayerCounter = 0 #Going to fight player 0 (first player, that means its going to fight you.
 
@@ -713,7 +716,6 @@ while gameIsRunning:
                     screen.blit(label, (350,labelHeight))
                     labelHeight += 25
 
-        
             #When both players decided which attacks they want, calculate the damage/condition for each player.
             if(fightIsOver):
                 bottomLeftFighter = selectedCharacters[bottomLeftFighter]
