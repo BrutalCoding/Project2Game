@@ -45,6 +45,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="main.py" />
+    <Compile Include="menu.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="options.py">
       <SubType>Code</SubType>
     </Compile>
@@ -60,11 +63,16 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Documenten\" />
+    <Folder Include="Fonts\" />
     <Folder Include="Images\" />
     <Folder Include="Sounds\" />
-    <Folder Include="__pycache__\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Documenten\Rules.pdf" />
+    <Content Include="Fonts\Brushstrike.ttf" />
+    <Content Include="Fonts\LCD-N.TTF" />
+    <Content Include="Fonts\Superstar.ttf" />
     <Content Include="Images\1.jpg" />
     <Content Include="Images\Background.png" />
     <Content Include="Images\blue.png" />
@@ -96,11 +104,14 @@
     <Content Include="Images\FighterMenu.png" />
     <Content Include="Images\green.png" />
     <Content Include="Images\head__iron_rekt.png" />
+    <Content Include="Images\manny_face.png" />
     <Content Include="Images\mike.png" />
     <Content Include="Images\MikeGlow.png" />
+    <Content Include="Images\mike_face.png" />
     <Content Include="Images\mohammed.png" />
     <Content Include="Images\MuhammedGlow.png" />
     <Content Include="Images\muhammed_ali.png" />
+    <Content Include="Images\muhammed_face.png" />
     <Content Include="Images\paquiao.png" />
     <Content Include="Images\Pause.png" />
     <Content Include="Images\pecquiao.png" />
@@ -110,7 +121,8 @@
     <Content Include="Images\red.png" />
     <Content Include="Images\rocky.png" />
     <Content Include="Images\RockyGlow.png" />
-    <Content Include="Images\rules.png" />
+    <Content Include="Images\rocky_face.png" />
+    <Content Include="Images\Rules.png" />
     <Content Include="Images\ScoreBoard.png" />
     <Content Include="Images\test.PNG" />
     <Content Include="Images\yellow.png" />
@@ -120,9 +132,6 @@
     <Content Include="Sounds\Intro_Soft_Touch.mp3" />
     <Content Include="Sounds\tik.m4a" />
     <Content Include="Sounds\tik.wav" />
-    <Content Include="__pycache__\main.cpython-34.pyc" />
-    <Content Include="__pycache__\selectScreen.cpython-34.pyc" />
-    <Content Include="__pycache__\WindowsScreen.cpython-34.pyc" />
   </ItemGroup>
   <ItemGroup>
     <InterpreterReference Include="{2af0f10d-7135-4994-9156-5d01c9c11b7e}\3.4" />
