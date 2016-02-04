@@ -84,7 +84,7 @@ class Board:
             #screen.blit(pygame.transform.scale(scoreBoardBackground,(250,100)), (vectorX,600))
             vectorX += 250
             if x == yourChar:
-                name = str(x.Name) + "Player 1: "
+                name = "Player 1: " + str(x.Name)
             else:
                 name = "Player: " + str(x.Name)
             if x == selectedCharacters[currentPlayerCounter] and playersAlive != 1:
