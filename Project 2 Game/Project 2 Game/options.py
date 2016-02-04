@@ -1,4 +1,8 @@
-﻿class Option:
+﻿import pygame
+
+pygame.font.init()
+
+class Option:
     hovered = False
     selected = False
     def __init__(self, text, pos, font, screen, id):
@@ -30,3 +34,14 @@
         self.set_rend()
         self.rect = self.rend.get_rect()
         self.rect.topleft = self.pos
+
+    def fontSize(size, typeFont):
+        if typeFont == "Brush": 
+            font_path = "./Fonts/Brushstrike.ttf"
+        elif typeFont == "Super":
+            font_path = "./Fonts/Superstar.ttf"
+        elif typeFont == "lcd":
+            font_path = "./Fonts/LCD-N.TTF"
+        else:
+            return pygame.font.Font(None, size)
+        return pygame.font.Font(font_path, size)
