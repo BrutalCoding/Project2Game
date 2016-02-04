@@ -70,6 +70,5 @@ class selectScreen:
                 screen.blit(PlayerImageFighterSelectedDict[character.text], (character.pos[0], (character.pos[1] - 200)))
             else:
                 screen.blit(playerImageFighterDict[character.text], (character.pos[0], (character.pos[1] - 200)))
-                
         for label in labelsPlayerSelected:
             screen.blit(label[0], label[1])

@@ -41,6 +41,9 @@
     <Compile Include="fightScreen.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="GameInit.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="main.py" />
     <Compile Include="options.py">
       <SubType>Code</SubType>
