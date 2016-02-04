@@ -4,7 +4,8 @@ class GameInit(object):
                  tempCurrentPlayerCounter = 0, defaultboardLogic = [], defaultTileLocations = [], maxAmountOfBots = 4,                                                                                                                                                   #Minimal 1 and maximum depends on how many characters are in the game, see 'players' variable. E.g. 4 = 3 bots, 1 player.
                  scoreBoardHeight = 0, randomDiceNumber = 1, firstDieIsThrown = False, mainMenuSize = [800, 600],
                  botChosen = False, charChosen = False, tileSelected = False, enableSound = True, ruleOpened = False, fighterDieInt = [],
-                fighterCurrentPlayerCounter = 0, fightAttackIsChosen = False, playersAlive = 0, counter = 0, gameIsRunning = True):
+                fighterCurrentPlayerCounter = 0, fightAttackIsChosen = False, playersAlive = 0, counter = 0, gameIsRunning = True,
+                superFighterDieInt=[], superFighterCurrentPlayerCounter=0, superFightAttackIsChosen=False):
 
         self.GameStatus = gameStatus
         self.SelectedCharacters = selectedCharacters #List of selected characters from the "new game" screen
@@ -26,6 +27,9 @@ class GameInit(object):
         self.FighterDieInt = fighterDieInt
         self.FighterCurrentPlayerCounter = fighterCurrentPlayerCounter #When a player lands on a corner, this variable will be assigned to the current fighter.
         self.FightAttackIsChosen = fightAttackIsChosen #In the fightscreen, where the player has the option to select an attack
+        self.SuperFighterDieInt = superFighterDieInt
+        self.SuperFighterCurrentPlayerCounter = superFighterCurrentPlayerCounter #When a player lands on a corner, this variable will be assigned to the current fighter.
+        self.SuperFightAttackIsChosen = superFightAttackIsChosen #In the fightscreen, where the player has the option to select an attack
         self.PlayersAlive = playersAlive
         self.Counter = counter
         self.GameIsRunning = gameIsRunning

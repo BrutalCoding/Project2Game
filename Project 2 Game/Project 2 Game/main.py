@@ -423,7 +423,7 @@ while init.GameIsRunning:
             if(fightIsOver):
                 bottomLeftFighter = init.SelectedCharacters[bottomLeftFighter]
                 topRightFighter = init.SelectedCharacters[init.TempCurrentPlayerCounter]
-                if bottomLeftFighter.Condition >= bottomLeftCornerCondition: #Attacker has enough condition to perform the attack
+                if bottomLeftFighter.Condition >= abs(bottomLeftCornerCondition): #Attacker has enough condition to perform the attack
                     if bottomLeftCornerDamage > topRightCornerDamage: #The attackers damage is better than the defender
                         bottomLeftFighter.Condition += bottomLeftCornerCondition #New condition for the attacker
                         if topRightFighter.Condition >= topRightCornerCondition: #Has the opponent enough condition to perform the attack?
@@ -442,6 +442,26 @@ while init.GameIsRunning:
                             #The defender has not enough condition to attack back
                             topRightCornerDamage = topRightCornerDamage #Damage remains the same
                         bottomLeftFighter.Health -= topRightCornerDamage
+                    else:
+                        bottomLeftCornerDamage = 0
+                        if bottomLeftCornerDamage > topRightCornerDamage: #The attackers damage is better than the defender
+                            bottomLeftFighter.Condition += bottomLeftCornerCondition #New condition for the attacker
+                            if topRightFighter.Condition >= topRightCornerCondition: #Has the opponent enough condition to perform the attack?
+                                topRightFighter.Condition += topRightCornerCondition
+                                bottomLeftCornerDamage = bottomLeftCornerDamage - topRightCornerDamage #New damage for the attacker
+                            else:
+                                #The defender has not enough condition to attack back
+                                bottomLeftCornerDamage = bottomLeftCornerDamage #Damage remains the same
+                            topRightFighter.Health -= bottomLeftCornerDamage
+                        elif topRightCornerDamage > bottomLeftCornerDamage:
+                            bottomLeftFighter.Condition += bottomLeftCornerCondition #New condition for the attacker
+                            if topRightFighter.Condition >= topRightCornerCondition: #Has the opponent enough condition to perform the attack?
+                                topRightFighter.Condition += topRightCornerCondition
+                                topRightCornerDamage = topRightCornerDamage - bottomLeftCornerDamage #New damage for the attacker
+                            else:
+                                #The defender has not enough condition to attack back
+                                topRightCornerDamage = topRightCornerDamage #Damage remains the same
+                            bottomLeftFighter.Health -= topRightCornerDamage
 
             if(init.TempCurrentPlayerCounter == 3):
                 init.TempCurrentPlayerCounter = 0
@@ -511,23 +531,23 @@ while init.GameIsRunning:
             screen.blit(ImageFighter, (0,450)) #Blit player at superfight in bottom left
            
             if init.FighterCurrentPlayerCounter == 0:
-                diePlaceholder = pygame.image.load("Images\\head__iron_rekt.png")
+                diePlaceholder = pygame.image.load("Images\\DIE-1.png")
                 screen.blit(diePlaceholder, (((screen.get_width() /2)-95), (screen.get_height()/2)-95))
             else:
-                screen.blit(dice[init.FighterDieInt[init.FighterCurrentPlayerCounter - 1]], (((screen.get_width() /2)-95), (screen.get_height()/2)-95))
+                screen.blit(dice[init.SuperFighterDieInt[init.FighterCurrentPlayerCounter - 1]], (((screen.get_width() /2)-95), (screen.get_height()/2)-95))
 
             fightDie = pygame.Rect(((screen.get_width() /2)-95), (screen.get_height()/2)-95, 190, 190)
             if fightDie.collidepoint(pygame.mouse.get_pos()) and init.FighterCurrentPlayerCounter < 1: #If there are still turns left and
                 if ev.type == pygame.MOUSEBUTTONDOWN:
-                        init.FighterDieInt.append(random.randint(1,6))
+                        init.SuperFighterDieInt.append(random.randint(1,6))
                         pygame.time.delay(150)
                         init.FighterCurrentPlayerCounter += 1
-            if init.FighterDieInt != [] and fightIsOver == False:
+            if init.SuperFighterDieInt != [] and fightIsOver == False:
                 #When the die is thrown, show which attacks are available.
-                attackOptions = init.SelectedCharacters[bottomLeftFighter].Card.value[init.FighterDieInt[0]]
+                attackOptions = init.SelectedCharacters[bottomLeftFighter].Card.value[init.SuperFighterDieInt[0]]
                 textPlayerAttack = []
                 textOpponentAttack = []
-                if len(init.FighterDieInt) == 2: #This is very irrelevant in superfight. Dirty fix right here.
+                if len(init.SuperFighterDieInt) == 2: #This is very irrelevant in superfight. Dirty fix right here.
                     donothing = True
                 #For the boxer in the bottom left corner
                 cnt = 0
@@ -569,10 +589,11 @@ while init.GameIsRunning:
             #This happens when the attack is chosen.
             if(fightIsOver):
                 bottomLeftFighter = init.SelectedCharacters[bottomLeftFighter]
-                if bottomLeftFighter.Condition >= bottomLeftCornerCondition: #Attacker has enough condition to perform the attack
+                if bottomLeftFighter.Condition >= abs(bottomLeftCornerCondition): #Attacker has enough condition to perform the attack
                     if bottomLeftCornerDamage > superfighter.value[randomFighterDamage]: #The attackers damage is better than the superfighter
+                        bottomLeftFighter.Condition += bottomLeftCornerCondition
                         init.FighterCurrentPlayerCounter = 0
-                        fighterDieInt = []
+                        init.SuperFighterDieInt = []
                         init.GameStatus = 'Game'
                         init.Counter = 0
                         #Nothing has to happen here. Superfighters don't take damage.
@@ -580,13 +601,19 @@ while init.GameIsRunning:
                         bottomLeftFighter.Condition += bottomLeftCornerCondition #New condition for the attacker
                         bottomLeftFighter.Health -= (superfighter.value[randomFighterDamage]-bottomLeftCornerDamage)
                         init.FighterCurrentPlayerCounter = 0
-                        fighterDieInt = []
+                        init.SuperFighterDieInt = []
+                        init.GameStatus = 'Game'
+                        init.Counter = 0
+                    elif superfighter.value[randomFighterDamage] == bottomLeftCornerDamage:
+                        bottomLeftFighter.Condition += bottomLeftCornerCondition #New condition for the attacker
+                        init.FighterCurrentPlayerCounter = 0
+                        int.SuperFighterDieInt = []
                         init.GameStatus = 'Game'
                         init.Counter = 0
                 else:
                     print("Cannot attack, you have not enough condition left!")
                     init.FighterCurrentPlayerCounter = 0
-                    fighterDieInt = []
+                    init.SuperFighterDieInt = []
                     init.GameStatus = 'Game'
                     init.Counter = 0
 
@@ -602,7 +629,7 @@ while init.GameIsRunning:
                     if ev.key == pygame.K_SPACE:
                         setDefaultSoundSystem(init.EnableSound,"Sounds\Intro_1_Soft_Pump.mp3", 300, 0.3)
                         init.FighterCurrentPlayerCounter = 0
-                        fighterDieInt = []
+                        init.SuperFighterDieInt = []
                         init.GameStatus = 'Game'
                         init.Counter = 0
                         fightIsOver = True

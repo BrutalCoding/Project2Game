@@ -186,7 +186,7 @@ def boardLogic(SelectedCharacters, CurrentPlayerCounter, RandomDiceNumber, First
                                             currentTileOwner = 0 #Going to fight player 0 (first player, that means its going to fight you.
                                 if currentTileOwner < len(init.SelectedCharacters):
                                     if init.SelectedCharacters[currentTileOwner].Health > 0:
-                                        setDefaultSoundSystem(init.EnableSound, "Sounds\Fight.mp3")
+                                        #setDefaultSoundSystem(init.EnableSound, "Sounds\Fight.mp3")
                                         init.GameStatus = 'fight'
                                     else:
                                         init.GameStatus = "Game"
