@@ -21,7 +21,8 @@ from Draw import *
 from Ai import Bot
 
 Option = options.Option
-pygame.mixer.init()
+#pygame.mixer.init()
+pygame.mixer.pre_init(44100, -16, 2, 2048)
 pygame.init()
 
 #Init variables
@@ -57,6 +58,9 @@ fighterCurrentPlayerCounter = 0 #When a player lands on a corner, this variable 
 fightAttackIsChosen = False #In the fightscreen, where the player has the option to select an attack
 playersAlive = 0
 #fightIsOver = False #Boolean to check if the both players have fought each other
+
+diceSound = pygame.mixer.Sound(os.path.join('Sounds','dice_throw.wav'))
+bellSound = pygame.mixer.Sound(os.path.join('Sounds','boxing-bell.wav'))
 
 #Font init
 pygame.font.init()
@@ -100,7 +104,7 @@ def  PawnLocations(selectedCharacters,currentPlayerCounter, randomDiceNumber, fi
             if selectedCharacters[currentPlayerCounter].Health > 0:
                 selectedCharacters[1].Health -= 50
                 randomDiceNumber = random.randint(1,6)
-
+                diceSound.play()
                 #check steps and ad condition
                 newSteps = selectedCharacters[currentPlayerCounter].Steps + randomDiceNumber
                 if newSteps >= 40:
@@ -227,6 +231,7 @@ def  PawnLocations(selectedCharacters,currentPlayerCounter, randomDiceNumber, fi
                 screen.blit(pawnload('Images/' + p.ImageFace), moveToTile)
             cntPlayer += 1
         screen.blit(dice[randomDiceNumber], (725,50))
+
         playersAlive = 0
         cnt = 0
         for fighter in selectedCharacters:
@@ -288,7 +293,7 @@ menu =    [Option("NEW GAME", (screen.get_rect().centerx - xM, 180), font_all, s
 
 #Define the images
 dice =      {1:diceload('Images/Die-1.png'), 2:diceload('Images/Die-2.png'), 3:diceload('Images/Die-3.png'), 4:diceload('Images/Die-4.png'), 5:diceload('Images/Die-5.png'), 6:diceload('Images/Die-6.png')}
-playerImages = {1:playerload('Images/mike.png'), 2:playerload('Images/paquiao.png'), 3:playerload('Images/mohammed.png'), 4:playerload('Images/rocky.png')}
+#playerImages = {1:playerload('Images/mike.png'), 2:playerload('Images/paquiao.png'), 3:playerload('Images/mohammed.png'), 4:playerload('Images/rocky.png')}
 boardtiles = tiles()
 players =  [Player("Mohammed Ali",100, 15, PlayerCards.MohammedAli,boardtiles[0], 0,"card__mohammed_ali.png", "muhammed_face.png", "muhammed_ali.png", "MuhammedGlow.png"),
             Player("Manny Pecquiao",100, 15, PlayerCards.MannyPecquiao,boardtiles[0], 0,"card__manny_pecquiao.png","manny_face.png", "paquiao.png", "PecquiaoGlow.png"),
@@ -447,9 +452,9 @@ while gameIsRunning:
                             screenVectorSize["y"] = 700
                             setScreenVectorSize(screenVectorSize, screen)
                             players =  [Player("Mohammed Ali",100, 15, PlayerCards.MohammedAli,boardtiles[0],"card__mohammed_ali.png", "mohammed.png", "muhammed_ali.png", "MuhammedGlow.png"),
-            Player("Manny Pecquiao",100, 15, PlayerCards.MannyPecquiao,boardtiles[0],"card__manny_pecquiao.png","face__manny_pecquiao.jpg", "paquiao.png", "PecquiaoGlow.png"),
-            Player("Mike Tysen",100, 15, PlayerCards.MikeTysen,boardtiles[0],"card__mike_tysen.png","face__mike_tysen.jpg", "mike.png", "MikeGlow.png"),
-            Player("Rocky Belboa",100,15,PlayerCards.RockyBelboa,boardtiles[0],"card__rocky_belboa.png","face__rocky_belboa.jpg", "rocky.png", "RockyGlow.png")]
+                                        Player("Manny Pecquiao",100, 15, PlayerCards.MannyPecquiao,boardtiles[0],"card__manny_pecquiao.png","face__manny_pecquiao.jpg", "paquiao.png", "PecquiaoGlow.png"),
+                                        Player("Mike Tysen",100, 15, PlayerCards.MikeTysen,boardtiles[0],"card__mike_tysen.png","face__mike_tysen.jpg", "mike.png", "MikeGlow.png"),
+                                        Player("Rocky Belboa",100,15,PlayerCards.RockyBelboa,boardtiles[0],"card__rocky_belboa.png","face__rocky_belboa.jpg", "rocky.png", "RockyGlow.png")]
                             gameStatus = 'Game'
                             #GameBoardSound
                             setDefaultSoundSystem(enableSound,"Sounds\Intro_1_Soft_Pump.mp3", 300, 0.3)
@@ -539,6 +544,7 @@ while gameIsRunning:
 
             #Pause and stop game button logic
             if bellRec.collidepoint(pygame.mouse.get_pos()) or pauseImg.collidepoint(pygame.mouse.get_pos()):
+                bellSound.play()
                 if pauseImg.collidepoint(pygame.mouse.get_pos()):
                     if(os.path.isfile('save.txt')):
                         os.remove('save.txt')
@@ -593,7 +599,7 @@ while gameIsRunning:
             webbrowser.open_new('Documenten\Rules.pdf')
             ruleOpened = False
             gameStatus = 'main'
-# Fight 
+#Fight 
     elif gameStatus == "fight":
         if(selectedCharacters[currentPlayerCounter].IsAlive == True):
             dieRect = None
@@ -604,6 +610,7 @@ while gameIsRunning:
             else:
                 tempCurrentPlayerCounter = currentPlayerCounter - 1
             bottomLeftFighter = tempCurrentPlayerCounter
+            screen.blit(pygame.transform.scale(selectBackground,(1000,700)), (0, 0))
             ImageFighter = pygame.image.load("Images\\" + selectedCharacters[tempCurrentPlayerCounter].ImageFighter)
         
             landedTile = selectedCharacters[tempCurrentPlayerCounter].Tile
@@ -644,7 +651,7 @@ while gameIsRunning:
         
             #If the first turn has not begun yet, display a placeholder for the dice. Else show what dice was thrown.
             if fighterCurrentPlayerCounter == 0:
-                diePlaceholder = pygame.image.load("Images\\head__iron_rekt.png")
+                diePlaceholder = pygame.image.load("Images\\DIE-1.png")
                 screen.blit(diePlaceholder, (((screen.get_width() /2)-95), (screen.get_height()/2)-95))
             else:
                 screen.blit(dice[fighterDieInt[fighterCurrentPlayerCounter - 1]], (((screen.get_width() /2)-95), (screen.get_height()/2)-95))
@@ -653,6 +660,7 @@ while gameIsRunning:
             if fightDie.collidepoint(pygame.mouse.get_pos()) and fighterCurrentPlayerCounter < 2: #If there are still turns left and
                 if ev.type == pygame.MOUSEBUTTONDOWN:
                         fighterDieInt.append(random.randint(1,6))
+                        diceSound.play()
                         pygame.time.delay(150)
                         fighterCurrentPlayerCounter += 1
             if fighterDieInt != [] and fightIsOver == False:

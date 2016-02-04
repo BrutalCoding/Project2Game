@@ -126,6 +126,8 @@
     <Content Include="Images\ScoreBoard.png" />
     <Content Include="Images\test.PNG" />
     <Content Include="Images\yellow.png" />
+    <Content Include="Sounds\boxing-bell.wav" />
+    <Content Include="Sounds\dice_throw.wav" />
     <Content Include="Sounds\fight.mp3" />
     <Content Include="Sounds\Intro_1_Hyped.mp3" />
     <Content Include="Sounds\Intro_1_Soft_Pump.mp3" />
