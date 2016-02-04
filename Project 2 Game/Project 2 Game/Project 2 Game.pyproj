@@ -29,33 +29,24 @@
     <PtvsTargetsFile>$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets</PtvsTargetsFile>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="AI.py">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="board.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Dice.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Draw.py">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="elements.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="main.py" />
-    <Compile Include="menu.py">
+    <Compile Include="fightScreen.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="main.py" />
     <Compile Include="options.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Player.py" />
     <Compile Include="PlayerCards.py" />
-    <Compile Include="rules.py">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="selectScreen.py" />
     <Compile Include="SuperFighters.py" />
     <Compile Include="WindowsScreen.py">
