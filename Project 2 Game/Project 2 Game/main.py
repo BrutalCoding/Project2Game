@@ -17,7 +17,6 @@ from WindowsScreen import *
 from Dice import rollDice
 from GameInit import *
 
-
 init = GameInit()
 Option = options.Option
 pygame.mixer.init()
@@ -40,141 +39,6 @@ def setScreenVectorSize(screenVectorSize, screen):
     return pygame.display.set_mode((screenVectorSize["x"], screenVectorSize["y"]))
 screen = pygame.display.set_mode((screenVectorSize["x"], screenVectorSize["y"]))
 screen = setScreenVectorSize(screenVectorSize, screen)
-
-#Loop through selected characters and place related pawns
-def PawnLocations(SelectedCharacters, CurrentPlayerCounter, RandomDiceNumber, FirstDieIsThrown, GameStatus, TempCurrentPlayerCounter, PlayersAlive):
-    #Board game main loop. Every movement is here.
-    if ev.type == pygame.MOUSEBUTTONDOWN:
-        if dieRect.collidepoint(pygame.mouse.get_pos()):
-            if init.SelectedCharacters[init.CurrentPlayerCounter].Health > 0:
-                init.RandomDiceNumber = random.randint(1,6)
-                diceSound.play()
-                #check steps and ad condition
-                newSteps = init.SelectedCharacters[init.CurrentPlayerCounter].Steps + init.RandomDiceNumber
-                if newSteps >= 40:
-                    init.SelectedCharacters[init.CurrentPlayerCounter].Condition = 15
-                    init.SelectedCharacters[init.CurrentPlayerCounter].Steps = 0
-                    if newSteps > 40:
-                        difference = newSteps - 40
-                        init.SelectedCharacters[init.CurrentPlayerCounter].Steps += difference
-                else:
-                    init.SelectedCharacters[init.CurrentPlayerCounter].Steps += init.RandomDiceNumber
-
-                currentTile = init.SelectedCharacters[init.CurrentPlayerCounter].Tile
-                for x in boardtiles.items():
-                    if x[1] == currentTile:
-                        #To prevent that newTileNumber gets number 40 (Since it goes from 0 to 39)
-                        if x[0] + init.RandomDiceNumber < 40:
-                            newTileNumber = x[0] + init.RandomDiceNumber
-                        else:
-                            newTileNumber = 0
-                        for pawn in init.SelectedCharacters:
-                            if pawn.Name != init.SelectedCharacters[init.CurrentPlayerCounter].Name:
-                                if boardtiles[newTileNumber] == pawn.Tile and pawn.Health > 0 and boardtiles[newTileNumber] != boardtiles[5] and boardtiles[newTileNumber] != boardtiles[15] and boardtiles[newTileNumber] != boardtiles[25] and boardtiles[newTileNumber] != boardtiles[35]:#If there are 2 pawns on the same tile and the tile is not a fight tile. 
-                                    init.GameStatus = 'fight'
-                        init.SelectedCharacters[init.CurrentPlayerCounter].Tile = boardtiles[newTileNumber]
-                        if init.SelectedCharacters[init.CurrentPlayerCounter].Tile == boardtiles[5] or init.SelectedCharacters[init.CurrentPlayerCounter].Tile == boardtiles[15] or init.SelectedCharacters[init.CurrentPlayerCounter].Tile == boardtiles[25] or init.SelectedCharacters[init.CurrentPlayerCounter].Tile == boardtiles[35]:
-                            init.GameStatus = "superfight"
-                        curplaypos = init.SelectedCharacters[init.CurrentPlayerCounter].Tile #Current player's position on board
-                        if curplaypos in (boardtiles[0], boardtiles[1], boardtiles[9], boardtiles[10], boardtiles[11], boardtiles[19], boardtiles[20], boardtiles[21], boardtiles[29], boardtiles[30], boardtiles[31], boardtiles[39]):
-                            if init.CurrentPlayerCounter == 0 and (curplaypos == boardtiles[0] or curplaypos == boardtiles[39] or curplaypos == boardtiles[1]):
-                                #Add HP to the owner
-                                playerHP = init.SelectedCharacters[init.CurrentPlayerCounter].Health  
-                                if playerHP + 10 <= 100:
-                                    init.SelectedCharacters[init.CurrentPlayerCounter].Health += 10
-                                elif playerHP + 10 > 100:
-                                    init.SelectedCharacters[init.CurrentPlayerCounter].Health = 100
-                            elif init.CurrentPlayerCounter != 0 and curplaypos in (boardtiles[init.CurrentPlayerCounter * 10], boardtiles[(init.CurrentPlayerCounter * 10) - 1], boardtiles[(init.CurrentPlayerCounter * 10) + 1]):
-                                #Add HP to the owner
-                                playerHP = init.SelectedCharacters[init.CurrentPlayerCounter].Health  
-                                if playerHP + 10 <= 100:
-                                    init.SelectedCharacters[init.CurrentPlayerCounter].Health += 10
-                                elif playerHP + 10 > 100:
-                                    init.SelectedCharacters[init.CurrentPlayerCounter].Health = 100
-                            else: #Fight code
-                                for x in boardtiles.items():
-                                    if x[1] == curplaypos:
-                                        if not x[0] in (0,39,1): #If its not the top left corner (Blue corner)
-                                            currentTileOwner = int(round(x[0] / 10)) #Going to fight player 1, 2 or 3 and not player 0.
-                                        else:
-                                            currentTileOwner = 0 #Going to fight player 0 (first player, that means its going to fight you.
-                                if currentTileOwner < len(init.SelectedCharacters):
-                                    if init.SelectedCharacters[currentTileOwner].Health > 0:
-                                        setDefaultSoundSystem(init.EnableSound, "Sounds\Fight.mp3")
-                                        init.GameStatus = 'fight'
-                                    else:
-                                        init.GameStatus = "Game"
-                                else:
-                                    init.SelectedCharacters[init.CurrentPlayerCounter].Health -= 10
-                screen.blit(pawnload('Images/' + init.SelectedCharacters[init.CurrentPlayerCounter].ImageFace), currentTile)
-                pygame.time.delay(150)
-                #If the counter is at the last character, start at the first player again.
-                init.FirstDieIsThrown = True
-                if init.CurrentPlayerCounter == len(init.SelectedCharacters) - 1: 
-                    init.CurrentPlayerCounter = 0
-                else:
-                    if init.SelectedCharacters[init.CurrentPlayerCounter + 1].Health > 0:
-                        init.CurrentPlayerCounter += 1
-                    elif init.SelectedCharacters[init.CurrentPlayerCounter]:
-                        init.CurrentPlayerCounter += 2
-
-                if init.TempCurrentPlayerCounter == len(init.SelectedCharacters) - 1: 
-                    init.TempCurrentPlayerCounter = 0
-                else:
-                    init.TempCurrentPlayerCounter += 1
-        return init.CurrentPlayerCounter, init.RandomDiceNumber, init.FirstDieIsThrown, init.GameStatus,init.TempCurrentPlayerCounter,init.SelectedCharacters[init.CurrentPlayerCounter].Health, init.PlayersAlive
-    else:
-        #Update player position
-        cntCorner = 1
-        cntPlayer = 1
-
-        for p in init.SelectedCharacters:
-            if not init.FirstDieIsThrown:
-                p.Health = 100
-                p.Condition = 15
-                #If no one has thrown the die yet, give each player their own tile.
-                if cntCorner == 1:
-                    moveToTile = boardtiles[0]
-                elif cntCorner == 2:
-                    moveToTile = boardtiles[10]
-                elif cntCorner == 3:
-                    moveToTile = boardtiles[20]
-                elif cntCorner == 4:
-                    moveToTile = boardtiles[30]
-
-                #Reset to corner 1 if the latest corner (4) has been reached already.
-                if cntCorner == 4:
-                    cntCorner = 1
-                else:
-                    cntCorner += 1
-            else:
-                moveToTile = p.Tile
-            p.Tile = moveToTile
-            if p.Health > 0:
-                screen.blit(pawnload('Images/' + p.ImageFace), moveToTile)
-            cntPlayer += 1
-        screen.blit(dice[init.RandomDiceNumber], (725,50))
-        init.PlayersAlive = 0
-        cnt = 0
-        for fighter in init.SelectedCharacters:
-            if fighter.Health > 0:
-                init.PlayersAlive += 1
-            else:
-                fighter.Health = 0 #Reset it to 0 instead of displaying a negative value.
-                fighter.IsAlive = False
-            if not fighter.Condition > 0:
-                fighter.Condition = 0
-            if cnt < len(init.SelectedCharacters):
-                cnt += 1
-        if init.PlayersAlive == 1:
-            for x in init.SelectedCharacters:
-                if x.IsAlive:
-                    message = str(x.Name) + " just won the game!"
-            ImageBGLink = "Images/EmptyBackground.png"
-            brushLink = "Fonts/Brushstrike.ttf"
-            screenMessage = WindowsScreen(screen,message,ImageBGLink,brushLink)
-            screen.blit(screenMessage.surf, (0, 0))
-    return init.CurrentPlayerCounter, init.RandomDiceNumber,init.FirstDieIsThrown,init.GameStatus, init.TempCurrentPlayerCounter,init.SelectedCharacters[init.CurrentPlayerCounter].Health, init.PlayersAlive
 
 #Define and initialize the sounds of the game
 pygame.mixer.init()
@@ -245,8 +109,8 @@ entities = [playerLabels[0], labelAmountPlayers[0], selectScreenButtons]
 while init.GameIsRunning:
     events = pygame.event.get()
     for ev in events:
-            if ev.type == pygame.QUIT:
-                    init.GameIsRunning = False
+        if ev.type == pygame.QUIT:
+            init.GameIsRunning = False
     screen.fill((0,0,0))
     #Main menu
     if(init.GameStatus == 'main'):
@@ -352,7 +216,7 @@ while init.GameIsRunning:
         screen.blit(board,(0,0))
         if init.TileSelected:
             screen.blit(playerImageCardDict[displayScoreCard[1]],(660,289))
-        init.CurrentPlayerCounter, init.RandomDiceNumber, init.FirstDieIsThrown, init.GameStatus,init.TempCurrentPlayerCounter,init.SelectedCharacters[init.CurrentPlayerCounter].Health, init.PlayersAlive = PawnLocations(init.SelectedCharacters, init.CurrentPlayerCounter, init.RandomDiceNumber,init.FirstDieIsThrown, init.GameStatus, init.TempCurrentPlayerCounter, init.PlayersAlive)
+        init.CurrentPlayerCounter, init.RandomDiceNumber, init.FirstDieIsThrown, init.GameStatus,init.TempCurrentPlayerCounter,init.SelectedCharacters[init.CurrentPlayerCounter].Health, init.PlayersAlive = boardLogic(init.SelectedCharacters, init.CurrentPlayerCounter, init.RandomDiceNumber,init.FirstDieIsThrown, init.GameStatus, init.TempCurrentPlayerCounter, init.PlayersAlive,ev,init,boardtiles,screen, pawnload, dice, dieRect, diceSound)
         #Draw the gameboard buttons: stop, pause and rules
         screenImg = [("BoxingBell.png", (25,25), (950,10)), ("Pause.png", (25,25), (915,10)), ("Rules.png", (25,25), (880,10))]
         for property in screenImg:
