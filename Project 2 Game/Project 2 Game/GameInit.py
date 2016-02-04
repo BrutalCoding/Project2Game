@@ -1,4 +1,5 @@
 import pygame
+
 class GameInit(object):
     def __init__(self, gameStatus = 'main', selectedCharacters = [], selectedAmountBots = None, currentPlayerCounter = 0, 
                  tempCurrentPlayerCounter = 0, defaultPawnLocations = [], defaultTileLocations = [], maxAmountOfBots = 4,                                                                                                                                                   #Minimal 1 and maximum depends on how many characters are in the game, see 'players' variable. E.g. 4 = 3 bots, 1 player.
@@ -13,7 +14,7 @@ class GameInit(object):
         self.TempCurrentPlayerCounter = tempCurrentPlayerCounter #Only used in the gamestatus 'fight'
         self.DefaultPawnLocations = defaultPawnLocations #The top left corner but all with a little bit of offset so the pawns are not on top of each other
         self.DefaultTileLocations = defaultTileLocations #All tiles that are possible to move on to (with a pawn)
-        self.MaxAmountOfBots = maxAmountOfBots  #MAX 4 OR GIUSEPPE WILL HAVE YOUR TESTICLES          4 is actually 3. Bots means players, really.                                                                                                                                                     #Minimal 1 and maximum depends on how many characters are in the game, see 'players' variable. E.g. 4 = 3 bots, 1 player.
+        self.MaxAmountOfBots = maxAmountOfBots   # 4 is actually 3. Bots means players, really.                                                                                                                                                     #Minimal 1 and maximum depends on how many characters are in the game, see 'players' variable. E.g. 4 = 3 bots, 1 player.
         self.ScoreBoardHeight = scoreBoardHeight #Define the scoreboard height, that's where the lives and conditions of each player gets displayed
         self.RandomDiceNumber = randomDiceNumber
         self.FirstDieIsThrown = firstDieIsThrown
@@ -29,3 +30,4 @@ class GameInit(object):
         self.PlayersAlive = playersAlive
         self.Counter = counter
         self.GameIsRunning = gameIsRunning
+   
