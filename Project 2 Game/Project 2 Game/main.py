@@ -350,8 +350,8 @@ while gameIsRunning:
 
         #select screen background and labels.
         screen.blit(pygame.transform.scale(selectBackground,(screenVectorSize["x"],screenVectorSize["y"])), (0, 0))
-        label = fontSize(35, "Brush").render("Choose players", 1, (255,0,0))
-        screen.blit(label, (screen.get_rect().centerx / 2 + 75, 20))
+        label = fontSize(35, "Brush").render("Choose extra players", 1, (255,0,0))
+        screen.blit(label, (screen.get_rect().centerx / 2 + 50, 20))
         label = fontSize(35, "Brush").render("Choose your characters", 1, (255,0,0))
         screen.blit(label, (screen.get_rect().centerx / 2, 150))
 
@@ -481,7 +481,7 @@ while gameIsRunning:
                 if pauseImg.collidepoint(pygame.mouse.get_pos()):
                     if(os.path.isfile('save.txt')):
                         os.remove('save.txt')
-                    pickle.dump((selectedCharacters, currentPlayerCounter), open('save.txt', "wb"))
+                    pickle.dump((selectedCharacters, currentPlayerCounter,enableSound), open('save.txt', "wb"))
                 gameStatus = 'main'
                 setDefaultSoundSystem(enableSound,"Sounds\Intro_Soft_Touch.mp3", 300)
                 screenVectorSize["x"] = mainMenuSize[0]
@@ -849,7 +849,7 @@ while gameIsRunning:
             gameStatus = 'Game'
 
     elif gameStatus == 'load':
-        selectedCharacters,currentPlayerCounter = pickle.load(open('save.txt', 'rb'))
+        selectedCharacters,currentPlayerCounter,enableSound = pickle.load(open('save.txt', 'rb'))
         firstDieIsThrown = True
         gameStatus = 'Game'
     pygame.display.flip()

@@ -1,7 +1,6 @@
 import pygame
 import options
 
-
 class selectScreen:
     #Reset the selected and amount of characters to zero again in able to reselect later.
     def resetSelections(selectedCharacters, selectedAmountBots, latestSelectedChar):
@@ -28,10 +27,10 @@ class selectScreen:
         playerNumber = 1 #Starting with min 1 and max 4 players
         amountPlayersLabelVector = {"x": 225,"y": 50}
         generateID += 1 #Increment the latest generated id by one so it stays unique
-        labelBotName = "Bot"
+        labelBotName = "Player"
         for x in range(1,maxAmountOfBots):
             if not playerNumber == 1:
-                labelBotName = "Bots"
+                labelBotName = "Players"
             labelAmountPlayers.append(Option(str(playerNumber) + ' ' + labelBotName, (amountPlayersLabelVector['x'], amountPlayersLabelVector['y']), font, screen, generateID))
             generateID += 1
             playerNumber += 1
@@ -65,10 +64,12 @@ class selectScreen:
                     label = font.render("Player 1", 1, (255,0,0))
                     labelsPlayerSelected.append((label, (character.pos[0] + 40, (character.pos[1] - 215))))
                 else:
-                    label = font.render("CPU", 1, (255,0,0))
+                    label = font.render("EXTRA", 1, (255,0,0))
                     labelsPlayerSelected.append((label, (character.pos[0] + 40, (character.pos[1] - 215))))
+                   
                 screen.blit(PlayerImageFighterSelectedDict[character.text], (character.pos[0], (character.pos[1] - 200)))
             else:
                 screen.blit(playerImageFighterDict[character.text], (character.pos[0], (character.pos[1] - 200)))
+                
         for label in labelsPlayerSelected:
             screen.blit(label[0], label[1])
