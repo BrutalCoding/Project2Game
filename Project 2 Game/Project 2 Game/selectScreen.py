@@ -22,7 +22,7 @@ class selectScreen:
             option.draw()
     
     #Make the bot labels
-    def makeBotLabels(generateID, maxAmountOfBots, font, screen, Option):
+    def makeBotLabels(generateID, maxAmountOfBots, screen, Option):
         labelAmountPlayers = []
         playerNumber = 1 #Starting with min 1 and max 4 players
         amountPlayersLabelVector = {"x": 225,"y": 50}
@@ -31,28 +31,21 @@ class selectScreen:
         for x in range(1,maxAmountOfBots):
             if not playerNumber == 1:
                 labelBotName = "Players"
-            labelAmountPlayers.append(Option(str(playerNumber) + ' ' + labelBotName, (amountPlayersLabelVector['x'], amountPlayersLabelVector['y']), font, screen, generateID))
+            labelAmountPlayers.append(Option(str(playerNumber) + ' ' + labelBotName, (amountPlayersLabelVector['x'], amountPlayersLabelVector['y']), Option.fontSize(25, None), screen, generateID))
             generateID += 1
             playerNumber += 1
-            if amountPlayersLabelVector["x"] > 600:
-                amountPlayersLabelVector["x"] = 200
-            else:
-                amountPlayersLabelVector['x'] += 150
+            amountPlayersLabelVector['x'] += 150
         return (labelAmountPlayers, generateID)
 
     #Make the player labels
-    def makePlayerLabels(players, Option, font, screen):
+    def makePlayerLabels(players, Option, screen):
         playerLabels = []
         playerLabelVector = {"x": 20,"y": 400}#x,y coordinates on the screen for the label to be displayed
         generateID = 0 #Generate an ID for each player
         for x in players:
-            playerLabels.append(Option(x.Name, (playerLabelVector["x"], playerLabelVector["y"]), font, screen, generateID))
+            playerLabels.append(Option(x.Name, (playerLabelVector["x"], playerLabelVector["y"]), Option.fontSize(25, None), screen, generateID))
             generateID += 1
-            if playerLabelVector["x"] > 600:
-                playerLabelVector["x"] = 50
-                playerLabelVector["y"] += 50
-            else:
-                playerLabelVector["x"] += 200
+            playerLabelVector["x"] += 200
         return (playerLabels, generateID)
         
     #Draw character image on screen based on if the character is selected and assign player or CPU to character.
@@ -70,5 +63,6 @@ class selectScreen:
                 screen.blit(PlayerImageFighterSelectedDict[character.text], (character.pos[0], (character.pos[1] - 200)))
             else:
                 screen.blit(playerImageFighterDict[character.text], (character.pos[0], (character.pos[1] - 200)))
+                
         for label in labelsPlayerSelected:
             screen.blit(label[0], label[1])

@@ -5,9 +5,10 @@ import random
 import pickle
 import os
 import webbrowser
+from Draw import *
 from Player import *
 from PlayerCards import *
-from board import tiles
+from board import *
 from elements import *
 from pygame import gfxdraw
 from SuperFighters import *
@@ -27,21 +28,6 @@ pygame.init()
 diceSound = pygame.mixer.Sound(os.path.join('Sounds','dice_throw.wav'))
 bellSound = pygame.mixer.Sound(os.path.join('Sounds','boxing-bell.wav'))
 
-#Font init
-pygame.font.init()
-font = pygame.font.Font(None, 25)
-
-def fontSize(size, typeFont):
-    if typeFont == "Brush": 
-        font_path = "./Fonts/Brushstrike.ttf"
-    elif typeFont == "Super":
-        font_path = "./Fonts/Superstar.ttf"
-    elif typeFont == "lcd":
-        font_path = "./Fonts/LCD-N.TTF"
-    else:
-        return pygame.font.Font(None, size)
-    return pygame.font.Font(font_path, size)
-
 #The board can be resized every moment by declaring the function here
 boardVectorSize = {"x": 600, "y": 600}
 def setBoardVectorSize(boardVectorSize):
@@ -56,7 +42,7 @@ screen = pygame.display.set_mode((screenVectorSize["x"], screenVectorSize["y"]))
 screen = setScreenVectorSize(screenVectorSize, screen)
 
 #Loop through selected characters and place related pawns
-def  PawnLocations(SelectedCharacters, CurrentPlayerCounter, RandomDiceNumber, FirstDieIsThrown, GameStatus, TempCurrentPlayerCounter, PlayersAlive):
+def PawnLocations(SelectedCharacters, CurrentPlayerCounter, RandomDiceNumber, FirstDieIsThrown, GameStatus, TempCurrentPlayerCounter, PlayersAlive):
     #Board game main loop. Every movement is here.
     if ev.type == pygame.MOUSEBUTTONDOWN:
         if dieRect.collidepoint(pygame.mouse.get_pos()):
@@ -202,16 +188,6 @@ def setDefaultSoundSystem(EnableSound, soundFileLocation, fadeOutms=500, volume=
         pygame.mixer.music.play(-1)
 setDefaultSoundSystem(init.EnableSound,"Sounds\Intro_Soft_Touch.mp3", 300)
 
-#Reset the selected and amount of characters to zero again in able to reselect later.
-def resetSelections(SelectedCharacters,SelectedAmountBots, latestSelectedChar):
-    if init.SelectedCharacters is not None:
-        init.SelectedCharacters.clear()
-    if init.SelectedAmountBots is not None:
-        init.SelectedAmountBots = None
-    if latestSelectedChar is not None:
-        latestSelectedChar = None
-    return (init.SelectedCharacters, init.SelectedAmountBots, latestSelectedChar)
-
 randomInt = 1
 yourChar = None #First selection made is the player
 latestSelectedChar = None #Latest character selection that was made
@@ -219,16 +195,15 @@ latestSelectedChar = None #Latest character selection that was made
 # A global dict value that will contain all the Pygame
 # Surface objects returned by pygame.image.load().
 xM = 85
-menu =    [Option("NEW GAME", (screen.get_rect().centerx - xM, 180), fontSize(40, "Super"), screen, 0),
-           Option("LOAD GAME", (screen.get_rect().centerx - xM, 240), fontSize(40, "Super"), screen, 1),
-           Option("OPTIONS", (screen.get_rect().centerx - xM, 300), fontSize(40, "Super"), screen, 2),
-           Option("RULES", (screen.get_rect().centerx - xM, 360), fontSize(40, "Super"), screen, 3),
-           Option("QUIT", (screen.get_rect().centerx - xM, 420), fontSize(40, "Super"), screen, 4)]
+menu =    [Option("NEW GAME", (screen.get_rect().centerx - xM, 180), Option.fontSize(40, "Super"), screen, 0),
+           Option("LOAD GAME", (screen.get_rect().centerx - xM, 240), Option.fontSize(40, "Super"), screen, 1),
+           Option("OPTIONS", (screen.get_rect().centerx - xM, 300), Option.fontSize(40, "Super"), screen, 2),
+           Option("RULES", (screen.get_rect().centerx - xM, 360), Option.fontSize(40, "Super"), screen, 3),
+           Option("QUIT", (screen.get_rect().centerx - xM, 420), Option.fontSize(40, "Super"), screen, 4)]
 
 #Define the images
 dice =      {1:diceload('Images/Die-1.png'), 2:diceload('Images/Die-2.png'), 3:diceload('Images/Die-3.png'), 4:diceload('Images/Die-4.png'), 5:diceload('Images/Die-5.png'), 6:diceload('Images/Die-6.png')}
-#playerImages = {1:playerload('Images/mike.png'), 2:playerload('Images/paquiao.png'), 3:playerload('Images/mohammed.png'), 4:playerload('Images/rocky.png')}
-boardtiles = tiles()
+boardtiles = Board.tiles()
 players =  [Player("Mohammed Ali",100, 15, PlayerCards.MohammedAli,boardtiles[0], 0,"card__mohammed_ali.png", "muhammed_face.png", "muhammed_ali.png", "MuhammedGlow.png"),
             Player("Manny Pecquiao",100, 15, PlayerCards.MannyPecquiao,boardtiles[0], 0,"card__manny_pecquiao.png","manny_face.png", "paquiao.png", "PecquiaoGlow.png"),
             Player("Mike Tysen",100, 15, PlayerCards.MikeTysen,boardtiles[0], 0,"card__mike_tysen.png","mike_face.png", "mike.png", "MikeGlow.png"),
@@ -247,31 +222,22 @@ for player in players:
 #Define entities so that it can also be called again to reset all values such as the selections
 
 #Draw all player names on the screen
-playerLabels = selectScreen.makePlayerLabels(players, Option, fontSize(25, None), screen)
+playerLabels = selectScreen.makePlayerLabels(players, Option, screen)
 generateID = playerLabels[1]
 amountOfCharacters = generateID
 
 #Draw all bots on the screen
-labelAmountPlayers = selectScreen.makeBotLabels(generateID, init.MaxAmountOfBots, fontSize(25, None), screen, Option)
+labelAmountPlayers = selectScreen.makeBotLabels(generateID, init.MaxAmountOfBots, screen, Option)
 generateID = labelAmountPlayers[1]
 
 #Increment the latest generated id and give it to the clickable button
 startGameID = generateID + 1
 mainMenuGameID = startGameID + 1
-selectScreenButtons = [Option("Start game", (575, 550), fontSize(40, "Super"), screen, startGameID),
-                       Option("Main", (25, 550), fontSize(40, "Super"), screen, mainMenuGameID)] # go back to main menu
-buttonsOptionScreen = [Option("Disable sound!", (300, 150), fontSize(30, "Super"), screen, 99), Option("Enable sound!", (300, 200), fontSize(30, "Super"), screen, 98), Option("Main", (25, 550), fontSize(40, "Super"), screen, mainMenuGameID)]
+selectScreenButtons = [Option("Start game", (575, 550), Option.fontSize(40, "Super"), screen, startGameID),
+                       Option("Main", (25, 550), Option.fontSize(40, "Super"), screen, mainMenuGameID)] # go back to main menu
+buttonsOptionScreen = [Option("Disable sound!", (300, 150), Option.fontSize(30, "Super"), screen, 99), Option("Enable sound!", (300, 200), Option.fontSize(30, "Super"), screen, 98), Option("Main", (25, 550), Option.fontSize(40, "Super"), screen, mainMenuGameID)]
 entities = [playerLabels[0], labelAmountPlayers[0], selectScreenButtons]
 
-def drawOptions(l):
-    for option in l:#Draw all options on the screen
-        if option.rect.collidepoint(pygame.mouse.get_pos()):
-            option.hovered = True
-        else:
-            option.hovered = False
-        option.draw()
-    return
- #If set to False, the game will stop and the program will exit.
 
 #--------------------#
 # ↓ Main game loop ↓ #
@@ -284,7 +250,7 @@ while init.GameIsRunning:
     screen.fill((0,0,0))
     #Main menu
     if(init.GameStatus == 'main'):
-        screen.blit(pygame.transform.scale(init.MainBackground,(screenVectorSize["x"],screenVectorSize["y"])), (0, 0))
+        Draw.drawImage(screen, "FighterMenu.png", (screenVectorSize["x"],screenVectorSize["y"]), (0, 0))
         for entity in entities:
                 for option in entity:
                     option.selected = False
@@ -324,21 +290,21 @@ while init.GameIsRunning:
                 setDefaultSoundSystem(init.EnableSound, "Sounds\Intro_Soft_Touch.mp3", 300)
 
         #select screen background and labels.
-        screen.blit(pygame.transform.scale(init.SelectBackground,(screenVectorSize["x"],screenVectorSize["y"])), (0, 0))
-        label = fontSize(35, "Brush").render("Choose extra players", 1, (255,0,0))
+        Draw.drawImage(screen, "EmptyBackground.png", (screenVectorSize["x"],screenVectorSize["y"]), (0, 0))
+        label = Option.fontSize(35, "Brush").render("Choose extra players", 1, (255,0,0))
         screen.blit(label, (screen.get_rect().centerx / 2 + 50, 20))
-        label = fontSize(35, "Brush").render("Choose your characters", 1, (255,0,0))
+        label = Option.fontSize(35, "Brush").render("Choose your characters", 1, (255,0,0))
         screen.blit(label, (screen.get_rect().centerx / 2, 150))
 
         for entity in entities:
             #Draw and display character images and player labels.
-            selectScreen.displayPlayers(screen, playerImageFighterDict, PlayerImageFighterSelectedDict, entities[0], init.SelectedCharacters, fontSize(25, None))
+            selectScreen.displayPlayers(screen, playerImageFighterDict, PlayerImageFighterSelectedDict, entities[0], init.SelectedCharacters, Option.fontSize(25, None))
             selectScreen.drawOptions(entity)
             if init.BotChosen == True:#If there is no bot selected
-                selectchar = fontSize(25, None).render("Make sure that you chose player(s)", 1,(255,0,0))
+                selectchar = Option.fontSize(25, None).render("Make sure that you chose player(s)", 1,(255,0,0))
                 screen.blit(selectchar, (screen.get_rect().centerx / 2, 500))
             elif init.CharChosen == True:#If there is no characters selected
-                selectchar = fontSize(25, None).render("Make sure the character(s) is selected", 1,(255,0,0))
+                selectchar = Option.fontSize(25, None).render("Make sure the character(s) is selected", 1,(255,0,0))
                 screen.blit(selectchar, (screen.get_rect().centerx / 2, 500))
             if ev.type == pygame.MOUSEBUTTONDOWN:
                 for option in entity:
@@ -381,74 +347,30 @@ while init.GameIsRunning:
                                 init.CharChosen = True  
     #Display board game
     elif(init.GameStatus == 'Game'):
-        screen.blit(pygame.transform.scale(init.SelectBackground,(1000,700)), (0, 0))
+        Draw.drawImage(screen, "EmptyBackground.png", (1000,700), (0, 0))
         dieRect = pygame.Rect((725,50,150,150))
         screen.blit(board,(0,0))
         if init.TileSelected:
-            screen.blit(playerImageCardDict[cardName],(660,289))
+            screen.blit(playerImageCardDict[displayScoreCard[1]],(660,289))
         init.CurrentPlayerCounter, init.RandomDiceNumber, init.FirstDieIsThrown, init.GameStatus,init.TempCurrentPlayerCounter,init.SelectedCharacters[init.CurrentPlayerCounter].Health, init.PlayersAlive = PawnLocations(init.SelectedCharacters, init.CurrentPlayerCounter, init.RandomDiceNumber,init.FirstDieIsThrown, init.GameStatus, init.TempCurrentPlayerCounter, init.PlayersAlive)
-        scoreBoardFont = pygame.font.Font(None, 20)
-
-        #Stop game, pause game and rules button
-        bellImg = pygame.image.load("Images\BoxingBell.png")
-        screen.blit(pygame.transform.scale(bellImg, (25, 25)), (950, 10))
-        pauseImg = pygame.image.load("Images\Pause.png")
-        screen.blit(pygame.transform.scale(pauseImg, (25, 25)), (915, 10))
-        ruleImg = pygame.image.load("Images\Rules.png")
-        screen.blit(pygame.transform.scale(ruleImg, (25, 25)), (880, 10))
+        #Draw the gameboard buttons: stop, pause and rules
+        screenImg = [("BoxingBell.png", (25,25), (950,10)), ("Pause.png", (25,25), (915,10)), ("Rules.png", (25,25), (880,10))]
+        for property in screenImg:
+            Draw.drawImage(screen, property[0], property[1], property[2]) 
         bellRec = pygame.Rect((950, 10, 25, 25))
         pauseImg = pygame.Rect((915, 10, 25, 25))
         ruleImg = pygame.Rect((880, 10, 25, 25))
 
-        #Draw scoreboard
-        scoreBoardLabels = []
-        name = None
-        vectorX = 0
-        for x in init.SelectedCharacters:
-            screen.blit(pygame.transform.scale(init.ScoreBoardBackground,(250,100)), (vectorX,600))
-            vectorX += 250
-            if x == yourChar:
-                name = str(x.Name) + "Player 1: "
-            else:
-                name = "Player: " + str(x.Name)
-            if x == init.SelectedCharacters[init.CurrentPlayerCounter] and init.PlayersAlive != 1:
-                labelColor = (217, 30, 24) #'Thunderbird' red
-                screen.blit(fontSize(35, None).render("Current player:", 1,(255,255,255)), (680, 225))
-                screen.blit(playerImageFaceDict[x.Name],(870,210))
-            else:
-                labelColor = (0,0,0) #Black
-            scoreBoardLabels.append((fontSize(18, "lcd").render(name, 1, labelColor),fontSize(20, None).render("Lifepoints: " + str(x.Health), 1, labelColor),fontSize(20, None).render("Condition: " + str(x.Condition), 1, labelColor)))
-            
-        #Render the players on the score board
-        labelPixelLenght = 10 #First label location on the score board
-        for label in scoreBoardLabels:
-            labelPixelHeight = 613
-            for x in label:
-                screen.blit(x, (labelPixelLenght, labelPixelHeight))
-                labelPixelHeight += 25
-            labelPixelLenght += 250
+        #Draw score board and render players on the board
+        scoreBoardLabels = Board.drawScoreBoard(screen, init.SelectedCharacters, yourChar, init.CurrentPlayerCounter, init.PlayersAlive, playerImageFaceDict)
+        Board.renderPlayers(screen, scoreBoardLabels)
 
         if ev.type == pygame.QUIT:
-            gameIsRunning = False
-
-        if ev.type == pygame.MOUSEBUTTONDOWN:
-            clickPosition = pygame.mouse.get_pos()#Check if player tile is selected
-            if (clickPosition[0] >= 0 and clickPosition[0] <= 75) and (clickPosition[1] >= 0 and clickPosition[1] <= 75):
-                init.TileSelected = True
-                cardName = init.SelectedCharacters[0].Name
-            elif (clickPosition[0] >= 525 and clickPosition[0] <= 600) and (clickPosition[1] >= 0 and clickPosition[1] <= 75):
-                init.TileSelected = True
-                cardName = init.SelectedCharacters[1].Name
-            elif (clickPosition[0] >= 525 and clickPosition[0] <= 600) and (clickPosition[1] >= 525 and clickPosition[1] <= 600):
-                if len(init.SelectedCharacters) >= 3:
-                    init.TileSelected = True
-                    cardName = init.SelectedCharacters[2].Name
-            elif (clickPosition[0] >= 0 and clickPosition[0] <= 75) and (clickPosition[1] >= 525 and clickPosition[1] <= 600):
-                if len(init.SelectedCharacters) >= 4:
-                    init.TileSelected = True
-                    cardName = init.SelectedCharacters[3].Name
-            else:
-                init.TileSelected = False
+            init.GameIsRunning = False
+        elif ev.type == pygame.MOUSEBUTTONDOWN:
+            clickPosition = pygame.mouse.get_pos()#Check if player tile is selected and display score card of that player's character
+            displayScoreCard = Board.displayCharacterScoreCard(clickPosition, init.SelectedCharacters)
+            init.TileSelected = displayScoreCard[0]
 
             #Pause and stop game button logic
             if bellRec.collidepoint(pygame.mouse.get_pos()) or pauseImg.collidepoint(pygame.mouse.get_pos()):
@@ -470,8 +392,8 @@ while init.GameIsRunning:
             elif ruleImg.collidepoint(pygame.mouse.get_pos()):
                 webbrowser.open_new('Documenten\Rules.pdf')
     elif init.GameStatus == "options":
-        screen.blit(pygame.transform.scale(init.SelectBackground,(screenVectorSize["x"],screenVectorSize["y"])), (0, 0))
-        label = fontSize(50, "Brush").render("Option menu", 1, (255, 0, 0))
+        Draw.drawImage(screen, "EmptyBackground.png", (screenVectorSize["x"],screenVectorSize["y"]), (0, 0))
+        label = Option.fontSize(50, "Brush").render("Option menu", 1, (255, 0, 0))
         screen.blit(label, (260, 50))
         if init.EnableSound == True:
             buttonsOptionScreen[1].selected = True
@@ -516,7 +438,7 @@ while init.GameIsRunning:
             else:
                 init.TempCurrentPlayerCounter = init.CurrentPlayerCounter - 1
             bottomLeftFighter = init.TempCurrentPlayerCounter
-            screen.blit(pygame.transform.scale(init.SelectBackground,(1000,700)), (0, 0))
+            Draw.drawImage(screen, "EmptyBackground.png", (1000,700), (0, 0))
             ImageFighter = pygame.image.load("Images\\" + init.SelectedCharacters[init.TempCurrentPlayerCounter].ImageFighter)
         
             landedTile = init.SelectedCharacters[init.TempCurrentPlayerCounter].Tile
@@ -536,10 +458,10 @@ while init.GameIsRunning:
                         init.TempCurrentPlayerCounter = 0 #Going to fight player 0 (first player, that means its going to fight you.
 
             #HP and Condition labels for the player and the owner of the corner
-            textPlayerHP = font.render("HP: " + str(init.SelectedCharacters[bottomLeftFighter].Health), 1, (255,255,0))
-            textPlayerCondition = font.render("Condition: " + str(init.SelectedCharacters[bottomLeftFighter].Condition), 1, (255,255,0))
-            textOpponentHP = font.render("HP: " + str(init.SelectedCharacters[init.TempCurrentPlayerCounter].Health), 1, (255,255,0))
-            textOpponentCondition = font.render("Condition: " + str(init.SelectedCharacters[init.TempCurrentPlayerCounter].Condition), 1, (255,255,0))
+            textPlayerHP = Option.fontSize(25, None).render("HP: " + str(init.SelectedCharacters[bottomLeftFighter].Health), 1, (255,255,0))
+            textPlayerCondition = Option.fontSize(25, None).render("Condition: " + str(init.SelectedCharacters[bottomLeftFighter].Condition), 1, (255,255,0))
+            textOpponentHP = Option.fontSize(25, None).render("HP: " + str(init.SelectedCharacters[init.TempCurrentPlayerCounter].Health), 1, (255,255,0))
+            textOpponentCondition = Option.fontSize(25, None).render("Condition: " + str(init.SelectedCharacters[init.TempCurrentPlayerCounter].Condition), 1, (255,255,0))
 
             #Blit the HP/Condition labels
             screen.blit(textPlayerHP, (200,600))
@@ -577,7 +499,7 @@ while init.GameIsRunning:
                     attackOpponentOptions = init.SelectedCharacters[init.TempCurrentPlayerCounter].Card.value[init.FighterDieInt[1]]
                     cnt = 0
                     for attack in attackOpponentOptions.items():
-                        textOpponentAttack.append(font.render("Attack " + str(cnt + 1) + ": Damage:" + str(attack[1]['damage']) + " | Condition: " + str(attack[1]['condition']), 1, (255,255,255)))
+                        textOpponentAttack.append(Option.fontSize(25, None).render("Attack " + str(cnt + 1) + ": Damage:" + str(attack[1]['damage']) + " | Condition: " + str(attack[1]['condition']), 1, (255,255,255)))
                         cnt += 1
                     labelHeight = 25
                     topRightAttackOptions = []
@@ -601,7 +523,7 @@ while init.GameIsRunning:
                 cnt = 0
                 labelHeight = 600
                 for attack in attackOptions.items():
-                    textPlayerAttack.append(font.render("Attack " + str(cnt + 1) + ": Damage:" + str(attack[1]['damage']) + " | Condition: " + str(attack[1]['condition']),1, (255,255,255)))
+                    textPlayerAttack.append(Option.fontSize(25, None).render("Attack " + str(cnt + 1) + ": Damage:" + str(attack[1]['damage']) + " | Condition: " + str(attack[1]['condition']),1, (255,255,255)))
                     labelHeight += 25
                     cnt += 1
             
@@ -704,10 +626,10 @@ while init.GameIsRunning:
                         init.TempCurrentPlayerCounter = 0 #Going to fight player 0 (first player, that means its going to fight you.
 
             #HP and Condition labels for the player and the owner of the corner
-            textPlayerHP = font.render("HP: " + str(init.SelectedCharacters[bottomLeftFighter].Health), 1, (255,255,0))
-            textPlayerCondition = font.render("Condition: " + str(init.SelectedCharacters[bottomLeftFighter].Condition), 1, (255,255,0))
-            textOpponentHP = font.render("HP: " + str(init.SelectedCharacters[init.TempCurrentPlayerCounter].Health), 1, (255,255,0))
-            textOpponentCondition = font.render("Condition: " + str(init.SelectedCharacters[init.TempCurrentPlayerCounter].Condition), 1, (255,255,0))
+            textPlayerHP = Option.fontSize(25, None).render("HP: " + str(init.SelectedCharacters[bottomLeftFighter].Health), 1, (255,255,0))
+            textPlayerCondition = Option.fontSize(25, None).render("Condition: " + str(init.SelectedCharacters[bottomLeftFighter].Condition), 1, (255,255,0))
+            textOpponentHP = Option.fontSize(25, None).render("HP: " + str(init.SelectedCharacters[init.TempCurrentPlayerCounter].Health), 1, (255,255,0))
+            textOpponentCondition = Option.fontSize(25, None).render("Condition: " + str(init.SelectedCharacters[init.TempCurrentPlayerCounter].Condition), 1, (255,255,0))
 
             screen.blit(textPlayerHP, (200,600))
             screen.blit(textPlayerCondition, (200,630))
@@ -716,8 +638,8 @@ while init.GameIsRunning:
                 superfighter = random.choice(list(SuperFighters))
                 randomFighterDamage = random.randint(1,6)-1
             init.Counter += 1
-            randomSuperFighter = font.render(superfighter.name+" deals "+str(superfighter.value[randomFighterDamage])+" damage!", 1, (255,255,0))
-            defendText = font.render("Roll to defend!", 1, (255,255,0))
+            randomSuperFighter = Option.fontSize(25, None).render(superfighter.name+" deals "+str(superfighter.value[randomFighterDamage])+" damage!", 1, (255,255,0))
+            defendText = Option.fontSize(25, None).render("Roll to defend!", 1, (255,255,0))
             screen.blit(randomSuperFighter, (450, 35))
             screen.blit(defendText, (450, 60))
 
@@ -747,7 +669,7 @@ while init.GameIsRunning:
                 cnt = 0
                 labelHeight = 600
                 for attack in attackOptions.items():
-                    textPlayerAttack.append(font.render("Attack " + str(cnt + 1) + ": Damage:" + str(attack[1]['damage']) + " | Condition: " + str(attack[1]['condition']),1, (255,255,255)))
+                    textPlayerAttack.append(Option.fontSize(25, None).render("Attack " + str(cnt + 1) + ": Damage:" + str(attack[1]['damage']) + " | Condition: " + str(attack[1]['condition']),1, (255,255,255)))
                     labelHeight += 25
                     cnt += 1
                 labelHeight = 600

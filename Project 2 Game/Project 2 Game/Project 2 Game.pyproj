@@ -35,6 +35,9 @@
     <Compile Include="Dice.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Draw.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="elements.py">
       <SubType>Code</SubType>
     </Compile>
